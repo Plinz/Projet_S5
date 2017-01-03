@@ -52,3 +52,7 @@ git push
 Autres parsers :
 * ELF Parser 2 : https://github.com/sifteo/node-elf
 * ELF Parser 3 : https://github.com/jacob-baines/elfparser
+
+## PROTIP
+
+"Dans la partie Annexe au lieu de "arm-eabi-cquevousvoulez" faut mettre "arm-none-eabi-cquevousvoulez" pour l'instant en tout cas celui qui est sur l'énoncé marche pas je sais pas pourquoi."
