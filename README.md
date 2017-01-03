@@ -6,6 +6,8 @@ L'objectif  de  ce  projet  est  d’implémenter  une  sous  partie  d'un  édi
 
 ***
 
+Sales Dispo : 202/204/216
+
 ## Membres du groupe
 
 * Andre Valentin
