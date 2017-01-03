@@ -1,8 +1,9 @@
 #include <elf.h>
+#include <stdio.h>
 
 int main (int argc, char *argv[]) 
 {
-int fich; 
+File *fich; 
   /*Elf Header
   #Elf Section Header*/
 if (argc!=2){
@@ -10,7 +11,10 @@ if (argc!=2){
   return 0;
 }
 
-
+if ((fich = fopen("argv[1]","r")) == NULL ){
+ printf("Erreur ouverture fichier"); 
+  return 0;
+}
 
 
 
