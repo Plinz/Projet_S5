@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 Elf32_Ehdr lectureheader(FILE* f);
+void affichageheader(Elf32_Ehdr header_elf);
 
 uint32_t Swap32(uint32_t valeur, char endianess);
 
