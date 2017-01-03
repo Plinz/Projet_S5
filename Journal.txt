@@ -1,0 +1,4 @@
+Jour 1 :
+
+Decouverte du sujet.
+Lecture de la documentation à propos du format ELF.
