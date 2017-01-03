@@ -2,3 +2,5 @@ Jour 1 :
 
 Decouverte du sujet.
 Lecture de la documentation à propos du format ELF.
+Creation du main (ouverture du fichier, includes...)
+Creation de la fonction de lecture des headers
