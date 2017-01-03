@@ -16,6 +16,6 @@ L'objectif  de  ce  projet  est  d’implémenter  une  sous  partie  d'un  édi
 
 ## Documentation Annexe 
 
-Cours de Verimag en français : http://www-verimag.imag.fr/~moy/cours/ldb-apprentissage/Edition-de-liens-nup.pdf
-Les ELF Specif .C en Français : http://manpagesfr.free.fr/man/man5/elf.5.html
-Logiciel ELF Viewer : https://sourceforge.net/p/elfviewer/code/ci/master/tree/
+* Cours de Verimag en français : http://www-verimag.imag.fr/~moy/cours/ldb-apprentissage/Edition-de-liens-nup.pdf
+* Les ELF Specif .C en Français : http://manpagesfr.free.fr/man/man5/elf.5.html
+* Logiciel ELF Viewer : https://sourceforge.net/p/elfviewer/code/ci/master/tree/
