@@ -24,7 +24,7 @@ if ((fich = fopen("argv[1]","rb")) == NULL ){
 }
 
 /* Lecture de l'header ELF au début du fichier */
-
+head = lectureheader(fich);
 
 //test test
 
