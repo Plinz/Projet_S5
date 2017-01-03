@@ -11,8 +11,11 @@ Sales Dispo : 202/204/216
 
 ***
 git clone https://github.com/Plinz/Projet_S5.git // git pull
+
 git add nom_fich
+
 git commit -m message
+
 git push
 
 ## Membres du groupe
