@@ -22,8 +22,16 @@ if ((fich = fopen(argv[1],"rb")) == NULL ){
 /* Lecture de l'header ELF au début du fichier */
 head = lectureheader(fich);
 
- /* Affichage de l'header de l'ELF */
+/* Affichage de l'header de l'ELF */
 affichageheader(head);
 //test test
+
+Elf32_Shdr * t = malloc(sizeof(Elf32_Shdr)*head.e_shnum);
+fseek(fich, head.e_shoff, SEEK_SET);
+
+lectureTableSection(fich, head,t);
+
+affichageTabsection(t, head, fich);
+
 
 }
