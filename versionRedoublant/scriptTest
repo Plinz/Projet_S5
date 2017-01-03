@@ -1,0 +1,13 @@
+#!/bin/sh
+
+
+for file in example/*.o
+do
+	echo "\n======================================="
+	echo "		$file			     "
+	echo "=======================================\n"
+	./editeurLien $file
+	
+	echo "\n appuyer sur une Entrée pour continuer\n"
+	read var
+done
