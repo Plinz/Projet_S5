@@ -1,4 +1,4 @@
-# PROG5 - Projet logiciel (groupe 5)
+# PROG5 - Projet logiciel (groupe 6)
 
 **Éditeur de liens - Phase de fusion**
 
