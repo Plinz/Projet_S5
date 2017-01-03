@@ -1,0 +1,5 @@
+Dans les en tête de section, il faut checker le type de la section (sh_type)
+Si c'est un type SYMTAB, alors on check l'adresse à laquelle se trouve cette section (sh_addr) et vérifier que cette valeur ne soit pas 0
+C'est donc à ce moment là qu'on accède a cette adresse pour lire le contenu de la section (et donc de la table des symboles)
+
+Il y aura plusieurs en tetes de section, il faudra donc parcourir tous le ?tableau? et réaliser l'opération pour chaque section de type SYMTAB
