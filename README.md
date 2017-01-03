@@ -25,4 +25,5 @@ L'objectif  de  ce  projet  est  d’implémenter  une  sous  partie  d'un  édi
 
 * ELF Parser : https://github.com/sifteo/node-elf
 * ELF Parser 2 : https://github.com/TheCodeArtist/elf-parser
+* * https://github.com/TheCodeArtist/elf-parser/blob/master/elf-parser.c
 * ELF Parser 3 : https://github.com/jacob-baines/elfparser
