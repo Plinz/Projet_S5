@@ -47,6 +47,8 @@ git push
 
 * Doc qui va nous servir selon les redoublants : http://wiki.osdev.org/ELF_Tutorial
 * http://wiki.osdev.org/ELF
+
+
 Autres parsers :
 * ELF Parser 2 : https://github.com/sifteo/node-elf
 * ELF Parser 3 : https://github.com/jacob-baines/elfparser
