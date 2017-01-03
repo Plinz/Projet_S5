@@ -14,6 +14,11 @@ L'objectif  de  ce  projet  est  d’implémenter  une  sous  partie  d'un  édi
 * Marco Florian
 * Novel Mathias
 
+## Work In Progress
+
+* Creation du lecteur de fichiers
+* Parsing des fichiers  
+
 ## Documentation Annexe 
 
 * Cours de Verimag en français : http://www-verimag.imag.fr/~moy/cours/ldb-apprentissage/Edition-de-liens-nup.pdf
