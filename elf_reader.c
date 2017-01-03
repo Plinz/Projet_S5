@@ -1,8 +1,4 @@
-#include <elf.h>
-#include <stdio.h>
-#include <byteswap.h>
-#include <string.h>
-#include <stdlib.h>
+#include "elf_reader.h"
 
 int main (int argc, char *argv[]) 
 {
@@ -18,7 +14,7 @@ if (argc!=2){
 }
 
   /* ouverture du fichier */
-if ((fich = fopen("argv[1]","rb")) == NULL ){
+if ((fich = fopen(argv[1],"rb")) == NULL ){
  printf("Erreur ouverture fichier"); 
   return 0;
 }
