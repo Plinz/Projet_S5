@@ -23,7 +23,10 @@ L'objectif  de  ce  projet  est  d’implémenter  une  sous  partie  d'un  édi
 * Introduction to linkers : http://www.lurklurk.org/linkers/linkers.html
 * "ld" et "readelf" disponible dans la librairie binutils : http://www.sourceware.org/binutils/
 
-* ELF Parser : https://github.com/sifteo/node-elf
-* ELF Parser 2 : https://github.com/TheCodeArtist/elf-parser
+
+* ELF Parser : https://github.com/TheCodeArtist/elf-parser
 * * https://github.com/TheCodeArtist/elf-parser/blob/master/elf-parser.c
+
+Autres parsers :
+* ELF Parser 2 : https://github.com/sifteo/node-elf
 * ELF Parser 3 : https://github.com/jacob-baines/elfparser
