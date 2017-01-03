@@ -6,7 +6,7 @@
 
 int main (int argc, char *argv[]) 
 {
-File *fich; /* Fichier ELF qu'on va lire */
+FILE *fich; /* Fichier ELF qu'on va lire */
 Elf32_Ehdr head; /* Header ELF de taille Fixe */
   
   /*Elf Section Header*/
