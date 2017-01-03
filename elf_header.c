@@ -1,6 +1,6 @@
 #include "elf_reader.h"
 
-Elf32_Ehdr recupEnTete(FILE* f){
+Elf32_Ehdr lectureheader(FILE* f){
 	Elf32_Ehdr header_elf;
 	int i;
 
