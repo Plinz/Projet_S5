@@ -21,4 +21,6 @@ L'objectif  de  ce  projet  est  d’implémenter  une  sous  partie  d'un  édi
 * Les Headers ELF Expliqués en Français : https://fr.wikipedia.org/wiki/Executable_and_Linkable_Format
 * Logiciel ELF Viewer : https://sourceforge.net/p/elfviewer/code/ci/master/tree/
 * Introduction to linkers : http://www.lurklurk.org/linkers/linkers.html
+* "ld" disponible dans la librairie binutils : http://www.sourceware.org/binutils/
+
 
