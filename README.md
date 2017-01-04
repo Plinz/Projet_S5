@@ -48,6 +48,8 @@ git push
 * Doc qui va nous servir selon les redoublants : http://wiki.osdev.org/ELF_Tutorial
 * http://wiki.osdev.org/ELF
 * Document pour les sections: https://docs.oracle.com/cd/E19683-01/816-1386/chapter6-94076/index.html
+* Affichage Table des symboles ( Incomplet ) : http://stackoverflow.com/questions/15225346/how-to-display-the-symbols-type-like-the-nm-command
+
 
 Autres parsers :
 * ELF Parser 2 : https://github.com/sifteo/node-elf
