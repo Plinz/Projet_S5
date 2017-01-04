@@ -51,6 +51,7 @@ git push
 * Affichage Table des symboles ( Incomplet ) : http://stackoverflow.com/questions/15225346/how-to-display-the-symbols-type-like-the-nm-command
 * Fichier contenant l'ensemble des types, structures et macros ELF : http://osxr.org:8080/glibc/source/elf/elf.h?v=glibc-2.18
 
+* Un Editeur de lien pour Android (donc ARM) en C++ : https://android.googlesource.com/platform/bionic/+/master/linker/linker.cpp
 
 Autres parsers :
 * ELF Parser 2 : https://github.com/sifteo/node-elf
