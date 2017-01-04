@@ -1,14 +1,14 @@
 Liste des Tests pour chaque etapes :
 
-# Etape 1 : 
+# Etape 1 : Affichage de l'en-tête
 
-# Etape 2 : 
+# Etape 2 : Affichage de la table des sections
 
-# Etape 3 : 
+# Etape 3 : Affichage du contenu d'une section
 
-# Etape 4 : 
+# Etape 4 : Affichage de la table des symboles
 
-# Etape 5 : 
+# Etape 5 : Affichage des tables de réimplémentation
 
 # Etape 6 : 
 
