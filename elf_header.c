@@ -54,8 +54,109 @@ void affichageheader(Elf32_Ehdr header_elf){
 		}
 	}
 	printf(" \n");
+	// Utilisation du Magic pour determiner classe, donnees et OS-ABI
+	printf("Classe : ");
+	switch(header_elf.e_ident[4]){
+		case 0 :
+			printf ("Aucun");
+			break;
+		case 1 :
+			printf ("ELF32");
+			break;
+		case 2 : 
+			printf("ELF64");
+			break;
+		default :
+			printf("Erreur");
+			break;
+	}
+	printf("\n");
 
 
+	printf("Endianness : ");
+	switch(header_elf.e_ident[5]){
+		case 0 :
+			printf ("Aucun");
+			break;
+		case 1 :
+			printf ("LSB");
+			break;
+		case 2 : 
+			printf("MSB");
+			break;
+		default :
+			printf("Erreur");
+			break;
+	}
+	printf("\n");
+
+	printf("ABI : ");
+	switch(header_elf.e_ident[7]){
+		case 0 :
+			printf ("UNIX System V");
+			break;
+		case 1 :
+			printf ("HP-UX");
+			break;
+		case 2 : 
+			printf("NetBSD");
+			break;
+		case 3 : 
+			printf("Linux");
+			break;
+		case 6 : 
+			printf("Sun Solaris");
+			break;
+		case 7 : 
+			printf("IBM AIX");
+			break;
+		case 8 : 
+			printf("SGI IRIX");
+			break;
+		case 9 : 
+			printf("FreeBSD");
+			break;
+		case 10 : 
+			printf("Compaq TRU64");
+			break;
+		case 11 : 
+			printf("Novell Modesto");
+			break;
+		case 12 : 
+			printf("OpenBSD");
+			break;
+		case 13 : 
+			printf("OpenVMS");
+			break;
+		case 14 : 
+			printf("NonStop Kernel");
+			break;
+		case 15 : 
+			printf("AROS");
+			break;
+		case 16 : 
+			printf("Fenix OS");
+			break;
+		case 17 : 
+			printf("CloudABI");
+			break;
+		case 64 : 
+			printf("ARM Eabi");
+			break;
+		case 83 : 
+			printf("Sortix");
+			break;
+		case 97 : 
+			printf("ARM");
+			break;
+		case 255 : 
+			printf("Standalone");
+			break;
+		default :
+			printf("Erreur");
+			break;
+	}
+	printf("\n");
 	//différent cas de type de fichier pour affiché la traduction des code hexa
 	printf("Type: ");
 	switch(header_elf.e_type){
