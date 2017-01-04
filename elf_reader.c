@@ -41,6 +41,13 @@ scanf("%s",secName);
 printf("\n");
 afficheSectionByName(head, t, fich, secName);
 
+int secNum;
+printf("\nNum de la section à afficher\n");
+scanf("%d",&secNum);
+afficheSectionByNum(fileHeader, sections_headers,  elf, secNum);
+
+
+
 //Test Etape 4
 printf("====================================================");
 Elf32_Sym *tabSymb = malloc(head.e_shentsize);
