@@ -1,6 +1,11 @@
-Jour 1 :
+Jour 1 : Mardi 03 Janvier 2017
 
 Decouverte du sujet.
 Lecture de la documentation à propos du format ELF.
 Creation du main (ouverture du fichier, includes...)
-Creation de la fonction de lecture des headers
+Creation de la fonction de lecture des headers (fonctionnelle)
+Creation de la fonction de lecture de section (non fonctionnelle)
+
+Jour 2 : Mercredi 04 Janvier 2017
+Debuggage de la fonction de lecture de section 
+Creation de la fonction de lecture de la table des symboles
