@@ -44,7 +44,7 @@ afficheSectionByName(head, t, fich, secName);
 int secNum;
 printf("\nNum de la section à afficher\n");
 scanf("%d",&secNum);
-afficheSectionByNum(fileHeader, sections_headers,  elf, secNum);
+afficheSectionByNum(head, t,  fich, secNum);
 
 
 
