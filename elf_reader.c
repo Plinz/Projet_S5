@@ -75,13 +75,12 @@ switch(o){
 		break;
 
 	case 's' :
-		/*
 		//Test Etape 4
 		printf("====================================================");
 		Elf32_Sym *tabSymb = malloc(head.e_shentsize);
 		int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
-		affichageTableSymbole(tabSymb, nbSymbole, fich);
-		*/
+		affichageTableSymbole(tabSymb, nbSymbole, fich, TableSec);
+		
 		break;
 	
 	case 'r' :
