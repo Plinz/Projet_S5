@@ -49,6 +49,7 @@ git push
 * http://wiki.osdev.org/ELF
 * Document pour les sections: https://docs.oracle.com/cd/E19683-01/816-1386/chapter6-94076/index.html
 * Affichage Table des symboles ( Incomplet ) : http://stackoverflow.com/questions/15225346/how-to-display-the-symbols-type-like-the-nm-command
+* Fichier contenant l'ensemble des types, structures et macros ELF : http://osxr.org:8080/glibc/source/elf/elf.h?v=glibc-2.18
 
 
 Autres parsers :
