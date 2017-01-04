@@ -19,11 +19,17 @@ int afficherNomSection(Elf32_Ehdr header, Elf32_Shdr *section_header, FILE* elf,
 
 void affichageTabsection(Elf32_Shdr *section_elf, Elf32_Ehdr header_elf, FILE* elf);
 
+
 //Recherche Section Etape 3
 void afficheSectionByName(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, char * secName);
 
+void afficheSectionByNum(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, int secNum);
 
-//Etape 5
+void afficheContenue(Elf32_Shdr currentSection, FILE* elf);
+
+
+
+//Etape 4
 int lectureTableSymbole(Elf32_sym* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f);
 
 Elf32_Off getIndexStringTable(Elf32_Shdr* tabSection);
