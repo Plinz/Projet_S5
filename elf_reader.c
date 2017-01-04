@@ -41,5 +41,10 @@ scanf("%s",secName);
 printf("\n");
 afficheSectionByName(head, t, fich, secName);
 
+//Test Etape 4
+printf("====================================================");
+Elf32_Sym *tabSymb = malloc(head.e_shentsize);
+int nbSymbole = lectureTableSymbole(tabSymb, head, t, fich);
+affichageTableSymbole(tabSymb, nbSymbole, fich);
 
 }
