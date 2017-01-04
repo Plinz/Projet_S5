@@ -47,6 +47,7 @@ git push
 
 * Doc qui va nous servir selon les redoublants : http://wiki.osdev.org/ELF_Tutorial
 * http://wiki.osdev.org/ELF
+* Type des sections : https://refspecs.linuxfoundation.org/LSB_2.0.1/LSB-Core/LSB-Core/sections.html
 
 
 Autres parsers :
