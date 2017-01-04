@@ -263,22 +263,22 @@ void affichageheader(Elf32_Ehdr header_elf){
 	//affichage du reste des champs de l'en tête
 	printf("Adresse de point d'entrée : 0x%x\n",header_elf.e_entry);
 
-	printf("Debut de l'en-tête du programme : %d (bits)\n", header_elf.e_phoff);
+	printf("Debut de l'en-tête du programme : %d (octets)\n", header_elf.e_phoff);
 
-	printf("Debut de la table des sections : %d (bits)\n", header_elf.e_shoff);
+	printf("Debut de la table des sections : %d (octets)\n", header_elf.e_shoff);
 
 	printf("Flags : 0x%x\n",header_elf.e_flags);
 
-	printf("Taille de l'en-tête : %d (bits)\n", header_elf.e_ehsize);
+	printf("Taille de l'en-tête : %d (octets)\n", header_elf.e_ehsize);
 
-	printf("Taille de la table des sections : %d (bits)\n",header_elf.e_shentsize);
+	printf("Taille de l'en-tête des sections : %d (octets)\n",header_elf.e_shentsize);
 
-	printf("Nombre de sections : %d\n",header_elf.e_shnum);
+	printf("Nombre d'en-tête de sections : %d\n",header_elf.e_shnum);
 
-	printf("Indice des en-têtes de sections : %d\n",header_elf.e_shstrndx);
+	printf("Table d'indexes des chaînes d'entêtes de section : %d\n",header_elf.e_shstrndx);
 
-	printf("Taille d'une entrée de la table d'en tête : %d\n", header_elf.e_phentsize);
+	printf("Taille de l'en-tête du programme (octets) : %d\n", header_elf.e_phentsize);
 
-	printf("Nombre d'entrée de la table d'en tête : %d\n", header_elf.e_phnum);
+	printf("Nombre d'en-tête du programme : %d\n", header_elf.e_phnum);
 
 }
