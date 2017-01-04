@@ -12,9 +12,12 @@ uint32_t Swap32(uint32_t valeur, char endianess);
 uint16_t Swap16(uint16_t valeur, char endianess);
 
 
-//Section header
+//Section header Etape 2
 void lectureTableSection(FILE* f, Elf32_Ehdr header_elf, Elf32_Shdr *t);
 
 int afficherNomSection(Elf32_Ehdr header, Elf32_Shdr *section_header, FILE* elf, Elf32_Shdr headerCourant);
 
 void affichageTabsection(Elf32_Shdr *section_elf, Elf32_Ehdr header_elf, FILE* elf);
+
+//Recherche Section Etape 3
+void afficheSectionByName(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, char * secName);

@@ -26,12 +26,20 @@ head = lectureheader(fich);
 affichageheader(head);
 //test test
 
+//Test Etape 2
 Elf32_Shdr * t = malloc(sizeof(Elf32_Shdr)*head.e_shnum);
 fseek(fich, head.e_shoff, SEEK_SET);
 
 lectureTableSection(fich, head,t);
 
 affichageTabsection(t, head, fich);
+
+//Test Etape 3
+char * secName = malloc(50);
+printf("\nNom de la section à afficher\n");
+scanf("%s",secName);
+printf("\n");
+afficheSectionByName(head, t, fich, secName);
 
 
 }
