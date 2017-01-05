@@ -9,3 +9,7 @@ Creation de la fonction de lecture de section (non fonctionnelle)
 Jour 2 : Mercredi 04 Janvier 2017
 Debuggage de la fonction de lecture de section 
 Creation de la fonction de lecture de la table des symboles
+Création de la fonction d'affichage du contenu d'une section, par son nom et numéro (fonctionnelle)
+Ajout d'options au main
+
+Jour 3 : Jeudi 05 Janvier 2017
