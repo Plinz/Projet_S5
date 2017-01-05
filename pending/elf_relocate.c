@@ -48,14 +48,10 @@ int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers) {
 	return taille;
 }
 
-int display_relocate_section(ELF_STRUCT *elf_struct) {
+int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf) {
 	
-	FILE* f = elf_struct->elf_file;
-	Elf32_Ehdr* elf_header = elf_struct->elf_header;
-	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
 	Elf32_Rela* rela = elf_struct->a_rela;
 	Elf32_Rel* rel = elf_struct->a_rel;
-	Elf32_Sym* a_symb = elf_struct->a_sym; 
 	
 	int trela = taillerela(elf_struct);
 	int trel = taillerela(elf_struct);
