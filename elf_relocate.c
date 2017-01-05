@@ -59,7 +59,6 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 			lesrel = realloc(lesrel, taille * sizeof(Elf32_Rel));
 			for (int j=0; j<nombre; j++) {
 				// on recupere chaque element de type Rel
-				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
 				fread(&(lesrel[k]),trel, 1, elf);
 				printf("lecture : %x \n",lesrel[k]);
 				printf("offset : %x \n",lesrel[k].r_offset);
