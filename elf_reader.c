@@ -86,9 +86,9 @@ switch(o){
 		//Etape 4
 		//Affichage de la table des symboles
 		printf("====================================================");
-		Elf32_Sym *tabSymb = malloc(head.e_shentsize);
-		int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
-		affichageTableSymbole(tabSymb, nbSymbole, fich, TableSec, head);
+		Elf32_Sym *tabSymbole = malloc(head.e_shentsize);
+		int nbSymbole = lectureTableSymbole(tabSymbole, head, TableSec, fich);
+		affichageTableSymbole(tabSymbole, nbSymbole, fich, TableSec, head);
 		Elf32_Sym *tabSymbDynamique = malloc(head.e_shentsize);
 		int nbSymboleDynamique = lectureTableSymboleDynamique(tabSymbDynamique, head, TableSec, fich);
 		affichageTableSymboleDynamique(tabSymbDynamique, nbSymboleDynamique, fich, TableSec, head);
