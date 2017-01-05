@@ -52,11 +52,11 @@ void recupNomSymbole(Elf32_Off offsetStringTable, Elf32_Word index, FILE* f){
 void affichageTableSymbole(Elf32_Sym* tabSymbole, int size, FILE* f, Elf32_Shdr* tabSection){
 	int i;
 	for(i=0; i<size; i++){
-		recupNomSymbole(getIndexStringTable(tabSection, tabSymbole[i].st_name;
+		recupNomSymbole(getIndexStringTable(tabSection), tabSymbole[i].st_name, f);
 		printf("value: %x \n", tabSymbole[i].st_value);
 		printf("size: %d \n", tabSymbole[i].st_size);
 		printf("bind: ");
-		switch(ELF_32_ST_BIND(tabSymbole[i].st_info)){
+		switch(ELF32_ST_BIND(tabSymbole[i].st_info)){
 			case 0:
 				printf("LOCAL");
 				break;
@@ -79,8 +79,3 @@ void affichageTableSymbole(Elf32_Sym* tabSymbole, int size, FILE* f, Elf32_Shdr*
 		printf("\n");
 	}
 }
-
-
-
-
-
