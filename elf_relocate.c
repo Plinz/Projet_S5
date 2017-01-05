@@ -62,6 +62,8 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
 				fread(&(lesrel[k]),trel, 1, elf);
 				printf("lecture : %x \n",lesrel[k]);
+				printf("offset : %x \n",lesrel[k].r_offset);
+				printf("info : %x \n",lesrel[k].r_info);
 				k++;
 			}
 		}
