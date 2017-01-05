@@ -89,15 +89,15 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 	Elf32_Rel* rel = malloc(sizeof(Elf32_Rel));
 	
 	
-	int trela = taillerela(fileHeader,sections_headers,lesrela,elf);
-	int trel = taillerela(fileHeader,sections_headers,lesrel,elf);
+	int trela = taillerela(fileHeader,sections_headers,rela,elf);
+	int trel = taillerela(fileHeader,sections_headers,rel,elf);
 	int nb_sec = fileHeader->e_shnum;
 	int j = 0 ;	
 	int noms,nombres;
 	char c;	
 	const char* type;
-	int strtab = -1;	
-	int shstrtab = 0;
+	unsigned int strtab = -1;	
+	unsigned int shstrtab = 0;
 	char* nomsec;		
 
 	//Initialisation des adresses de STRTAB et SHSTRTAB
