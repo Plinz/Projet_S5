@@ -38,8 +38,8 @@ void affichageTableSymbole(Elf32_Sym* tabSymbole, int size, FILE* f, Elf32_Shdr*
 
 //Relocation Etape 5
 
-int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) ;
+int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) ;
 
-int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
+int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
   
-int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf);
+int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, FILE* elf);
