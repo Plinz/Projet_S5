@@ -31,8 +31,6 @@ void afficheContenue(Elf32_Shdr currentSection, FILE* elf);
 //Etape 4
 int lectureTableSymbole(Elf32_Sym* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f);
 
-Elf32_Off getIndexStringTable(Elf32_Shdr* tabSection);
+void recupNomSymbole(Elf32_Word index, Elf32_Shdr *tabSection, FILE* elf);
 
-void recupNomSymbole(Elf32_Off offsetStringTable, Elf32_Word index, FILE* f);
-
-void affichageTableSymbole(Elf32_Sym* tabSymbole, int size, FILE* f);
+void affichageTableSymbole(Elf32_Sym* tabSymbole, int size, FILE* f, Elf32_Shdr* tabSection);
