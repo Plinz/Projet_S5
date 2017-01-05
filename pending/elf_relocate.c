@@ -16,44 +16,41 @@ const char* relType[] =
 		"R_ARM_THM_MOVT_PREL", "", "", "", "", "" 
 	};
 
-int get_rela_size(ELF_STRUCT *elf_struct) {
+
+int taillerela(ELF_STRUCT *elf_struct) {
 
 	Elf32_Ehdr* elf_header = elf_struct->elf_header;
 	Elf32_Shdr* a_shdr = elf_struct->a_shdr;	
-int nb_shdr = elf_header->e_shnum;
-	int i = 0;	// i counter
-	int nb_rela = 0; 	// nb number of rela
-	int nb_entries = 0;
 	
-	for (i = 0; i < nb_shdr; i++) {
+	int nb_shdr = elf_header->e_shnum;
+	int taille = 0; 	
+	int nombre = 0;
+	
+	for (int i = 0; i < nb_shdr; i++) {
 		if (a_shdr[i].sh_type == SHT_RELA) {
-			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries
-			nb_rela += nb_entries;
+			nombre = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	
+			taille += nombre;
 		}
 	} 
-
-	return nb_rela;
-
+	return taille;
 }
 
-int get_rel_size(ELF_STRUCT *elf_struct) {
+int taillerel(ELF_STRUCT *elf_struct) {
 
 	Elf32_Ehdr* elf_header = elf_struct->elf_header;
 	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
 
 	int nb_shdr = elf_header->e_shnum;
-	int i = 0;	// i counter
-	int nb_rel = 0; 	// nb number of rel
-	int nb_entries = 0;
+	int taille = 0; 	
+	int nombre = 0;
 	
-	for (i = 0; i < nb_shdr; i++) {
+	for (int i = 0; i < nb_shdr; i++) {
 		if (a_shdr[i].sh_type == SHT_REL) {
-			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries
-			nb_rel += nb_entries;
+			nombre = a_shdr[i].sh_size / a_shdr[i].sh_entsize;
+			taille += nombre;
 		}
 	}
-	return nb_rel;
-
+	return taille;
 }
 
 int get_rela_table(ELF_STRUCT *elf_struct) {
@@ -64,17 +61,17 @@ int get_rela_table(ELF_STRUCT *elf_struct) {
 	Elf32_Rela* a_rela = elf_struct->a_rela;
 
 	int nb_shdr = elf_header->e_shnum;
-	int i = 0, j = 0, k = 0;	// i counter ,j table counter, k entry counter
+	int j = 0;
 	int nb_entries;	
 	int rela_size = sizeof(Elf32_Rela);
 
-	for (i = 0; i < nb_shdr; i++) {
+	for (int i = 0; i < nb_shdr; i++) {
 		
 		if (a_shdr[i].sh_type == SHT_RELA) {
 			
 			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries
 
-			for(k = 0; k < nb_entries; k++) {
+			for(int k = 0; k < nb_entries; k++) {
 				
 				if ( fseek(f, a_shdr[i].sh_offset, SEEK_SET) == -1 ) {
 					fprintf(stderr, "Error while fseek to read rela\n");
@@ -111,11 +108,11 @@ int get_rel_table(ELF_STRUCT *elf_struct) {
 	Elf32_Rel* a_rel = elf_struct->a_rel;
 
 	int nb_shdr = elf_header->e_shnum;
-	int i = 0, j = 0, k = 0;	// i counter ,j table counter, k entry counter
+	int j = 0;	// i counter ,j table counter, k entry counter
 	int nb_entries;	//number of entry
 	int rel_size = sizeof(Elf32_Rel);
 
-	for (i = 0; i <nb_shdr; i++) {
+	for (int i = 0; i <nb_shdr; i++) {
 		
 		if (a_shdr[i].sh_type == SHT_REL) {
 
@@ -127,7 +124,7 @@ int get_rel_table(ELF_STRUCT *elf_struct) {
 
 			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries	
 			
-			for (k = 0; k < nb_entries; k++) {
+			for (int k = 0; k < nb_entries; k++) {
 				
 				if ( fread(&(a_rel[j]), rel_size, 1, f) != 1 ) {
 					fprintf(stderr, "Error while reading rel\n");
