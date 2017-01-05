@@ -44,6 +44,6 @@ Elf32_Word rechercheSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, F
 
 int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) ;
 
-int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
+int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, int sizeTabSymbole, FILE* elf);
   
 int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, FILE* elf);
