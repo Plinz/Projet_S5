@@ -90,7 +90,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 	
 	
 	int trela = taillerela(fileHeader,sections_headers,rela,elf);
-	int trel = taillerela(fileHeader,sections_headers,rel,elf);
+	int trel = taillerel(fileHeader,sections_headers,rel,elf);
 	int nb_sec = fileHeader->e_shnum;
 	int j = 0 ;	
 	int noms,nombres;
