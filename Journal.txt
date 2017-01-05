@@ -13,3 +13,5 @@ Création de la fonction d'affichage du contenu d'une section, par son nom et nu
 Ajout d'options au main
 
 Jour 3 : Jeudi 05 Janvier 2017
+Modification sur la fonction de lecture de la table des symboles
+Création de la fonction de lecture/affichage de la table des réimplatations
