@@ -200,9 +200,6 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 			free(nomsec);	
 		}		
 	}
-		for (j=0; j<10;j++){
-		printf(" num %s \n",tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_name);
-		printf(" num %s \n",tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_value);}
 	printf("\n");
 	return 1;
 	
