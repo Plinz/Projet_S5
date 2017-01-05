@@ -17,7 +17,7 @@ const char* relType[] =
 	};
 
 
-int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) {	
+int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) {	
 	// Calcul de la taille de Rela et construction de sa table. 
 	int nb_sec = file_header->e_shnum;
 	int taille = 0; 	
@@ -42,7 +42,7 @@ int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rela* 
 	return taille;
 }
 
-int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf) {
+int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf) {
 	// Calcul de la taille de Rela et construction de sa table. 
 	int nb_sec = file_header->e_shnum;
 	int taille = 0; 	
@@ -83,7 +83,7 @@ int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rel* le
 		return -1;
 	}*/
 
-int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf) {
+int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, FILE* elf) {
 	
 	Elf32_Rela* rela = malloc(sizeof(Elf32_Rela)) ;
 	Elf32_Rel* rel = malloc(sizeof(Elf32_rel));
