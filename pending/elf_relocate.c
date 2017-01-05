@@ -23,6 +23,7 @@ int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rela* 
 	int taille = 0; 	
 	int nombre = 0;
 	int k = 0; 
+	int trela = sizeof(Elf32_Rela);
 	for (int i = 0; i < nb_sec; i++) {
 		// Pour chacun des sections du programme, si on a un type Rela :
 		if (section_headers[i].sh_type == SHT_RELA) {
@@ -30,26 +31,37 @@ int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rela* 
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;
 			for (int j=0; j<nombre; j++) {
-					
+				// on recupere chaque element de type Rela
+				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
+				fread(&(lesrela[j]),trela, 1, elf);
+				k++;
 			}
 		}
 	} 
 	return taille;
 }
 
-int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers) {
-	// Calcul de la taille de Rel
+int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf) {
+	// Calcul de la taille de Rela et construction de sa table. 
 	int nb_sec = file_header->e_shnum;
 	int taille = 0; 	
 	int nombre = 0;
+	int k = 0; 
+	int trel = sizeof(Elf32_Rel);
 	for (int i = 0; i < nb_sec; i++) {
 		// Pour chacun des sections du programme, si on a un type Rela :
 		if (section_headers[i].sh_type == SHT_REL) {
 			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
-			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;
+			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;
+			for (int j=0; j<nombre; j++) {
+				// on recupere chaque element de type Rel
+				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
+				fread(&(lesrel[j]),trel, 1, elf);
+				k++;
+			}
 		}
-	}
+	} 
 	return taille;
 }
 /*
