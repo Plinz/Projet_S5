@@ -149,8 +149,8 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 	
 			for (int l = 0; l < nombres; l++) {
 				// get type
-				type = relType[ELF32_R_TYPE(rela[j].r_info)]; 
-				printf("%x     %x     %s       %x    \n",rela[j].r_offset, rela[j].r_info, type, tabSymbole[ELF32_R_SYM(rela[j].r_info)].st_value);
+				type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
+				printf("%x     %x     %s       %x    \n",rel[j].r_offset, rel[j].r_info, type, tabSymbole[ELF32_R_SYM(rela[j].r_info)].st_value);
 				j++;				
 			}		
 			free(nomsec);	
