@@ -1,5 +1,5 @@
 #include "elf_reader.h"
-// YA PLUS QU'A TESTER
+// Test : Seul la valeur des symboles est fausse
 
 const char* relType[] = 
 	{ 
