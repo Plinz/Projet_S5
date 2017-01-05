@@ -29,11 +29,13 @@ void afficheContenue(Elf32_Shdr currentSection, FILE* elf);
 
 
 //Etape 4
-int lectureTableSymbole(Elf32_Sym* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f);
+void affichageTableSymbole( Elf32_Sym* tabSymboleDynamique, int sizeTabSymboleDynamique, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header);
 
-void recupNomSymbole(Elf32_Word index, Elf32_Shdr *tabSection, FILE* elf);
+void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabSymbole, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header);
 
-void affichageTableSymbole(Elf32_Sym* tabSymbole, int size, FILE* f, Elf32_Shdr* tabSection);
+int lectureTableSymboleDynamique(Elf32_Sym* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f);
+
+Elf32_Word rechercheSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
 
 
 //Relocation Etape 5
