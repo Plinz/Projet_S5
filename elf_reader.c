@@ -4,7 +4,7 @@ int main (int argc, char *argv[])
 {
 FILE *fich; /* Fichier ELF qu'on va lire */
 Elf32_Ehdr head; /* Header ELF de taille Fixe */
- char o;
+char o;
   /*Elf Section Header*/
   
   /* Verification du nombre d'arguments */
