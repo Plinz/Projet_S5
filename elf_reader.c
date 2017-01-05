@@ -50,11 +50,6 @@ int secNum;
 //Déclaration de la table des symboles
 Elf32_Sym *tabSymb = malloc(head.e_shentsize);		
 	
-//Nombre de symboles dans la table donnée :  : PENSER A ENLEVER LES TESTS DE LECTURETABLESYMBOLE
-int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
-
-
-	
 //Choix de l'affichage
 switch(o){
 	case 'h' :
@@ -91,7 +86,14 @@ switch(o){
 		//Etape 4
 		//Affichage de la table des symboles
 		printf("====================================================");
-		affichageTableSymbole(tabSymb, nbSymbole, fich, TableSec);
+		Elf32_Sym *tabSymb = malloc(head.e_shentsize);
+		int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
+		affichageTableSymbole(tabSymb, nbSymbole, fich, TableSec, head);
+		Elf32_Sym *tabSymbDynamique = malloc(head.e_shentsize);
+		int nbSymboleDynamique = lectureTableSymboleDynamique(tabSymbDynamique, head, TableSec, fich);
+		affichageTableSymboleDynamique(tabSymbDynamique, nbSymboleDynamique, fich, TableSec, head);
+		
+		printf("-------------------------------------------------------");
 		
 		break;
 	
