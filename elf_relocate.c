@@ -35,7 +35,6 @@ int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela 
 				// on recupere chaque element de type Rela
 				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
 				fread(&(lesrela[k]),trela, 1, elf);
-				printf("lecture : %x \n",lesrela[k]);
 				k++;
 			}
 		}
@@ -54,14 +53,13 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 		// Pour chacun des sections du programme, si on a un type Rela :
 		if (section_headers[i].sh_type == SHT_REL) {
 			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
-			fseek(elf, section_headers[i].sh_offset, SEEK_SET)
+			fseek(elf, section_headers[i].sh_offset, SEEK_SET);
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;
 			lesrel = realloc(lesrel, taille * sizeof(Elf32_Rel));
 			for (int j=0; j<nombre; j++) {
 				// on recupere chaque element de type Rel
 				fread(&(lesrel[k]),trel, 1, elf);
-				printf("lecture : %x \n",lesrel[k]);
 				printf("offset : %x \n",lesrel[k].r_offset);
 				printf("info : %x \n",lesrel[k].r_info);
 				k++;
