@@ -1,5 +1,13 @@
-#include "elf_reader.h"
-// Version Presque Finale, a Tester :3
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <elf.h> 
+#include "util.h"
+#include "elf_symbol_table.h"
+#include "elf_relocate.h"
+#include "elf_struct.h"
+
+// NE FONCTIONNE PAS CEST JUSTE POUR QUE JE PUISSE LA REPRENDRE CHEZ MOI ET NIQUER LA MERE DE LA TABLE DES SYMBOLES
 
 const char* relType[] = 
 	{ 
@@ -16,138 +24,248 @@ const char* relType[] =
 		"R_ARM_THM_MOVT_PREL", "", "", "", "", "" 
 	};
 
+int get_rela_size(ELF_STRUCT *elf_struct) {
 
-int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) {	
-	// Calcul de la taille de Rela et construction de sa table. 
-	int nb_sec = file_header->e_shnum;
-	int taille = 0; 	
-	int nombre = 0;
-	int k = 0; 
-	int trela = sizeof(Elf32_Rela);
-	for (int i = 0; i < nb_sec; i++) {
-		// Pour chacun des sections du programme, si on a un type Rela :
-		if (section_headers[i].sh_type == SHT_RELA) {
-			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
-			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
-			taille += nombre;
-			lesrela = realloc(lesrela, taille * sizeof(Elf32_Rela));
-			for (int j=0; j<nombre; j++) {
-				// on recupere chaque element de type Rela
-				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
-				fread(&(lesrela[j]),trela, 1, elf);
-				k++;
-			}
+	Elf32_Ehdr* elf_header = elf_struct->elf_header;
+	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
+
+	int nb_shdr = elf_header->e_shnum;
+	int i = 0;	// i counter
+	int nb_rela = 0; 	// nb number of rela
+	int nb_entries = 0;
+	
+	for (i = 0; i < nb_shdr; i++) {
+		if (a_shdr[i].sh_type == SHT_RELA) {
+			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries
+			nb_rela += nb_entries;
 		}
 	} 
-	return taille;
+
+	return nb_rela;
+
 }
 
-int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf) {
-	// Calcul de la taille de Rela et construction de sa table. 
-	int nb_sec = file_header->e_shnum;
-	int taille = 0; 	
-	int nombre = 0;
-	int k = 0; 
-	int trel = sizeof(Elf32_Rel);
-	for (int i = 0; i < nb_sec; i++) {
-		// Pour chacun des sections du programme, si on a un type Rela :
-		if (section_headers[i].sh_type == SHT_REL) {
-			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
-			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
-			taille += nombre;
-			lesrel = realloc(lesrel, taille * sizeof(Elf32_Rel));
-			for (int j=0; j<nombre; j++) {
-				// on recupere chaque element de type Rel
-				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
-				fread(&(lesrel[j]),trel, 1, elf);
-				k++;
-			}
-		}
-	} 
-	return taille;
-}
-/*
-	size_rel = taillerel(elf_struct);	
-	size_rela = taillerela(elf_struct);
+int get_rel_size(ELF_STRUCT *elf_struct) {
 
-	elf_struct->a_rel = malloc( sizeof(Elf32_Rel) * size_rel );
-	elf_struct->a_rela = malloc( sizeof(Elf32_Rela) * size_rela );
-	Malloc sans size_rel + realloc à chaque fois
-	if ( get_rela_table(elf_struct) == -1) {
-		printf("Error reading file to be relocated.\n");
-		return -1;
-	}
+	Elf32_Ehdr* elf_header = elf_struct->elf_header;
+	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
 
-	if ( get_rel_table(elf_struct) == -1) {
-		printf("Error reading file to be relocated.\n");
-		return -1;
-	}*/
-
-int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf) {
+	int nb_shdr = elf_header->e_shnum;
+	int i = 0;	// i counter
+	int nb_rel = 0; 	// nb number of rel
+	int nb_entries = 0;
 	
-	Elf32_Rela* rela = malloc(sizeof(Elf32_Rela)) ;
-	Elf32_Rel* rel = malloc(sizeof(Elf32_rel));
-	
-	
-	int trela = taillerela(fileHeader,section_headers,lesrela,elf);
-	int trel = taillerela(fileHeader,section_headers,lesrel,elf);
-	int nb_sec = fileHeader->e_shnum;
-	int j = 0 ;	
-	int noms,nombres;
-	char c;	
-	const char* type;
-	int strtab = -1;	
-	int shstrtab = 0;
-	char* nomsec;		
-
-	//Initialisation des adresses de STRTAB et SHSTRTAB
-	shstrtab = section_headers[fileHeader->e_shstrndx].sh_offset;	
-	 
-	if ( (trela + trel) == 0 ) {printf("Pas de Relocation a faire \n"); return -1;}
-	
-	for (int i = 0; i < nb_sec; i++) {
-		if ( (sections_headers[i].sh_type == SHT_STRTAB) && (sections_headers[i].sh_offset != shstrtab) ) {
-			strtab = sections_headers[i].sh_offset;
-			// Ajout de l'offset à strtab
+	for (i = 0; i < nb_shdr; i++) {
+		if (a_shdr[i].sh_type == SHT_REL) {
+			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries
+			nb_rel += nb_entries;
 		}
 	}
 
-	if (strtrab == -1) {printf("Pas de table des chaines \n"); return -1;}
+	return nb_rel;
+
+}
+
+int get_rela_table(ELF_STRUCT *elf_struct) {
+	
+	FILE* f = elf_struct->elf_file;
+	Elf32_Ehdr* elf_header = elf_struct->elf_header;
+	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
+	Elf32_Rela* a_rela = elf_struct->a_rela;
+
+	int nb_shdr = elf_header->e_shnum;
+	int i = 0, j = 0, k = 0;	// i counter ,j table counter, k entry counter
+	int nb_entries;	
+	int rela_size = sizeof(Elf32_Rela);
+
+	for (i = 0; i < nb_shdr; i++) {
 		
-	// Affichage de Rela
-	j = 0;
-	for (int k = 0; k < nb_sec; k++) {
-		
-		if (sections_headers[k].sh_type == SHT_RELA) {	
+		if (a_shdr[i].sh_type == SHT_RELA) {
 			
-			fseek(elf, shstrtab + sections_headers[k].sh_name, SEEK_SET);
-			noms = 0;
-			c = fgetc(elf);
-			while (c != '\0') {
-				c = fgetc(elf);
-				noms++;
+			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries
+
+			for(k = 0; k < nb_entries; k++) {
+				
+				if ( fseek(f, a_shdr[i].sh_offset, SEEK_SET) == -1 ) {
+					fprintf(stderr, "Error while fseek to read rela\n");
+					return -1;
+				}
+				
+				if ( fread(&(a_rela[j]), rela_size, 1, f) != 1 ) {
+					fprintf(stderr, "Error while reading rela\n");
+					return -1;
+				}
+
+				if ( this_needs_reverse(elf_header->e_ident[EI_DATA]) ) {
+
+					a_rela[j].r_offset	= reverse_4(a_rela[j].r_offset);
+					a_rela[j].r_info	= reverse_4(a_rela[j].r_info);
+					a_rela[j].r_addend	= reverse_4(a_rela[j].r_addend);		
+
+				}
+
+				j++;
+
 			}
-			nomsec = malloc( (noms + 1) * sizeof(char) );
-			fseek(elf, sections_headers[fileHeader->e_shstrndx].sh_offset + sections_headers[k].sh_name, SEEK_SET);
-			noms = 0;
+		}		
+	}
+
+	return 1;	
+}
+
+int get_rel_table(ELF_STRUCT *elf_struct) {
+	
+	FILE* f = elf_struct->elf_file;
+	Elf32_Ehdr* elf_header = elf_struct->elf_header;
+	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
+	Elf32_Rel* a_rel = elf_struct->a_rel;
+
+	int nb_shdr = elf_header->e_shnum;
+	int i = 0, j = 0, k = 0;	// i counter ,j table counter, k entry counter
+	int nb_entries;	//number of entry
+	int rel_size = sizeof(Elf32_Rel);
+
+	for (i = 0; i <nb_shdr; i++) {
+		
+		if (a_shdr[i].sh_type == SHT_REL) {
+
+
+			if ( fseek(f, a_shdr[i].sh_offset, SEEK_SET) == -1 ) {
+				fprintf(stderr, "Error while fseek to read rel\n");
+				return -1;
+			}
+
+			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries	
+			
+			for (k = 0; k < nb_entries; k++) {
+				
+				if ( fread(&(a_rel[j]), rel_size, 1, f) != 1 ) {
+					fprintf(stderr, "Error while reading rel\n");
+					return -1;
+				}
+				
+				if ( this_needs_reverse(elf_header->e_ident[EI_DATA]) ) {
+
+					a_rel[j].r_offset	= reverse_4(a_rel[j].r_offset);
+					a_rel[j].r_info	= reverse_4(a_rel[j].r_info);
+
+				}
+
+				j++;
+
+			}
+		}		
+	}
+
+	return 1;
+
+}
+
+int display_relocate_section(ELF_STRUCT *elf_struct) {
+	
+	FILE* f = elf_struct->elf_file;
+	Elf32_Ehdr* elf_header = elf_struct->elf_header;
+	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
+	Elf32_Rela* rela = elf_struct->a_rela;
+	Elf32_Rel* rel = elf_struct->a_rel;
+	Elf32_Sym* a_symb = elf_struct->a_sym; 
+	
+	int rela_size = get_rela_size(elf_struct);
+	int rel_size = get_rel_size(elf_struct);
+	int nb_shdr = elf_header->e_shnum;
+	int i = 0, j = 0, k = 0, l = 0;		// i counter ,j table counter, k entry counter, l symb counter
+	int iCnt;		// iCnt Name counter
+	char c;			// c counter for reading FILE
+	const char* type;	// Type name
+	char* symName = NULL;	// Symbol name
+	int nb_entries;		// Number of entry	
+	int strndx = -1;	// STRTAB address
+	int shstrndx = 0;	// SHSTRTAB address
+	int symb_size = 0;	// Symbol size
+	char* name;		// Section name
+
+	//Initialise strndx and shstrndx
+	shstrndx = a_shdr[elf_header->e_shstrndx].sh_offset;	
+	 
+	if ( (rela_size + rel_size) == 0 ) {
+		printf("No relocation in this file.\n\n");
+		return 1;
+	}
+	
+	for (l = 0; l < elf_header->e_shnum; l++) {
+		if ( (a_shdr[l].sh_type == SHT_STRTAB) && (a_shdr[l].sh_offset != shstrndx) ) {
+			strndx = a_shdr[l].sh_offset;
+		}
+	}
+
+	if (strndx == -1) return -1;
+		
+	// Displaying Rela content
+	j = 0;
+	for (i = 0; i < nb_shdr; i++) {
+		
+		if (a_shdr[i].sh_type == SHT_RELA) {	
+			
+			//getName
+			if ( fseek(f, shstrndx + a_shdr[i].sh_name, SEEK_SET) == -1 ) {
+				fprintf(stderr, "error while fseek\n");
+				return -1;
+			}
+
+			iCnt = 0;
 			
 			c = fgetc(f);
-			while (c != '\0') {
-				nomsec[noms] = c;			s
-				noms++;
+			if ( ferror(f) ) return -1;
+
+			while (c != '\0') {a_symb
+				iCnt++;
 				c = fgetc(f);
+				if ( ferror(f) ) return -1;
 			}
-			nomsec[noms] = c;
+
+			name = malloc( (iCnt + 1) * sizeof(char) );
+			if (name == NULL) {
+				fprintf(stderr, "Error malloc name \n");
+				return -1;	
+			}
+
+			if ( fseek(f, a_shdr[elf_header->e_shstrndx].sh_offset + a_shdr[i].sh_name, SEEK_SET) == - 1 ) {
+				fprintf(stderr, "error while fseek\n");
+				free(name);
+				return -1;
+			}
+
+			iCnt = 0;
 			
-			// Affichage de Rela 
-			nombres = sections_headers[k].sh_size / sections_headers[k].sh_entsize;	
+			c = fgetc(f);
+			if ( ferror(f) ) {
+				free(name);
+				return -1;
+			}
 
-			printf("Relocation :  Nom Section : %s  à l'adresse 0x%x avec %s éléments \n", nomsec, sections_headers[k].sh_offset, nombres);
-			printf("RELA - Symboles \n");
-			printf("offset:        Type:        Valeur Symbole : \n");
+			while (c != '\0') {
+				name[iCnt] = c;			
+				iCnt++;
+				c = fgetc(f);
+				if ( ferror(f) ) {
+					free(name);
+					return -1;
+				}
+			}
 
+			name[iCnt] = c;
+			
+			//printRela
+			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	//calcul number of entries
+
+			printf("\nSection relocation \e[1;31m%s\e[0m   at offset address 0x%x contains %d entries:\n", name, a_shdr[i].sh_offset, nb_entries);
+			printf("╔════════════════════════════════════════════════════════════════════════════════════╗\n");
+   			printf("║                                     SymbTable:                                     ║\n");
+   			printf("╠═══════════╤════════════╤══════════════╤═════════════════════╤══════════════════════╣\n");
+			printf("║ offset:   │    Info    │      Type    │     Symbol-value    │      Symbol-name     ║\n");
+			printf("╟───────────┼────────────┼──────────────┼─────────────────────┼──────────────────────╢\n");
 	
-			for (int l = 0; l < nombres; l++) {
+			for (k = 0; k < nb_entries; k++) {
 				// get type
 				type = relType[ELF32_R_TYPE(rela[j].r_info)]; 
 				if (type == NULL) { 
@@ -155,48 +273,108 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 					free(name);
 					return -1;
 				}
-				printf("%08x     %-10s       %08x    \n",rela[j].r_offset, type, a_symb[ELF32_R_SYM(rela[j].r_info)].st_value);
+				
+				/////
+				if (a_symb[ELF32_R_SYM(rela[j].r_info)].st_value != 0 ) {
+					// AAA
+					symb_size = get_symb_name_size(f, a_symb[ELF32_R_SYM(rela[j].r_info)].st_name, strndx);
+					if (symb_size == -1) {
+						symName = NULL;
+					} else {
+						symName = malloc( sizeof(char) * symb_size);
+						if (symName == NULL) {
+							fprintf(stderr, "Error : name malloc failed. Break.\n");
+							free(name);
+							return -1;
+						}
+						get_symb_name(f, a_symb[ELF32_R_SYM(rela[j].r_info)].st_name, strndx, symName, symb_size);
+					}	
+				} else {
+					symb_size = get_symb_name_size(f, a_shdr[a_symb[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrndx);
+					if (symb_size == -1) {
+						symName = NULL;
+					} else {
+						symName = malloc( sizeof(char) * symb_size);
+						if (symName == NULL) {
+							fprintf(stderr, "Error : name malloc failed. Break.\n");
+							free(name);
+							return -1;
+						}
+						get_symb_name(f, a_shdr[a_symb[ELF32_R_SYM(rela[j].r_info)].st_shndx].sh_name, shstrndx, symName, symb_size);
+					}
+				}	
+				/////
+				printf("║ %08x  │  %08x  │ %-10s  │      %08x       │     %-16s ║\n",rela[j].r_offset, rela[j].r_info, type, a_symb[ELF32_R_SYM(rela[j].r_info)].st_value, symName==NULL?"":symName);
 				j++;				
-			}		
-			free(nomsec);	
+			}
+			printf("╚═══════════╧════════════╧══════════════╧═════════════════════╧══════════════════════╝\n");		
+			free(symName);		
+			free(name);	
 		}		
 	}	
 
 	// Displaying Rel content
 	j = 0;
-	for (i = 0; i < nb_sec; i++) {
-		if (sections_headers[i].sh_type == SHT_REL) {	
+	for (i = 0; i < nb_shdr; i++) {
+		if (a_shdr[i].sh_type == SHT_REL) {	
 			
-			fseek(elf, shstrtab + sections_headers[k].sh_name, SEEK_SET);
-			noms = 0;
-			c = fgetc(elf);
-
-			while (c != '\0') {
-				c = fgetc(elf);
-				noms++;
+			//getName
+			if ( fseek(f, shstrndx + a_shdr[i].sh_name, SEEK_SET) == -1 ) {
+				fprintf(stderr, "error while fseek\n");
+				return -1;
 			}
 
-			nomsec = malloc( (noms + 1) * sizeof(char) );
-			fseek(elf, sections_headers[fileHeader->e_shstrndx].sh_offset + sections_headers[k].sh_name, SEEK_SET);
-			noms = 0;
-			
+			iCnt = 0;
+
 			c = fgetc(f);
+			if ( ferror(f) ) return -1;
+
 			while (c != '\0') {
-				nomsec[noms] = c;			s
-				noms++;
-				c = fgetc(f);
+				iCnt++;
+				c = fgetc(f);		
+				if ( ferror(f) ) return -1;
 			}
-			nomsec[noms] = c;
+
+			name = malloc( (iCnt + 1) * sizeof(char) );
+			if (name == NULL) {
+				return -1;	
+			}
+
+			if ( fseek(f, shstrndx + a_shdr[i].sh_name, SEEK_SET) == -1 ) {
+				fprintf(stderr, "error while fseek\n");
+				free(name);
+				return -1;
+			}
+
+			iCnt = 0;
+
+			c = fgetc(f);
+			if ( ferror(f) ) {
+				free(name);
+				return -1;
+			}
+
+			while (c != '\0') {
+				name[iCnt] = c;			
+				iCnt++;
+				c = fgetc(f);
+				if ( ferror(f) ) {
+					free(name);
+					return -1;
+				}
+			}
+			name[iCnt] = c;
 
 			//printRel
-			nombres = sections_headers[k].sh_size / sections_headers[k].sh_entsize;	
-
-			printf("Relocation :  Nom Section : %s  à l'adresse 0x%x avec %s éléments \n", nomsec, sections_headers[k].sh_offset, nombres);
-			printf("REL - Symboles \n");
-			printf("offset:        Type:        Valeur Symbole : \n");
-
+			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	//calcul de nombre d'entrée
+			printf("\nSection relocation \e[1;31m%s\e[0m  at offset address 0x%x contains %d entries:\n", name, a_shdr[i].sh_offset, nb_entries);
+			printf("╔════════════════════════════════════════════════════════════════════════════════════╗\n");
+   			printf("║                                      SymbTable:                                    ║\n");
+   			printf("╠═══════════╤════════════╤══════════════╤═════════════════════╤══════════════════════╣\n");
+			printf("║ offset:   │    Info    │      Type    │     Symbol-value    │      Symbol-name     ║\n");
+			printf("╟───────────┼────────────┼──────────────┼─────────────────────┼──────────────────────╢\n");
 	
-			for (int l = 0; l < nombres; l++) {
+			for(k = 0; k < nb_entries; k++) {
 				// get type
 				type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
 				if (type == NULL) { 
@@ -204,11 +382,41 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 					free(name);
 					return -1;
 				}
-				printf("%08x     %-10s       %08x    \n",rel[j].r_offset, type, a_symb[ELF32_R_SYM(rel[j].r_info)].st_value);
+				/////
+				if ( a_symb[ELF32_R_SYM(rel[j].r_info)].st_value != 0 ) {
+					symb_size = get_symb_name_size(f, a_symb[ELF32_R_SYM(rel[j].r_info)].st_name, strndx);
+					if (symb_size == -1) {
+						symName = NULL;
+					} else {
+						symName = malloc( sizeof(char) * symb_size );
+						if (symName == NULL) {
+							fprintf(stderr, "Error : name malloc failed. Break.\n");
+							free(name);
+							return -1;
+						}
+						get_symb_name(f, a_symb[ELF32_R_SYM(rel[j].r_info)].st_name, strndx, symName, symb_size);
+					}	
+				} else {
+					symb_size = get_symb_name_size(f, a_shdr[a_symb[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrndx);
+					if (symb_size == -1) {
+						symName = NULL;
+					} else {
+						symName = malloc( sizeof(char) * symb_size );
+						if (symName == NULL) {
+							fprintf(stderr, "Error : name malloc failed. Break.\n");
+							free(name);
+							return -1;
+						}
+						get_symb_name(f, a_shdr[a_symb[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrndx, symName, symb_size);
+					}
+				}			
+				/////
+				printf("║ %08x  │  %08x  │ %-10s  │      %08x       │     %-16s ║\n",rel[j].r_offset, rel[j].r_info, type, a_symb[ELF32_R_SYM(rel[j].r_info)].st_value, symName==NULL?"":symName);
 				j++;				
-			}		
+			}
+			printf("╚═══════════╧════════════╧══════════════╧═════════════════════╧══════════════════════╝\n");		
 			free(symName);		
-			free(nomsec);	
+			free(name);	
 		}		
 	}	
 
