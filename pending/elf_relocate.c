@@ -157,8 +157,8 @@ int display_relocate_section(ELF_STRUCT *elf_struct) {
 	Elf32_Rel* rel = elf_struct->a_rel;
 	Elf32_Sym* a_symb = elf_struct->a_sym; 
 	
-	int rela_size = get_rela_size(elf_struct);
-	int rel_size = get_rel_size(elf_struct);
+	int trela = taillerela(elf_struct);
+	int trel = taillerela(elf_struct);
 	int nb_shdr = elf_header->e_shnum;
 	int i = 0, j = 0, k = 0, l = 0;		// i counter ,j table counter, k entry counter, l symb counter
 	int iCnt;		// iCnt Name counter
@@ -174,7 +174,7 @@ int display_relocate_section(ELF_STRUCT *elf_struct) {
 	//Initialise strndx and shstrndx
 	shstrndx = a_shdr[elf_header->e_shstrndx].sh_offset;	
 	 
-	if ( (rela_size + rel_size) == 0 ) {
+	if ( (trela + trel) == 0 ) {
 		printf("No relocation in this file.\n\n");
 		return 1;
 	}
