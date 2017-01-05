@@ -144,7 +144,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 
 			printf("Relocation :  Nom Section : %s  à l'adresse 0x%x avec %d éléments \n", nomsec, sections_headers[k].sh_offset, nombres);
 			printf("RELA - Symboles \n");
-			printf("offset:        Type:        Valeur Symbole : \n");
+			printf("offset:       info :           Type:        Valeur Symbole : \n");
 
 	
 			for (int l = 0; l < nombres; l++) {
@@ -188,7 +188,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 
 			printf("Relocation :  Nom Section : %s  à l'adresse 0x%x avec %d éléments \n", nomsec, sections_headers[k].sh_offset, nombres);
 			printf("REL - Symboles \n");
-			printf("offset:        Type:        Valeur Symbole : \n");
+			printf("offset:       info :           Type:        Valeur Symbole : \n");
 
 	
 			for (int l = 0; l < nombres; l++) {
