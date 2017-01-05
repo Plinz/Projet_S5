@@ -47,10 +47,10 @@ char * secName = malloc(50);
 //Déclaration pour l'affichage d'une section par son numero
 int secNum;
 
-	//4-5
+//Déclaration de la table des symboles
 Elf32_Sym *tabSymb = malloc(head.e_shentsize);		
 	
-	//4
+//Nombre de symboles dans la table donnée
 int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
 
 
