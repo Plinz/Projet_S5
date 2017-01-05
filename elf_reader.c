@@ -47,6 +47,12 @@ char * secName = malloc(50);
 //Déclaration pour l'affichage d'une section par son numero
 int secNum;
 
+	//4
+int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
+
+	//4-5
+Elf32_Sym *tabSymb = malloc(head.e_shentsize);	
+	
 //Choix de l'affichage
 switch(o){
 	case 'h' :
@@ -83,15 +89,13 @@ switch(o){
 		//Etape 4
 		//Affichage de la table des symboles
 		printf("====================================================");
-		Elf32_Sym *tabSymb = malloc(head.e_shentsize);
-		int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
 		affichageTableSymbole(tabSymb, nbSymbole, fich, TableSec);
 		
 		break;
 	
 	case 'r' :
 		//Etape 5
-		printf("test");
+		affichage_relocation(tabSymb, head, TableSec, fich);
 		break;
 	
 	default :
