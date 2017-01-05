@@ -30,6 +30,7 @@ int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rela* 
 			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;
+			lesrela = realloc(lesrela, taille * sizeof(Elf32_Rela));
 			for (int j=0; j<nombre; j++) {
 				// on recupere chaque element de type Rela
 				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
@@ -54,6 +55,7 @@ int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rel* le
 			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;
+			lesrel = realloc(lesrel, taille * sizeof(Elf32_Rel));
 			for (int j=0; j<nombre; j++) {
 				// on recupere chaque element de type Rel
 				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
@@ -70,7 +72,7 @@ int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rel* le
 
 	elf_struct->a_rel = malloc( sizeof(Elf32_Rel) * size_rel );
 	elf_struct->a_rela = malloc( sizeof(Elf32_Rela) * size_rela );
-
+	Malloc sans size_rel + realloc à chaque fois
 	if ( get_rela_table(elf_struct) == -1) {
 		printf("Error reading file to be relocated.\n");
 		return -1;
