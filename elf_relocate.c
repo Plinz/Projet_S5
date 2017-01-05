@@ -83,7 +83,7 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 		return -1;
 	}*/
 
-int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, FILE* elf) {
+int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf) {
 	
 	Elf32_Rela* rela = malloc(sizeof(Elf32_Rela)) ;
 	Elf32_Rel* rel = malloc(sizeof(Elf32_Rel));
@@ -141,7 +141,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 			
 			// Affichage de Rela 
 			nombres = sections_headers[k].sh_size / sections_headers[k].sh_entsize;	
-
+	affichage_relocation(tabSymb, &head, TableSec, fich);
 			printf("Relocation :  Nom Section : %s  à l'adresse 0x%x avec %d éléments \n", nomsec, sections_headers[k].sh_offset, nombres);
 			printf("RELA - Symboles \n");
 			printf("offset:       info :           Type:        Valeur Symbole : \n");
@@ -193,9 +193,11 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 	
 			for (int l = 0; l < nombres; l++) {
 				// get type
-				type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
-				printf("%d     %x     %s       %x    \n",rel[j].r_offset, rel[j].r_info, type, tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_value);
-				j++;				
+				for ( int z = 0 ; z < sizeTabSymbole ; z++) {
+					type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
+					printf("%d     %x     %s       %x    \n",rel[j].r_offset, rel[j].r_info, type, tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_value);
+					}
+					j++;				
 			}			
 			free(nomsec);	
 		}		
