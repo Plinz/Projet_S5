@@ -97,7 +97,7 @@ switch(o){
 	
 	case 'r' :
 		//Etape 5
-		affichage_relocation(tabSymb, *head, TableSec, fich);
+		affichage_relocation(tabSymb, &head, TableSec, fich);
 		break;
 	
 	default :
