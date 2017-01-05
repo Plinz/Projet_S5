@@ -85,11 +85,12 @@ int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rel* le
 
 int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf) {
 	
-	Elf32_Rela* rela = elf_struct->a_rela;
-	Elf32_Rel* rel = elf_struct->a_rel;
+	Elf32_Rela* rela = malloc(sizeof(Elf32_Rela)) ;
+	Elf32_Rel* rel = malloc(sizeof(Elf32_rel));
 	
-	int trela = taillerela(elf_struct);
-	int trel = taillerela(elf_struct);
+	
+	int trela = taillerela(fileHeader,section_headers,lesrela,elf);
+	int trel = taillerela(fileHeader,section_headers,lesrel,elf);
 	int nb_shdr = elf_header->e_shnum;
 	int i = 0, j = 0, k = 0, l = 0;		// i counter ,j table counter, k entry counter, l symb counter
 	int iCnt;		// iCnt Name counter
