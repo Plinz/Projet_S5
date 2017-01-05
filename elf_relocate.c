@@ -203,10 +203,10 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 
 	printf("\n");
 	for (int i = 0; i < 10; i++) { 
-		printf("%x" rel[i].r_offset);
-		printf("%x" rel[i].r_info);
-		printf("%x" rela[i].r_offset);
-		printf("%x" rela[i].r_info);
+		printf("%x", rel[i].r_offset);
+		printf("%x", rel[i].r_info);
+		printf("%x", rela[i].r_offset);
+		printf("%x", rela[i].r_info);
 		printf("\n");
 	}
 	return 1;
