@@ -1,5 +1,5 @@
 #include "elf_reader.h"
-// * A MODIFIER ET A PERSONNALISER POUR QUE CA MARCHE AVEC NOUS :3
+// Version Presque Finale, a Tester :3
 
 const char* relType[] = 
 	{ 
