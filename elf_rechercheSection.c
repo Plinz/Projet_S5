@@ -1,18 +1,26 @@
 #include "elf_reader.h"
 
-void afficheSectionByName(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, char * secName){
+/*
+/ Fonction de recherche d'une recherche de section par nom, puis affichage de celle-ci
+/ Arguments :
+/		-header_elf 		:	header du fichier elf
+/		-sections_table 	:	Tableau regroupant toutes les sections
+/		-elf 				:	Fichier au format elf
+/		-secName 			:	Nom de la section recherchee
+*/
+void afficheSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName){
 	int i = 0;
 	char * currentName = malloc(40);
 	char courant;
 	int trouve = 0;
 	Elf32_Shdr currentSection;
 	
-	int offsetNameTable = sections_headers[fileHeader.e_shstrndx].sh_offset; //On prend l'offset de la section contenant les noms de sections
+	int offsetNameTable = sections_table[header_elf.e_shstrndx].sh_offset; //On prend l'offset de la section contenant les noms de sections
 
 	//On parcour chaque section jusqu'à trouver la bonne ou, toute les parcourirs
-	while (!trouve && i < fileHeader.e_shnum) {
+	while (!trouve && i < header_elf.e_shnum) {
 		//On se place dans le fichier afin de retouver le nom de la section courante
-		currentSection = sections_headers[i];
+		currentSection = sections_table[i];
 		fseek(elf, offsetNameTable + currentSection.sh_name, SEEK_SET); //offset nous ammène au début du stockage des noms, et sh_name contient l'index du nom de la section courante
 
 		//On recupere le nom de la section courrante
@@ -40,17 +48,31 @@ void afficheSectionByName(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, F
 }
 
 
-
-void afficheSectionByNum(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, int secNum) {
-	if (secNum < 0 || secNum > fileHeader.e_shnum-1) {
+/*
+/ Fonction de recherche d'une recherche de section par son numéro, puis affichage de celle-ci
+/ Arguments :
+/		-header_elf 		:	header du fichier elf
+/		-sections_table 	:	Tableau regroupant toutes les sections
+/		-elf 				:	Fichier au format elf
+/		-secNum 			:	Numero de la section recherchee
+*/
+void afficheSectionByNum(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, int secNum) {
+	if (secNum < 0 || secNum > header_elf.e_shnum-1) {
 		printf("Aucune section ne correspond à ce numero\n");
 	} else {
-		Elf32_Shdr currentSection = sections_headers[secNum];
+		Elf32_Shdr currentSection = sections_table[secNum];
 		afficheContenue(currentSection, elf);
 	}
 
 }
 
+
+/*
+/ Fonction d'affichage du contenu d'une section
+/ Arguments :
+/		-currentSection :	Section dont le contenu va etre affiche
+/		-elf 			:	Fichier au format elf
+*/
 void afficheContenue(Elf32_Shdr currentSection, FILE* elf) {
 		fseek(elf, currentSection.sh_offset, SEEK_SET); //On se place au début du contenu de la section
 
