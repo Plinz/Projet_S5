@@ -112,7 +112,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 		}
 	}
 
-	if (strtrab == -1) {printf("Pas de table des chaines \n"); return -1;}
+	if (strtab == -1) {printf("Pas de table des chaines \n"); return -1;}
 		
 	// Affichage de Rela
 	j = 0;
@@ -131,7 +131,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 			fseek(elf, sections_headers[fileHeader->e_shstrndx].sh_offset + sections_headers[k].sh_name, SEEK_SET);
 			noms = 0;
 			
-			c = fgetc(f);
+			c = fgetc(elf);
 			while (c != '\0') {
 				nomsec[noms] = c;			s
 				noms++;
@@ -155,7 +155,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 					free(name);
 					return -1;
 				}
-				printf("%08x     %-10s       %08x    \n",rela[j].r_offset, type, a_symb[ELF32_R_SYM(rela[j].r_info)].st_value);
+				printf("%08x     %-10s       %08x    \n",rela[j].r_offset, type, tabSymbole[ELF32_R_SYM(rela[j].r_info)].st_value);
 				j++;				
 			}		
 			free(nomsec);	
@@ -180,7 +180,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 			fseek(elf, sections_headers[fileHeader->e_shstrndx].sh_offset + sections_headers[k].sh_name, SEEK_SET);
 			noms = 0;
 			
-			c = fgetc(f);
+			c = fgetc(elf);
 			while (c != '\0') {
 				nomsec[noms] = c;			s
 				noms++;
@@ -204,7 +204,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 					free(name);
 					return -1;
 				}
-				printf("%08x     %-10s       %08x    \n",rel[j].r_offset, type, a_symb[ELF32_R_SYM(rel[j].r_info)].st_value);
+				printf("%08x     %-10s       %08x    \n",rel[j].r_offset, type, tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_value);
 				j++;				
 			}			
 			free(nomsec);	
