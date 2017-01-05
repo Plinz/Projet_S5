@@ -109,8 +109,8 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 	if ( (trela + trel) == 0 ) {printf("Pas de Relocation a faire");}
 	
 	for (int i = 0; i < nb_sec; i++) {
-		if ( (a_shdr[i].sh_type == SHT_STRTAB) && (a_shdr[i].sh_offset != shstrtab) ) {
-			strtab = a_shdr[i].sh_offset;
+		if ( (sections_headers[i].sh_type == SHT_STRTAB) && (sections_headers[i].sh_offset != shstrtab) ) {
+			strtab = sections_headers[i].sh_offset;
 		}
 	}
 
@@ -120,10 +120,10 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 	j = 0;
 	for (i = 0; i < nb_shdr; i++) {
 		
-		if (a_shdr[i].sh_type == SHT_RELA) {	
+		if (sections_headers[i].sh_type == SHT_RELA) {	
 			
-			//getName
-			if ( fseek(f, shstrtab + a_shdr[i].sh_name, SEEK_SET) == -1 ) {
+			//getName	
+			if ( fseek(elf, shstrtab + sections_headers[i].sh_name, SEEK_SET) == -1 ) {
 				fprintf(stderr, "error while fseek\n");
 				return -1;
 			}
@@ -145,7 +145,7 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 				return -1;	
 			}
 
-			if ( fseek(f, a_shdr[elf_header->e_shstrndx].sh_offset + a_shdr[i].sh_name, SEEK_SET) == - 1 ) {
+			if ( fseek(elf, sections_headers[fileHeader->e_shstrndx].sh_offset + sections_headers[i].sh_name, SEEK_SET) == - 1 ) {
 				fprintf(stderr, "error while fseek\n");
 				free(name);
 				return -1;
@@ -172,9 +172,9 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 			name[iCnt] = c;
 			
 			//printRela
-			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	//calcul number of entries
+			nb_entries = sections_headers[i].sh_size / sections_headers[i].sh_entsize;	//calcul number of entries
 
-			printf("\nSection relocation \e[1;31m%s\e[0m   at offset address 0x%x contains %d entries:\n", name, a_shdr[i].sh_offset, nb_entries);
+			printf("\nSection relocation \e[1;31m%s\e[0m   at offset address 0x%x contains %d entries:\n", name, sections_headers[i].sh_offset, nb_entries);
 			printf("╔════════════════════════════════════════════════════════════════════════════════════╗\n");
    			printf("║                                     SymbTable:                                     ║\n");
    			printf("╠═══════════╤════════════╤══════════════╤═════════════════════╤══════════════════════╣\n");
@@ -191,9 +191,9 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 				}
 				
 				/////
-				if (a_symb[ELF32_R_SYM(rela[j].r_info)].st_value != 0 ) {
+				if (tabSymbole[ELF32_R_SYM(rela[j].r_info)].st_value != 0 ) {
 					// AAA
-					symb_size = get_symb_name_size(f, a_symb[ELF32_R_SYM(rela[j].r_info)].st_name, strtab);
+					symb_size = get_symb_name_size(f, tabSymbole[ELF32_R_SYM(rela[j].r_info)].st_name, strtab);
 					if (symb_size == -1) {
 						symName = NULL;
 					} else {
@@ -203,10 +203,10 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 							free(name);
 							return -1;
 						}
-						get_symb_name(f, a_symb[ELF32_R_SYM(rela[j].r_info)].st_name, strtab, symName, symb_size);
+						get_symb_name(elf, tabSymbole[ELF32_R_SYM(rela[j].r_info)].st_name, strtab, symName, symb_size);
 					}	
 				} else {
-					symb_size = get_symb_name_size(f, a_shdr[a_symb[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrndx);
+					symb_size = get_symb_name_size(elf, sections_headers[tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrndx);
 					if (symb_size == -1) {
 						symName = NULL;
 					} else {
@@ -216,7 +216,7 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 							free(name);
 							return -1;
 						}
-						get_symb_name(f, a_shdr[a_symb[ELF32_R_SYM(rela[j].r_info)].st_shndx].sh_name, shstrndx, symName, symb_size);
+						get_symb_name(elf, sections_headers[tabSymbole[ELF32_R_SYM(rela[j].r_info)].st_shndx].sh_name, shstrndx, symName, symb_size);
 					}
 				}	
 				/////
@@ -232,10 +232,10 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 	// Displaying Rel content
 	j = 0;
 	for (i = 0; i < nb_shdr; i++) {
-		if (a_shdr[i].sh_type == SHT_REL) {	
+		if (sections_headers[i].sh_type == SHT_REL) {	
 			
 			//getName
-			if ( fseek(f, strtab + a_shdr[i].sh_name, SEEK_SET) == -1 ) {
+			if ( fseek(elf, strtab + sections_headers[i].sh_name, SEEK_SET) == -1 ) {
 				fprintf(stderr, "error while fseek\n");
 				return -1;
 			}
@@ -256,7 +256,7 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 				return -1;	
 			}
 
-			if ( fseek(f, strtab + a_shdr[i].sh_name, SEEK_SET) == -1 ) {
+			if ( fseek(elf, strtab + sections_headers[i].sh_name, SEEK_SET) == -1 ) {
 				fprintf(stderr, "error while fseek\n");
 				free(name);
 				return -1;
@@ -282,8 +282,8 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 			name[iCnt] = c;
 
 			//printRel
-			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	//calcul de nombre d'entrée
-			printf("\nSection relocation \e[1;31m%s\e[0m  at offset address 0x%x contains %d entries:\n", name, a_shdr[i].sh_offset, nb_entries);
+			nb_entries = sections_headers[i].sh_size / sections_headers[i].sh_entsize;	//calcul de nombre d'entrée
+			printf("\nSection relocation \e[1;31m%s\e[0m  at offset address 0x%x contains %d entries:\n", name, sections_headers[i].sh_offset, nb_entries);
 			printf("╔════════════════════════════════════════════════════════════════════════════════════╗\n");
    			printf("║                                      SymbTable:                                    ║\n");
    			printf("╠═══════════╤════════════╤══════════════╤═════════════════════╤══════════════════════╣\n");
@@ -299,8 +299,8 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 					return -1;
 				}
 				/////
-				if ( a_symb[ELF32_R_SYM(rel[j].r_info)].st_value != 0 ) {
-					symb_size = get_symb_name_size(f, a_symb[ELF32_R_SYM(rel[j].r_info)].st_name, strtab);
+				if ( tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_value != 0 ) {
+					symb_size = get_symb_name_size(elf, tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_name, strtab);
 					if (symb_size == -1) {
 						symName = NULL;
 					} else {
@@ -310,10 +310,10 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 							free(name);
 							return -1;
 						}
-						get_symb_name(f, a_symb[ELF32_R_SYM(rel[j].r_info)].st_name, strtab, symName, symb_size);
+						get_symb_name(elf, tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_name, strtab, symName, symb_size);
 					}	
 				} else {
-					symb_size = get_symb_name_size(f, a_shdr[a_symb[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrtab);
+					symb_size = get_symb_name_size(elf, sections_headers[tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrtab);
 					if (symb_size == -1) {
 						symName = NULL;
 					} else {
@@ -323,7 +323,7 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 							free(name);
 							return -1;
 						}
-						get_symb_name(f, a_shdr[a_symb[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrtab, symName, symb_size);
+						get_symb_name(elf, sections_headers[tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_shndx].sh_name, shstrtab, symName, symb_size);
 					}
 				}			
 				/////
