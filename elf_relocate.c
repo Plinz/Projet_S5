@@ -133,9 +133,9 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 			
 			c = fgetc(elf);
 			while (c != '\0') {
-				nomsec[noms] = c;			s
+				nomsec[noms] = c;
 				noms++;
-				c = fgetc(f);
+				c = fgetc(elf);
 			}
 			nomsec[noms] = c;
 			
@@ -184,7 +184,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 			while (c != '\0') {
 				nomsec[noms] = c;			s
 				noms++;
-				c = fgetc(f);
+				c = fgetc(elf);
 			}
 			nomsec[noms] = c;
 
