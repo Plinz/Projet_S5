@@ -159,8 +159,8 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 
 	// Displaying Rel content
 	j = 0;
-	for (i = 0; i < nb_sec; i++) {
-		if (sections_headers[i].sh_type == SHT_REL) {	
+	for (int k = 0; k < nb_sec; k++) {
+		if (sections_headers[k].sh_type == SHT_REL) {	
 			
 			fseek(elf, shstrtab + sections_headers[k].sh_name, SEEK_SET);
 			noms = 0;
