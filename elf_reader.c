@@ -48,7 +48,8 @@ char * secName = malloc(50);
 int secNum;
 
 //Déclaration de la table des symboles
-Elf32_Sym *tabSymb = malloc(head.e_shentsize);		
+Elf32_Sym *tabSymb = malloc(head.e_shentsize);	
+	int nbSym;
 	
 //Choix de l'affichage
 switch(o){
@@ -100,7 +101,7 @@ switch(o){
 	case 'r' :
 		//Etape 5
 		
-		int nbSym = lectureTableSymbole(tabSymb, head, TableSec, fich);
+		nbSym = lectureTableSymbole(tabSymb, head, TableSec, fich);
 		affichage_relocation(tabSymb, &head, TableSec, nbSym, fich);
 		break;
 	
