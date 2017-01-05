@@ -17,17 +17,22 @@ const char* relType[] =
 	};
 
 
-int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers) {	
-	// Calcul de la taille de Rela
+int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) {	
+	// Calcul de la taille de Rela et construction de sa table. 
 	int nb_sec = file_header->e_shnum;
 	int taille = 0; 	
 	int nombre = 0;
+	int k = 0; 
 	for (int i = 0; i < nb_sec; i++) {
 		// Pour chacun des sections du programme, si on a un type Rela :
 		if (section_headers[i].sh_type == SHT_RELA) {
 			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
-			taille += nombre;}
+			taille += nombre;
+			for (int j=0; j<nombre; j++) {
+					
+			}
+		}
 	} 
 	return taille;
 }
@@ -47,6 +52,22 @@ int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers) {
 	}
 	return taille;
 }
+/*
+	size_rel = taillerel(elf_struct);	
+	size_rela = taillerela(elf_struct);
+
+	elf_struct->a_rel = malloc( sizeof(Elf32_Rel) * size_rel );
+	elf_struct->a_rela = malloc( sizeof(Elf32_Rela) * size_rela );
+
+	if ( get_rela_table(elf_struct) == -1) {
+		printf("Error reading file to be relocated.\n");
+		return -1;
+	}
+
+	if ( get_rel_table(elf_struct) == -1) {
+		printf("Error reading file to be relocated.\n");
+		return -1;
+	}*/
 
 int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf) {
 	
