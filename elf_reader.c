@@ -4,7 +4,7 @@ int main (int argc, char *argv[])
 {
 FILE *fich; /* Fichier ELF qu'on va lire */
 Elf32_Ehdr head; /* Header ELF de taille Fixe */
-  
+ char o;
   /*Elf Section Header*/
   
   /* Verification du nombre d'arguments */
@@ -27,10 +27,13 @@ if(argc!=3){
 		  printf("N: affichage du contenu d'une section via son numéro.\n");
 		  printf("s: affichage de la table des symboles.\n");
 		  printf("r : affichage des tables de réimplantation.\n");
+		  printf("\n");
+		  scanf("%s", &o);
+		  printf("\n");
 } 
 
-else{
-char o = *argv[2];
+else
+	o = *argv[2];
 
 /* Lecture de l'header ELF au début du fichier */
 head = lectureheader(fich);
@@ -47,7 +50,7 @@ int secNum;
 //Choix de l'affichage
 switch(o){
 	case 'h' :
-		//Test Etape 1
+		//Etape 1
 
 		/* Affichage de l'header de l'ELF */
 		affichageheader(head);
@@ -55,19 +58,21 @@ switch(o){
 		break;
 	
 	case 't' :
-		//Test Etape 2
-
+		//Etape 2
+		//Affichage de la table des sections
 		affichageTabsection(TableSec, head, fich);
 		break;
 	
 	case 'n' :
-		//Test Etape 3
+		//Etape 3
+		//Affichage du contenu d'une section dont le nom est donné en entrée
 		printf("\nNom de la section à afficher\n");
 		scanf("%s",secName);
 		printf("\n");
 		afficheSectionByName(head, TableSec, fich, secName);
 		break;
 	case 'N' :
+		//Affichage du contenu d'une section dont le numéro est donné en entrée
 		printf("\nNumero de la section à afficher\n");
 		scanf("%d",&secNum);
 		printf("\n");
@@ -75,7 +80,8 @@ switch(o){
 		break;
 
 	case 's' :
-		//Test Etape 4
+		//Etape 4
+		//Affichage de la table des symboles
 		printf("====================================================");
 		Elf32_Sym *tabSymb = malloc(head.e_shentsize);
 		int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
@@ -84,18 +90,20 @@ switch(o){
 		break;
 	
 	case 'r' :
+		//Etape 5
 		printf("test");
 		break;
 	
 	default :
-		  printf("\nVeuillez choisir une option parmi les suivantes: \n");
+		  printf("\nRelancez le programme en veillant à choisir une option existante: \n");
   		  printf("h : affichage du ELF header.\n");
 		  printf("t: affichage de la table des sections.\n");
 		  printf("n: affichage du contenu d'une section via son nom.\n");
 		  printf("N: affichage du contenu d'une section via son numéro.\n");
 		  printf("s: affichage de la table des symboles.\n");
 		  printf("r : affichage des tables de réimplantation.\n");
+		  printf("\n");
 		  break;
 };
 }
-}
+
