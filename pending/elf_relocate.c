@@ -17,36 +17,27 @@ const char* relType[] =
 	};
 
 
-int taillerela(ELF_STRUCT *elf_struct) {
-
-	Elf32_Ehdr* elf_header = elf_struct->elf_header;
-	Elf32_Shdr* a_shdr = elf_struct->a_shdr;	
-	
-	int nb_shdr = elf_header->e_shnum;
+int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers) {	
+	// Calcul de la taille de Rela
+	int nb_sec = file_header->e_shnum;
 	int taille = 0; 	
 	int nombre = 0;
-	
-	for (int i = 0; i < nb_shdr; i++) {
-		if (a_shdr[i].sh_type == SHT_RELA) {
-			nombre = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	
-			taille += nombre;
-		}
+	for (int i = 0; i < nb_sec; i++) {
+		if (section_headers[i].sh_type == SHT_RELA) {
+			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
+			taille += nombre;}
 	} 
 	return taille;
 }
 
-int taillerel(ELF_STRUCT *elf_struct) {
-
-	Elf32_Ehdr* elf_header = elf_struct->elf_header;
-	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
-
-	int nb_shdr = elf_header->e_shnum;
+int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers) {
+	// Calcul de la taille de Rel
+	int nb_sec = file_header->e_shnum;
 	int taille = 0; 	
 	int nombre = 0;
-	
-	for (int i = 0; i < nb_shdr; i++) {
-		if (a_shdr[i].sh_type == SHT_REL) {
-			nombre = a_shdr[i].sh_size / a_shdr[i].sh_entsize;
+	for (int i = 0; i < nb_sec; i++) {
+		if (section_headers[i].sh_type == SHT_REL) {
+			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;
 			taille += nombre;
 		}
 	}
