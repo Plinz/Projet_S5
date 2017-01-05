@@ -195,7 +195,8 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 				// get type
 				type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
 				printf("%d     %x     %s       %x    \n",rel[j].r_offset, rel[j].r_info, type, tabSymbole[rel[j].r_info].st_value);
-				printf(" num %d \n",j);
+				printf(" num %d \n",tabSymbole[ELF32_R_SYM(rel[j].r_info)]);
+				printf(" num %x \n",tabSymbole[ELF32_R_SYM(rel[j].r_info)]);
 				j++;				
 			}			
 			free(nomsec);	
