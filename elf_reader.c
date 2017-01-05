@@ -99,7 +99,9 @@ switch(o){
 	
 	case 'r' :
 		//Etape 5
-		affichage_relocation(tabSymb, &head, TableSec, fich);
+		Elf32_Sym *tabSymbole = malloc(head.e_shentsize);
+		int nbSymbole = lectureTableSymbole(tabSymbole, head, TableSec, fich);
+		affichage_relocation(tabSymb, &head, TableSec, nbsymbole, fich);
 		break;
 	
 	default :
