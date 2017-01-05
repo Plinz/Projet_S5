@@ -102,8 +102,8 @@ switch(o){
 		  printf("N: affichage du contenu d'une section via son numéro.\n");
 		  printf("s: affichage de la table des symboles.\n");
 		  printf("r : affichage des tables de réimplantation.\n");
-		  printf("\n");
 		  break;
 };
+printf("\n");
 }
 
