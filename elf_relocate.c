@@ -60,8 +60,6 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 			for (int j=0; j<nombre; j++) {
 				// on recupere chaque element de type Rel
 				fread(&(lesrel[k]),trel, 1, elf);
-				printf("offset : %x \n",lesrel[k].r_offset);
-				printf("info : %x \n",lesrel[k].r_info);
 				k++;
 			}
 		}
@@ -205,13 +203,6 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 	}	
 
 	printf("\n");
-	for (int i = 0; i < 10; i++) { 
-		printf("offset : %x  ----- ", rel[i].r_offset);
-		printf("info : %x \n", rel[i].r_info);
-		printf("offset : %x ", rela[i].r_offset);
-		printf("---- info : %x \n", rela[i].r_info);
-		printf("\n");
-	}
 	return 1;
 	
 }
