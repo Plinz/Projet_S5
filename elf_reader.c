@@ -101,7 +101,7 @@ switch(o){
 		//Etape 5
 		
 		int nbSym = lectureTableSymbole(tabSymb, head, TableSec, fich);
-		affichage_relocation(tabSymb, &head, TableSec, nbsym, fich);
+		affichage_relocation(tabSymb, &head, TableSec, nbSym, fich);
 		break;
 	
 	default :
