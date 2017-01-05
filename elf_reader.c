@@ -100,8 +100,8 @@ switch(o){
 	case 'r' :
 		//Etape 5
 		
-		int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
-		affichage_relocation(tabSymb, &head, TableSec, nbsymbole, fich);
+		int nbSym = lectureTableSymbole(tabSymb, head, TableSec, fich);
+		affichage_relocation(tabSymb, &head, TableSec, nbsym, fich);
 		break;
 	
 	default :
