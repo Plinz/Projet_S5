@@ -16,44 +16,41 @@ const char* relType[] =
 		"R_ARM_THM_MOVT_PREL", "", "", "", "", "" 
 	};
 
-int get_rela_size(ELF_STRUCT *elf_struct) {
+
+int taillerela(ELF_STRUCT *elf_struct) {
 
 	Elf32_Ehdr* elf_header = elf_struct->elf_header;
 	Elf32_Shdr* a_shdr = elf_struct->a_shdr;	
-int nb_shdr = elf_header->e_shnum;
-	int i = 0;	// i counter
-	int nb_rela = 0; 	// nb number of rela
-	int nb_entries = 0;
 	
-	for (i = 0; i < nb_shdr; i++) {
+	int nb_shdr = elf_header->e_shnum;
+	int taille = 0; 	
+	int nombre = 0;
+	
+	for (int i = 0; i < nb_shdr; i++) {
 		if (a_shdr[i].sh_type == SHT_RELA) {
-			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries
-			nb_rela += nb_entries;
+			nombre = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	
+			taille += nombre;
 		}
 	} 
-
-	return nb_rela;
-
+	return taille;
 }
 
-int get_rel_size(ELF_STRUCT *elf_struct) {
+int taillerel(ELF_STRUCT *elf_struct) {
 
 	Elf32_Ehdr* elf_header = elf_struct->elf_header;
 	Elf32_Shdr* a_shdr = elf_struct->a_shdr;
 
 	int nb_shdr = elf_header->e_shnum;
-	int i = 0;	// i counter
-	int nb_rel = 0; 	// nb number of rel
-	int nb_entries = 0;
+	int taille = 0; 	
+	int nombre = 0;
 	
-	for (i = 0; i < nb_shdr; i++) {
+	for (int i = 0; i < nb_shdr; i++) {
 		if (a_shdr[i].sh_type == SHT_REL) {
-			nb_entries = a_shdr[i].sh_size / a_shdr[i].sh_entsize;	// calcul the number of entries
-			nb_rel += nb_entries;
+			nombre = a_shdr[i].sh_size / a_shdr[i].sh_entsize;
+			taille += nombre;
 		}
 	}
-	return nb_rel;
-
+	return taille;
 }
 
 int get_rela_table(ELF_STRUCT *elf_struct) {
