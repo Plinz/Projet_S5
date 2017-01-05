@@ -50,7 +50,7 @@ int secNum;
 //Déclaration de la table des symboles
 Elf32_Sym *tabSymb = malloc(head.e_shentsize);		
 	
-//Nombre de symboles dans la table donnée
+//Nombre de symboles dans la table donnée :  : PENSER A ENLEVER LES TESTS DE LECTURETABLESYMBOLE
 int nbSymbole = lectureTableSymbole(tabSymb, head, TableSec, fich);
 
 
