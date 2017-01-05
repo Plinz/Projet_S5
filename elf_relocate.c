@@ -35,6 +35,7 @@ int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela 
 				// on recupere chaque element de type Rela
 				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
 				fread(&(lesrela[k]),trela, 1, elf);
+				printf("lecture : %x \n",lesrela[k]);
 				k++;
 			}
 		}
@@ -60,6 +61,7 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 				// on recupere chaque element de type Rel
 				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
 				fread(&(lesrel[k]),trel, 1, elf);
+				printf("lecture : %x \n",lesrela[k]);
 				k++;
 			}
 		}
