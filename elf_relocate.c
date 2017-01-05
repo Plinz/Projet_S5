@@ -96,7 +96,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 	int noms,nombres;
 	char c;	
 	const char* type;
-	unsigned int strtab = -1;	
+	unsigned int strtab = 1;	
 	unsigned int shstrtab = 0;
 	char* nomsec;		
 
@@ -112,7 +112,7 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 		}
 	}
 
-	if (strtab == -1) {printf("Pas de table des chaines \n"); return -1;}
+	if (strtab == 1) {printf("Pas de table des chaines \n"); return -1;}
 		
 	// Affichage de Rela
 	j = 0;
