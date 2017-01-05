@@ -23,7 +23,9 @@ int taillerela(Elf32_Ehdr file_header, Elf32_Shdr *section_headers) {
 	int taille = 0; 	
 	int nombre = 0;
 	for (int i = 0; i < nb_sec; i++) {
+		// Pour chacun des sections du programme, si on a un type Rela :
 		if (section_headers[i].sh_type == SHT_RELA) {
+			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;}
 	} 
@@ -36,7 +38,9 @@ int taillerel(Elf32_Ehdr file_header, Elf32_Shdr *section_headers) {
 	int taille = 0; 	
 	int nombre = 0;
 	for (int i = 0; i < nb_sec; i++) {
+		// Pour chacun des sections du programme, si on a un type Rela :
 		if (section_headers[i].sh_type == SHT_REL) {
+			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;
 			taille += nombre;
 		}
