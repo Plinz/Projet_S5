@@ -92,96 +92,69 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 	int trela = taillerela(fileHeader,section_headers,lesrela,elf);
 	int trel = taillerela(fileHeader,section_headers,lesrel,elf);
 	int nb_sec = fileHeader->e_shnum;
-	int i = 0, j = 0, k = 0, l = 0;		// i counter ,j table counter, k entry counter, l symb counter
-	int iCnt;		// iCnt Name counter
-	char c;			// c counter for reading FILE
+	int j = 0 ;	
+	int noms;
+	char c;	
 	const char* type;	// Type name
 	char* symName = NULL;	// Symbol name
 	int nb_entries;		// Number of entry	
 	int strtab = -1;	// STRTAB address
 	int shstrtab = 0;	// SHSTRTAB address
 	int symb_size = 0;	// Symbol size
-	char* name;		// Section name
+	char* nomsec;		
 
 	//Initialisation des adresses de STRTAB et SHSTRTAB
 	shstrtab = section_headers[fileHeader->e_shstrndx].sh_offset;	
 	 
-	if ( (trela + trel) == 0 ) {printf("Pas de Relocation a faire");}
+	if ( (trela + trel) == 0 ) {printf("Pas de Relocation a faire \n"); return -1;}
 	
 	for (int i = 0; i < nb_sec; i++) {
 		if ( (sections_headers[i].sh_type == SHT_STRTAB) && (sections_headers[i].sh_offset != shstrtab) ) {
 			strtab = sections_headers[i].sh_offset;
+			// Ajout de l'offset à strtab
 		}
 	}
 
-	if (strtrab == -1) return -1;
+	if (strtrab == -1) {printf("Pas de table des chaines \n"); return -1;}
 		
-	// Displaying Rela content
+	// Affichage de Rela
 	j = 0;
-	for (i = 0; i < nb_shdr; i++) {
+	for (int k = 0; k < nb_sec; k++) {
 		
-		if (sections_headers[i].sh_type == SHT_RELA) {	
+		if (sections_headers[k].sh_type == SHT_RELA) {	
 			
-			//getName	
-			if ( fseek(elf, shstrtab + sections_headers[i].sh_name, SEEK_SET) == -1 ) {
-				fprintf(stderr, "error while fseek\n");
-				return -1;
-			}
-
-			iCnt = 0;
-			
-			c = fgetc(f);
-			if ( ferror(f) ) return -1;
+			fseek(elf, shstrtab + sections_headers[k].sh_name, SEEK_SET);
+			noms = 0;
+			c = fgetc(elf);
 
 			while (c != '\0') {
-				iCnt++;
-				c = fgetc(f);
-				if ( ferror(f) ) return -1;
+				c = fgetc(elf);
+				noms++;
 			}
 
-			name = malloc( (iCnt + 1) * sizeof(char) );
-			if (name == NULL) {
-				fprintf(stderr, "Error malloc name \n");
-				return -1;	
-			}
-
-			if ( fseek(elf, sections_headers[fileHeader->e_shstrndx].sh_offset + sections_headers[i].sh_name, SEEK_SET) == - 1 ) {
-				fprintf(stderr, "error while fseek\n");
-				free(name);
-				return -1;
-			}
-
-			iCnt = 0;
+			nomsec = malloc( (noms + 1) * sizeof(char) );
+			fseek(elf, sections_headers[fileHeader->e_shstrndx].sh_offset + sections_headers[k].sh_name, SEEK_SET);
+			noms = 0;
 			
 			c = fgetc(f);
-			if ( ferror(f) ) {
-				free(name);
-				return -1;
-			}
-
 			while (c != '\0') {
-				name[iCnt] = c;			s
-				iCnt++;
+				nomsec[noms] = c;			s
+				noms++;
 				c = fgetc(f);
-				if ( ferror(f) ) {
-					free(name);
-					return -1;
-				}
 			}
-
-			name[iCnt] = c;
+			nomsec[noms] = c;
 			
 			//printRela
-			nb_entries = sections_headers[i].sh_size / sections_headers[i].sh_entsize;	//calcul number of entries
+			nb_entries = sections_headers[k].sh_size / sections_headers[k].sh_entsize;	//calcul number of entries
 
-			printf("\nSection relocation \e[1;31m%s\e[0m   at offset address 0x%x contains %d entries:\n", name, sections_headers[i].sh_offset, nb_entries);
+			printf("\nSection relocation \e[1;31m%s\e[0m   at offset address 0x%x contains %d entries:\n", nomsec, sections_headers[k].sh_offset, nb_entries);
 			printf("╔════════════════════════════════════════════════════════════════════════════════════╗\n");
    			printf("║                                     SymbTable:                                     ║\n");
    			printf("╠═══════════╤════════════╤══════════════╤═════════════════════╤══════════════════════╣\n");
 			printf("║ offset:   │    Info    │      Type    │     Symbol-value    │      Symbol-name     ║\n");
 			printf("╟───────────┼────────────┼──────────────┼─────────────────────┼──────────────────────╢\n");
 	
-			for (k = 0; k < nb_entries; k++) {
+			for (int l = 0; l < nb_entries; l++) {
 				// get type
 				type = relType[ELF32_R_TYPE(rela[j].r_info)]; 
 				if (type == NULL) { 
@@ -225,65 +198,39 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 			}
 			printf("╚═══════════╧════════════╧══════════════╧═════════════════════╧══════════════════════╝\n");		
 			free(symName);		
-			free(name);	
+			free(nomsec);	
 		}		
 	}	
 
 	// Displaying Rel content
 	j = 0;
-	for (i = 0; i < nb_shdr; i++) {
+	for (i = 0; i < nb_sec; i++) {
 		if (sections_headers[i].sh_type == SHT_REL) {	
 			
-			//getName
-			if ( fseek(elf, strtab + sections_headers[i].sh_name, SEEK_SET) == -1 ) {
-				fprintf(stderr, "error while fseek\n");
-				return -1;
-			}
-
-			iCnt = 0;
-
-			c = fgetc(f);
-			if ( ferror(f) ) return -1;
+			fseek(elf, shstrtab + sections_headers[k].sh_name, SEEK_SET);
+			noms = 0;
+			c = fgetc(elf);
 
 			while (c != '\0') {
-				iCnt++;
-				c = fgetc(f);		
-				if ( ferror(f) ) return -1;
+				c = fgetc(elf);
+				noms++;
 			}
 
-			name = malloc( (iCnt + 1) * sizeof(char) );
-			if (name == NULL) {
-				return -1;	
-			}
-
-			if ( fseek(elf, strtab + sections_headers[i].sh_name, SEEK_SET) == -1 ) {
-				fprintf(stderr, "error while fseek\n");
-				free(name);
-				return -1;
-			}
-
-			iCnt = 0;
-
+			nomsec = malloc( (noms + 1) * sizeof(char) );
+			fseek(elf, sections_headers[fileHeader->e_shstrndx].sh_offset + sections_headers[k].sh_name, SEEK_SET);
+			noms = 0;
+			
 			c = fgetc(f);
-			if ( ferror(f) ) {
-				free(name);
-				return -1;
-			}
-
 			while (c != '\0') {
-				name[iCnt] = c;			
-				iCnt++;
+				nomsec[noms] = c;			s
+				noms++;
 				c = fgetc(f);
-				if ( ferror(f) ) {
-					free(name);
-					return -1;
-				}
 			}
-			name[iCnt] = c;
+			nomsec[noms] = c;
 
 			//printRel
 			nb_entries = sections_headers[i].sh_size / sections_headers[i].sh_entsize;	//calcul de nombre d'entrée
-			printf("\nSection relocation \e[1;31m%s\e[0m  at offset address 0x%x contains %d entries:\n", name, sections_headers[i].sh_offset, nb_entries);
+			printf("\nSection relocation \e[1;31m%s\e[0m  at offset address 0x%x contains %d entries:\n", nomsec, sections_headers[i].sh_offset, nb_entries);
 			printf("╔════════════════════════════════════════════════════════════════════════════════════╗\n");
    			printf("║                                      SymbTable:                                    ║\n");
    			printf("╠═══════════╤════════════╤══════════════╤═════════════════════╤══════════════════════╣\n");
@@ -332,7 +279,7 @@ int display_relocate_section(Elf32_Sym* tabSymbole, Elf32_Ehdr fileHeader, Elf32
 			}
 			printf("╚═══════════╧════════════╧══════════════╧═════════════════════╧══════════════════════╝\n");		
 			free(symName);		
-			free(name);	
+			free(nomsec);	
 		}		
 	}	
 
