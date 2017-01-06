@@ -92,9 +92,11 @@ switch(o){
 		affichageTableSymbole(tabSymbole, nbSymbole, fich, TableSec, head);
 		Elf32_Sym *tabSymbDynamique = malloc(head.e_shentsize);
 		int nbSymboleDynamique = lectureTableSymboleDynamique(tabSymbDynamique, head, TableSec, fich);
-		affichageTableSymboleDynamique(tabSymbDynamique, nbSymboleDynamique, fich, TableSec, head);
+		if(nbSymboleDynamique > 0){
+			affichageTableSymboleDynamique(tabSymbDynamique, nbSymboleDynamique, fich, TableSec, head);
+		}
 		
-		printf("-------------------------------------------------------");
+		printf("=====================================================");
 		
 		break;
 	
