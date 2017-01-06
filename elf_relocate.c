@@ -43,7 +43,7 @@ int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela 
 }
 
 int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *lesrel, FILE* elf) {
-	// Calcul de la taille de Rela et construction de sa table. 
+	// Calcul de la taille de Rel et construction de sa table. 
 	int nb_sec = file_header->e_shnum;
 	int taille = 0; 	
 	int nombre = 0;
@@ -57,6 +57,7 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;
 			lesrel = realloc(lesrel, taille * sizeof(Elf32_Rel));
+			if (lesrel == NULL) { printf("ERREUR REALLOC"); exit(1);}
 			for (int j=0; j<nombre; j++) {
 				// on recupere chaque element de type Rel
 				fread(&(lesrel[k]),trel, 1, elf);
@@ -98,7 +99,8 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 	const char* type;
 	unsigned int strtab = 1;	
 	unsigned int shstrtab = 0;
-	char* nomsec;		
+	char* nomsec;
+	uint32_t info ;	
 
 	//Initialisation des adresses de STRTAB et SHSTRTAB
 	shstrtab = sections_headers[fileHeader->e_shstrndx].sh_offset;	
@@ -147,10 +149,10 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 
 	
 			for (int l = 0; l < nombres; l++) {
-				// get type
 				type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
-				printf("%x     %x     %s       %x    \n",rel[j].r_offset, rel[j].r_info, type, tabSymbole[ELF32_R_SYM(rela[j].r_info)].st_value);
-				j++;				
+				info = rela[j].r_info;
+				printf("%d     %x     %s       %x    \n",rela[j].r_offset, rela[j].r_info, type, ELF32_R_SYM(info));
+				printf("%d \n",j);				
 			}		
 			free(nomsec);	
 		}		
@@ -194,7 +196,9 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 				// get type
 
 						type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
-						printf("%d     %x     %s       %x    \n",rel[j].r_offset, rel[j].r_info, type, tabSymbole[ELF32_R_SYM(rel[j].r_info)].st_value);
+						info = rel[j].r_info;
+						printf("%d     %x     %s       %x    \n",rel[j].r_offset, rel[j].r_info, type, ELF32_R_SYM(info));
+						printf("%d \n",j);
 
 					j++;				
 			}			
