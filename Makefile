@@ -43,7 +43,7 @@ PRG_SUFFIX_FLAG := 1
 #
 LDFLAGS := 
 CFLAGS_INC := 
-CFLAGS := -g -Wall $(CFLAGS_INC)
+CFLAGS := -g -Wall -Werror $(CFLAGS_INC)
 #
 ## ==================- NOTHING TO CHANGE BELOW THIS LINE ===================
 ##
