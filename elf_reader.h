@@ -4,6 +4,12 @@
 #include <string.h>
 #include <stdlib.h>
 
+typedef struct fichierElf {
+	Elf32_Ehdr	header_elf;
+	Elf32_Shdr	*sectionsTable;
+	FILE 	 	*fichierElf;	
+} FichierElf;
+
 Elf32_Ehdr lectureheader(FILE* f);
 void affichageheader(Elf32_Ehdr header_elf);
 
@@ -49,3 +55,12 @@ int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela*
 int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
   
 int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf);
+
+//Fusion Simple Etape 6
+void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr * res);
+
+char * getSectionName(Elf32_Shdr section, FichierElf * fichierElf);
+
+void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes);
+
+
