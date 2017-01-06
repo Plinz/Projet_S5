@@ -66,15 +66,15 @@ else
 endif
 ## Compile the executables
 %$(PRG_SUFFIX) : $(OBJS)
-    $(CC) $(OBJ)  $(LDFLAGS) -o $(BIN)
+        $(CC) $(OBJ)  $(LDFLAGS) -o $(BIN)
 ##
 ## $(OBJS) should be automagically removed right after linking.
 ##
 veryclean:
 ifeq ($(PRG_SUFFIX_FLAG),0)
-    $(RM) $(PRGS)
+        $(RM) $(PRGS)
 else
-    $(RM) $(BINS)
+        $(RM) $(BINS)
 endif
 ##
 rebuild: veryclean all
