@@ -191,14 +191,14 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 			printf("REL - Symboles \n");
 			printf("offset:       info :           Type:        Valeur Symbole : \n");
 
-	
+			// Elf32_Word offsetStringTable = rechercheOffsetSection(*fileHeader, sections_headers, elf, strtab);
 			for (int l = 0; l < nombres; l++) {
 				// get type
-
 						type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
 						info = rel[j].r_info;
-						printf("%d     %x     %s       %x    \n",rel[j].r_offset, rel[j].r_info, type, ELF32_R_SYM(info));
-						printf("%d \n",j);
+						printf("%d     %x     %s       %x    ",rel[j].r_offset, rel[j].r_info, type, ELF32_R_SYM(info));
+						//recupNomSymbole(rel[j].r_offset, elf, strtab);
+						printf("\n");
 
 					j++;				
 			}			
