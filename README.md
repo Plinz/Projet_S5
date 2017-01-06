@@ -92,14 +92,14 @@ https://en.wikipedia.org/wiki/Register_allocation
 
 On voit dans le sujet qu'on doit juste s'occuper de la section progbits, matthias t'es allé trop loin. Possible que les opérations sur les headers qu'on veut faire, faut faire ça à la fin
 
-SH_TYPE         SH_LINK         SH_INFO
+SH_TYPE ----- SH_LINK  -----       SH_INFO
 
-SHT_Dynamics      OSEF ??????
+SHT_Dynamics   -----   OSEF -----??????
 
-SHT_HASH        header du symtab ou le hash s'affiche ---- 0
+SHT_HASH    -----   header du symtab ou le hash s'affiche ---- 0
 
-SHT_REL/RELA      Index de l'header de tab_symb associé ------ index de l'header de là ou il y a la relocation
+SHT_REL/RELA    -----  Index de l'header de tab_symb associé ------ index de l'header de là ou il y a la relocation
 
-SHT_SYMTAB        Index de l'header du strtab associé ------- 1 de plus que le dernier symbole local
+SHT_SYMTAB  -----      Index de l'header du strtab associé ------- 1 de plus que le dernier symbole local
 
-AUTRE :           SHN_UNDEF  ------ 0
+AUTRE :      -----     SHN_UNDEF  ------ 0
