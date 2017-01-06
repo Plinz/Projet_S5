@@ -200,7 +200,7 @@ void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, 
 				printf("??");
 				break;
 		}
-		printf("		%c", tabSymbole[i].st_other);
+		printf("		%d", tabSymbole[i].st_other);
 		printf("			");
 		switch(tabSymbole[i].st_shndx){
 			case SHN_UNDEF:
@@ -279,7 +279,7 @@ void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabS
 				printf("??");
 				break;
 		}
-		printf("		%c", tabSymboleDynamique[i].st_other);
+		printf("		%d", tabSymboleDynamique[i].st_other);
 		printf("			");
 		switch(tabSymboleDynamique[i].st_shndx){
 			case SHN_UNDEF:
