@@ -37,7 +37,9 @@ int lectureTableSymbole(Elf32_Sym* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* ta
 
 int lectureTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f);
 
-Elf32_Word rechercheSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
+Elf32_Word rechercheOffsetSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
+
+void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset, char*c);
 
 
 //Relocation Etape 5

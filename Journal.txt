@@ -15,3 +15,9 @@ Ajout d'options au main
 Jour 3 : Jeudi 05 Janvier 2017
 Modification sur la fonction de lecture de la table des symboles
 Création de la fonction de lecture/affichage de la table des réimplatations
+Début de la phase de fusion des headers
+
+Jour 4 : Vendredi 06 Janvier 2017 
+Validation de la table des reimplémentations et de la table des symboles
+Finition de la fusion des headers
+Creation d'une structure globale de headers
