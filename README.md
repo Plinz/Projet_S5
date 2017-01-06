@@ -63,6 +63,10 @@ Autres parsers :
 
 
 
-<gl>	en gros quand tu link tes deux .o, tu dois faire en sorte que d'une fonction a l'autre (car quand tu compiles un premier .o et un second .o t'as pas toutes les infos), quand elles sont appeles dans deux unites de translations differentes, les donnees dans les registres ont un sens
-<gl>	ie. faire des sauvegardes, nettoyage, etc
-<gl>	souvent c'est fait via des algorithmes de coloration de graphes, mais il y a pas mal de methodes
+< gl >	en gros quand tu link tes deux .o, tu dois faire en sorte que d'une fonction a l'autre (car quand tu compiles un premier .o et un second .o t'as pas toutes les infos), quand elles sont appeles dans deux unites de translations differentes, les donnees dans les registres ont un sens
+
+< gl >	ie. faire des sauvegardes, nettoyage, etc
+
+< gl >	souvent c'est fait via des algorithmes de coloration de graphes, mais il y a pas mal de methodes
+
+https://en.wikipedia.org/wiki/Register_allocation
