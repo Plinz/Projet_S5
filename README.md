@@ -60,3 +60,9 @@ Autres parsers :
 ## PROTIP
 
 "Dans la partie Annexe au lieu de "arm-eabi-cquevousvoulez" faut mettre "arm-none-eabi-cquevousvoulez" pour l'instant en tout cas celui qui est sur l'énoncé marche pas je sais pas pourquoi."
+
+
+
+<gl>	en gros quand tu link tes deux .o, tu dois faire en sorte que d'une fonction a l'autre (car quand tu compiles un premier .o et un second .o t'as pas toutes les infos), quand elles sont appeles dans deux unites de translations differentes, les donnees dans les registres ont un sens
+<gl>	ie. faire des sauvegardes, nettoyage, etc
+<gl>	souvent c'est fait via des algorithmes de coloration de graphes, mais il y a pas mal de methodes
