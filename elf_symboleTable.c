@@ -125,33 +125,37 @@ Elf32_Word rechercheOffsetSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_ta
 	}
 }
 
-void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset){
+void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset, char *c){
 	fseek(f, offset+index, SEEK_SET);
-	char c;
-	c = fgetc(f);
-	while(c!= '\0'){
-		printf("%c", c);
-		c = fgetc(f);
+	char courant;
+	int i = 0 ;
+	courant = fgetc(f);
+	while(courant != '\0'){
+		c[i] = courant;
+		courant = fgetc(f);
+		i++;
 	}
+	c[i] = '\0';
 }
 
 
 void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header){
-		printf("-------------------Table des symboles // Nb Symbole: %d-----------------------------\n", sizeTabSymbole);
+		printf("\n-------------------Table des symboles // Nb Symbole: %d-----------------------------\n\n", sizeTabSymbole);
 
 	int i;
-	
 	Elf32_Word offset;
 	char * stringTabSymb;
+	char *nomSymbole;
+	nomSymbole = malloc(50);
 	stringTabSymb = malloc(50);
 	stringTabSymb = ".strtab";
 	offset = rechercheOffsetSection(header, tabSection, f, stringTabSymb);
-	printf("num	nom							value			size		bind		type		other			shndx \n");
+	printf("num		value		size		bind		type			other			shndx 				nom\n");
 	for(i=0; i<sizeTabSymbole; i++){
-		printf("[%d]	", i);
-		recupNomSymbole(tabSymbole[i].st_name, f, offset);
-		printf("							%x", tabSymbole[i].st_value);
-		printf("			%d", tabSymbole[i].st_size);
+		printf("[%3d]", i);
+		recupNomSymbole(tabSymbole[i].st_name, f, offset, nomSymbole);
+		printf("%15x", tabSymbole[i].st_value);
+		printf("%15d", tabSymbole[i].st_size);
 		printf("		");
 		switch(ELF32_ST_BIND(tabSymbole[i].st_info)){
 			case 0:
@@ -176,31 +180,31 @@ void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, 
 		printf("		");
 		switch(ELF32_ST_TYPE(tabSymbole[i].st_info)){
 			case 0:
-				printf("NOTYPE");
+				printf("NOTYPE ");
 				break;
 			case 1:
-				printf("OBJECT");
+				printf("OBJECT ");
 				break;
 			case 2:
-				printf("FUNC");
+				printf("FUNC   ");
 				break;
 			case 3: 
 				printf("SECTION");
 				break;
 			case 4:
-				printf("FILE");
+				printf("FILE   ");
 				break;
 			case 13:
-				printf("LOPROC");
+				printf("LOPROC ");
 				break;
 			case 15:
-				printf("HIPROC");
+				printf("HIPROC ");
 				break;
 			default:
-				printf("??");
+				printf("??     ");
 				break;
 		}
-		printf("		%d", tabSymbole[i].st_other);
+		printf("%20d", tabSymbole[i].st_other);
 		printf("			");
 		switch(tabSymbole[i].st_shndx){
 			case SHN_UNDEF:
@@ -210,27 +214,30 @@ void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, 
 				printf("ABS");
 				break;
 			default:
-				printf("%d", tabSymbole[i].st_shndx);
+				printf("%2d", tabSymbole[i].st_shndx);
 				break;
 		}
+		printf("%40s", nomSymbole);
 		printf("\n");
 	}
 }
 
 void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabSymboleDynamique, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header){
-	printf("-------------------Table des symboles dynamique // Nb Symbole: %d-----------------------------\n", sizeTabSymboleDynamique);
+	printf("\n-------------------Table des symboles dynamique // Nb Symbole: %d-----------------------------\n\n", sizeTabSymboleDynamique);
 	int i;
 	Elf32_Word offsetTableStringDynamique;
 	char * tabSymbdynamique;
+	char *nomSymboleDynamique;
 	tabSymbdynamique = malloc(50);
+	nomSymboleDynamique = malloc(50);
 	tabSymbdynamique = ".dynstr";
 	offsetTableStringDynamique = rechercheOffsetSection(header, tabSection, f, tabSymbdynamique);
-	printf("num	nom							value			size		bind		type		other			shndx \n");
+	printf("num		value		size		bind		type			other			shndx 				nom\n");
 	for(i=0; i<sizeTabSymboleDynamique; i++){
-		printf("[%d]	", i);
-		recupNomSymbole(tabSymboleDynamique[i].st_name, f, offsetTableStringDynamique);
-		printf("							%x", tabSymboleDynamique[i].st_value);
-		printf("			%d", tabSymboleDynamique[i].st_size);
+		printf("[%d]", i);
+		recupNomSymbole(tabSymboleDynamique[i].st_name, f, offsetTableStringDynamique, nomSymboleDynamique);
+		printf("%15x", tabSymboleDynamique[i].st_value);
+		printf("%15d", tabSymboleDynamique[i].st_size);
 		printf("		");
 		switch(ELF32_ST_BIND(tabSymboleDynamique[i].st_info)){
 			case 0:
@@ -255,31 +262,31 @@ void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabS
 		printf("		");
 		switch(ELF32_ST_TYPE(tabSymboleDynamique[i].st_info)){
 			case 0:
-				printf("NOTYPE");
+				printf("NOTYPE ");
 				break;
 			case 1:
-				printf("OBJECT");
+				printf("OBJECT ");
 				break;
 			case 2:
-				printf("FUNC");
+				printf("FUNC   ");
 				break;
 			case 3: 
 				printf("SECTION");
 				break;
 			case 4:
-				printf("FILE");
+				printf("FILE   ");
 				break;
 			case 13:
-				printf("LOPROC");
+				printf("LOPROC ");
 				break;
 			case 15:
-				printf("HIPROC");
+				printf("HIPROC ");
 				break;
 			default:
-				printf("??");
+				printf("??     ");
 				break;
 		}
-		printf("		%d", tabSymboleDynamique[i].st_other);
+		printf("%20d", tabSymboleDynamique[i].st_other);
 		printf("			");
 		switch(tabSymboleDynamique[i].st_shndx){
 			case SHN_UNDEF:
@@ -289,9 +296,10 @@ void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabS
 				printf("ABS");
 				break;
 			default:
-				printf("%d", tabSymboleDynamique[i].st_shndx);
+				printf("%2d", tabSymboleDynamique[i].st_shndx);
 				break;
 		}
+		printf("%40s", nomSymboleDynamique);
 		printf("\n");
 	}
 }
