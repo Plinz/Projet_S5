@@ -71,6 +71,8 @@ Autres parsers :
 
 https://en.wikipedia.org/wiki/Register_allocation
 
+Gestion des erreurs : http://paste.suut.in/RuhovKXy.h
+
 ## NOTE SUR LA FUSION :
 
 * Etape 7 : Fusion/Renumérotation des symboles :
