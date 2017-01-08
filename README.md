@@ -23,7 +23,7 @@ git push
 * Andre Valentin
 * Defosse Benjamin
 * Duquennoy Antoine
-* Marco Florian
+* X
 * Novel Mathias
 
 ## Work In Progress
