@@ -23,9 +23,14 @@ int main (int argc, char *argv[])
 		fichierElf1.sectionsTable = malloc(sizeof(Elf32_Shdr)*fichierElf1.header_elf.e_shnum);
 		fseek(fichierElf1.fichierElf, fichierElf1.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf1.fichierElf, fichierElf1.header_elf,fichierElf1.sectionsTable);
+		/*
+		//symboles
+		Elf32_Sym tableSymbole1;
+		int nbSymbole = lectureTableSymbole(tableSymbole1, fichierElf1.header, fichierElf1.sectionsTable, fichierElf1.fichierElf);
+		fichierElf1.tabSymbole = tableSymbole1;
+		*/
 
-
-		//Init fichier1
+	//Init fichier2
 		fichierElf2.fichierElf = fopen(argv[2],"r");
 		if (fichierElf2.fichierElf == NULL) {
 			printf("Erreur lors de l'ouverture du fichier2\n");
@@ -35,7 +40,14 @@ int main (int argc, char *argv[])
 		fichierElf2.sectionsTable = malloc(sizeof(Elf32_Shdr)*fichierElf2.header_elf.e_shnum);
 		fseek(fichierElf2.fichierElf, fichierElf2.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf2.fichierElf, fichierElf2.header_elf,fichierElf2.sectionsTable);
-
+		
+		/*
+		//symboles
+		Elf32_Sym tableSymbole2;
+		int nbSymbole2 = lectureTableSymbole(tableSymbole2, fichierElf2.header, fichierElf2.sectionsTable,fichierElf2.fichierElf);
+		fichierElf2.tabSymbole = tableSymbole2;
+		*/
+		
 		//Init fichierRes
 		fichierElfRes.fichierElf = fopen(argv[3],"w+");
 		if (fichierElfRes.fichierElf == NULL) {
