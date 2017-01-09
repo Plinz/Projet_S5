@@ -10,6 +10,8 @@ typedef struct fichierElf {
 	Elf32_Sym	*tabSymbole;
 	Elf32_Sym	*tabSymboleDynamique;
 	FILE 	 	*fichierElf;
+	Elf32_Rel	*tabRel	
+	Elf32_Rela	*tabRela
 } FichierElf;
 
 typedef struct section {
