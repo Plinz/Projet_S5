@@ -11,7 +11,6 @@ typedef struct fichierElf {
 	Elf32_Sym	*tabSymboleDynamique;
 	FILE 	 	*fichierElf;
 	Elf32_Rel	*tabRel;
-	Elf32_Rela	*tabRela;
 } FichierElf;
 
 typedef struct section {
@@ -31,6 +30,12 @@ typedef struct strtab {
   int offsetCourant;
   int nbNames;
 } Strtab;
+
+typedef struct reloctable {
+  Elf32_Rel tablerel 
+  int indice_section
+} Reloctable ;
+
 
 Elf32_Ehdr lectureheader(FILE* f);
 void affichageheader(Elf32_Ehdr header_elf);
@@ -83,7 +88,7 @@ Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2);
 
 Section sectionShstrtab(Section section, Shstrtab * shstrtab);
 
-Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab);
+Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab)
 
 Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Shstrtab * shstrtab);
 
