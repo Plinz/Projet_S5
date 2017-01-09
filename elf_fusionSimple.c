@@ -168,9 +168,46 @@ void sectionStrtab(Section *section, Strtab * strtab) {
   printf("\tOk\n\n");
 }
 
+void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab) {
+	fusion->nbOctets = sectionHeader1.sh_size + sectionHeader2.sh_size;
+	fusion->contenu = malloc(fusion->nbOctets);
+
+	//Concatenation
+	int i;
+	fseek(fichierElf1->fichierElf, sectionHeader1.sh_offset, SEEK_SET);
+	for (i = 0; i < (int)sectionHeader1.sh_size; i++) {
+		fusion->contenu[i] = fgetc(fichierElf1->fichierElf);
+	}
+	int j;
+	fseek(fichierElf2->fichierElf, sectionHeader2.sh_offset, SEEK_SET);
+	for (j = 0; j < (int)sectionHeader2.sh_size; j++) {
+		fusion->contenu[i+j] = fgetc(fichierElf2->fichierElf);
+	}
+
+	//Creation Header
+	fusion->header.sh_type = sectionHeader1.sh_type;
+	fusion->header.sh_size = fusion->nbOctets;
+	fusion->header.sh_flags = sectionHeader1.sh_flags | sectionHeader2.sh_flags;
+	fusion->header.sh_addr = 0;
+	fusion->header.sh_link = SHN_UNDEF;
+	fusion->header.sh_info = 0;
+	if (sectionHeader1.sh_addralign != sectionHeader2.sh_addralign) {
+	  printf("\t\tpas le meme sh_addralign : %d et %d\n",sectionHeader1.sh_addralign,sectionHeader2.sh_addralign);
+	} else {
+	   fusion->header.sh_addralign = sectionHeader1.sh_addralign;
+	}
+	if (sectionHeader1.sh_entsize != sectionHeader2.sh_entsize) {
+	  printf("\t\tpas le meme sh_entsize : %d et %d\n",sectionHeader1.sh_entsize,sectionHeader2.sh_entsize);
+	} else {
+	  fusion->header.sh_entsize = sectionHeader1.sh_entsize;
+	}
+	//sh_offset sera etabli à l'écriture du fichier
+}
+
 Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab) {
 	Section sectionfusionee;
 
+	//Traitement de du nom de la section
 	shstrtab->names[shstrtab->nbNames] = getSectionName(sectionHeader1, fichierElf1);
 	sectionfusionee.header.sh_name = shstrtab->offsetCourant;
 	sectionfusionee.header.sh_addr = 0;
@@ -191,39 +228,7 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 			printf("\t\tTable des rela-alocation à faire\n");
 			break;*/
 		default : //Pour l'instant, on fait partout pareil
-		 sectionfusionee.nbOctets = sectionHeader1.sh_size + sectionHeader2.sh_size;
-		 sectionfusionee.contenu = malloc(sectionfusionee.nbOctets);
-
-		//Concatenation
-		int i;
-		fseek(fichierElf1->fichierElf, sectionHeader1.sh_offset, SEEK_SET);
-		for (i = 0; i < (int)sectionHeader1.sh_size; i++) {
-			sectionfusionee.contenu[i] = fgetc(fichierElf1->fichierElf);
-		}
-		int j;
-		fseek(fichierElf2->fichierElf, sectionHeader2.sh_offset, SEEK_SET);
-		for (j = 0; j < (int)sectionHeader2.sh_size; j++) {
-			sectionfusionee.contenu[i+j] = fgetc(fichierElf2->fichierElf);
-		}
-
-		//Creation Header
-		sectionfusionee.header.sh_type = sectionHeader1.sh_type;
-		sectionfusionee.header.sh_size = sectionfusionee.nbOctets;
-		sectionfusionee.header.sh_flags = sectionHeader1.sh_flags | sectionHeader2.sh_flags;
-		sectionfusionee.header.sh_addr = 0;
-		sectionfusionee.header.sh_link = SHN_UNDEF;
-		sectionfusionee.header.sh_info = 0;
-		if (sectionHeader1.sh_addralign != sectionHeader2.sh_addralign) {
-		  printf("\t\tpas le meme sh_addralign : %d et %d\n",sectionHeader1.sh_addralign,sectionHeader2.sh_addralign);
-		} else {
-		   sectionfusionee.header.sh_addralign = sectionHeader1.sh_addralign;
-		}
-		if (sectionHeader1.sh_entsize != sectionHeader2.sh_entsize) {
-		  printf("\t\tpas le meme sh_entsize : %d et %d\n",sectionHeader1.sh_entsize,sectionHeader2.sh_entsize);
-		} else {
-		  sectionfusionee.header.sh_entsize = sectionHeader1.sh_entsize;
-		}
-		//sh_offset sera etabli à l'écriture du fichier
+			sectionFusionSimple(&sectionfusionee, sectionHeader1, sectionHeader2, fichierElf1, fichierElf2, shstrtab);
 		break;
 	}
 	printf("\t\tsh_name %d\n",shstrtab->offsetCourant);
