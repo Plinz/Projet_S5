@@ -145,7 +145,27 @@ Section sectionShstrtab(Section section, Shstrtab * shstrtab) {
   return section;
 }
 
-Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab) {
+Section sectionStrtab(Section section, Strtab * strtab) {
+  section.nbOctets = strtab->offsetCourant;
+  section.contenu = malloc(section.nbOctets);
+  section.header.sh_size = section.nbOctets;
+
+  int j;
+  int curseur = 0;
+  for (int i = 0; i < strtab->nbNames; i++) {
+    j = 0;
+    while ((section.contenu[curseur] = strtab->names[i][j]) != '\0') {
+			j++;
+      curseur++;
+		}
+    curseur++;
+  }
+
+
+  return section;
+}
+
+Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab) {
  Section sectionfusionee;
 
  shstrtab->names[shstrtab->nbNames] = getSectionName(sectionHeader1, fichierElf1);
@@ -327,20 +347,34 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
   shstrtab->nbNames = 0;
 
 
+  //Structure qui va contenir le nom de tous les symboles
+  Strtab *strtab = malloc(sizeof(Strtab));
+  strtab->names = malloc((nbSectionMax)*sizeof(char*)); //A CHANGER PAR NBSYMBOLEMAX
+  for (i = 0; i < (nbSectionMax); i++) {
+    strtab->names[i] = malloc(50);
+  }
+  strtab->offsetCourant = 0;
+  strtab->nbNames = 0;
+
+
 	//Différenciation en les sections à fusionner ou à ajouter
 	//Si une section est présente dans les deux fichiers on la fusionne
   //Sinon on l'ajoute
   //Obligé de faire une seconde boucle pour voi les sections du fichier2 qui ne sont pas dans le fichier1
   int present = 0;
   int indexShstrtab = -1;
+  int indexStrtab = -1;
 	Elf32_Shdr * tmp = malloc(sizeof(Elf32_Shdr));
 	for (i = 0; i < fichierElf1->header_elf.e_shnum; i++) { //Pour toutes les sections du fichier1
 		RechercheSectionByName(fichierElf2, getSectionName(fichierElf1->sectionsTable[i],fichierElf1), tmp, &present); //est-ce-que cette section est dans le fichier2 ?
 		if (present) { //Si oui on les fusionne
-      sections_elfRes[i] = sectionfusion(fichierElf1->sectionsTable[i], *tmp, fichierElf1, fichierElf2, shstrtab); //Fusion
-      if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".shstrtab") == 0) { //On sauvegarde l'index de shstrtab pour le header et pour ecrire cette section après les boucles
-        indexShstrtab = nbSectionEcrites;
-      }
+      		sections_elfRes[i] = sectionfusion(fichierElf1->sectionsTable[i], *tmp, fichierElf1, fichierElf2, shstrtab, strtab); //Fusion
+			if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".shstrtab") == 0) { //On sauvegarde l'index de shstrtab pour le header et pour ecrire cette section après les boucles
+			indexShstrtab = nbSectionEcrites;
+			}
+			if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".strtab") == 0) { //On sauvegarde l'index de shstrtab pour le header et pour ecrire cette section après les boucles
+			indexStrtab = nbSectionEcrites;
+			}
 		} else { //Sinon, on ajoute simplement
       sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf1->sectionsTable[i], fichierElf1, shstrtab); //Ajout
 
@@ -356,8 +390,11 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
 		}
 	}
 
-  //finalement on s'occupe de shstrtab car on a parcouru toutes les sections à ecrire, ainsi que sauvegardé leur nom
+  //finalement on s'occupe de shstrtab et de strtab car il a fallu parcourir toutes les sections pour avoir leur contenu
   sections_elfRes[indexShstrtab] = sectionShstrtab(sections_elfRes[indexShstrtab],shstrtab);
+  sections_elfRes[indexStrtab] = sectionStrtab(sections_elfRes[indexStrtab],strtab);
+
+
 
 	printf("OK\n");
 	/////////////////////////////////////////////////////////////////////
