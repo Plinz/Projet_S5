@@ -2,8 +2,6 @@
 
 int main (int argc, char *argv[]) 
 {
-	FILE *fich; /* Fichier ELF qu'on va lire */
-	  
 	/* Verification du nombre d'arguments */
 	if (argc != 4){
 	  printf("Erreur : ./prog [fichier1 .o] [fichier2 .o] [fichier destination]");
