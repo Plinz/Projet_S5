@@ -56,7 +56,7 @@ int main (int argc, char *argv[])
 	}
 
 	/* Ouverture du fichier */
-	if ((fich = fopen(argv[1],"rb")) == NULL ){
+	if ((fich = fopen(argv[argc-1],"rb")) == NULL ){
 	 printf("Erreur ouverture fichier"); 
 	  return 0;
 	}
