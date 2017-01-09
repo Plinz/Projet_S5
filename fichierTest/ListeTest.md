@@ -1,3 +1,9 @@
+Etape à faire pour créer des fichiers tests .s et .o
+export PATH=/opt/gnu/arm/bin:$PATH
+arm-eabi-gcc -mno-thumb-interwork -S [FILE .c]
+arm-eabi-as -o [FILE .o] [FILE .s]
+
+
 Liste des Tests pour chaque etapes :
 
 # Etape 1 : Affichage de l'en-tête
