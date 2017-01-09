@@ -21,3 +21,9 @@ Jour 4 : Vendredi 06 Janvier 2017
 Validation de la table des reimplémentations et de la table des symboles
 Finition de la fusion des headers
 Creation d'une structure globale de headers
+
+Jour 5 : Lundi 09 Janvier 2017
+Audit de mi-projet
+Début de l'étape Fusion, renumérotation et correction des symboles
+Début de l'étape Fusion et correction des tables de réimplantations
+Debuggage de la fusion des headers et divers ajouts
