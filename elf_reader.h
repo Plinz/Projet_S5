@@ -3,6 +3,8 @@
 #include <byteswap.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <getopt.h>
 
 typedef struct fichierElf {
 	Elf32_Ehdr	header_elf;
@@ -10,8 +12,8 @@ typedef struct fichierElf {
 	Elf32_Sym	*tabSymbole;
 	Elf32_Sym	*tabSymboleDynamique;
 	FILE 	 	*fichierElf;
-	Elf32_Rel	*tabRel	
-	Elf32_Rela	*tabRela
+	Elf32_Rel	*tabRel;
+	Elf32_Rela	*tabRela;
 } FichierElf;
 
 typedef struct section {
