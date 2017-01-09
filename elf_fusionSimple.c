@@ -180,6 +180,13 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
      switch(sectionHeader1.sh_type) {
 		case SHT_SYMTAB :
 			printf("Table des symboles à faire");
+			break;
+		case SHT_REL :
+			printf("Table des relocations à faire");
+			break;
+		case SHT_RELA :
+			printf("Table des Rela-ocations à faire");
+			break; 
        default : //Pour l'instant, on fait partout pareil
          sectionfusionee.nbOctets = sectionHeader1.sh_size + sectionHeader2.sh_size;
          sectionfusionee.contenu = malloc(sectionfusionee.nbOctets);
