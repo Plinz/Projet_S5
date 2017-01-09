@@ -7,6 +7,8 @@
 typedef struct fichierElf {
 	Elf32_Ehdr	header_elf;
 	Elf32_Shdr	*sectionsTable;
+	Elf32_Sym	*tabSymbole;
+	Elf32_Sym	*tabSymboleDynamique;
 	FILE 	 	*fichierElf;
 } FichierElf;
 
@@ -21,6 +23,12 @@ typedef struct shstrtab {
   int offsetCourant;
   int nbNames;
 } Shstrtab;
+
+typedef struct strtab {
+  char ** names;
+  int offsetCourant;
+  int nbNames;
+} Strtab;
 
 Elf32_Ehdr lectureheader(FILE* f);
 void affichageheader(Elf32_Ehdr header_elf);
