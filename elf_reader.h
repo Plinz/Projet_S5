@@ -3,6 +3,8 @@
 #include <byteswap.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <getopt.h>
 
 typedef struct fichierElf {
 	Elf32_Ehdr	header_elf;
@@ -10,6 +12,7 @@ typedef struct fichierElf {
 	Elf32_Sym	*tabSymbole;
 	Elf32_Sym	*tabSymboleDynamique;
 	FILE 	 	*fichierElf;
+	Elf32_Rel	*tabRel;
 } FichierElf;
 
 typedef struct section {
@@ -29,6 +32,12 @@ typedef struct strtab {
   int offsetCourant;
   int nbNames;
 } Strtab;
+
+typedef struct reloctable {
+  Elf32_Rel tablerel;
+  int indice_section;
+} Reloctable ;
+
 
 Elf32_Ehdr lectureheader(FILE* f);
 void affichageheader(Elf32_Ehdr header_elf);
@@ -79,9 +88,11 @@ int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Sh
 //Fusion Simple Etape 6
 Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2);
 
-Section sectionShstrtab(Section section, Shstrtab * shstrtab);
+void sectionShstrtab(Section *section, Shstrtab * shstrtab);
 
-Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab);
+void sectionStrtab(Section *section, Strtab * strtab);
+
+Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab);
 
 Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Shstrtab * shstrtab);
 
@@ -91,4 +102,6 @@ char * getSectionName(Elf32_Shdr section, FichierElf * fichier);
 
 int recupIndexByName(char * sht_name, int e_shstrndx, int nbSections, Elf32_Shdr * sections ,FILE * elf);
 
-void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes);
+void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes);
+
+void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichierElfRes);

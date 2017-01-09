@@ -173,6 +173,8 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 
 	shstrtab->names[shstrtab->nbNames] = getSectionName(sectionHeader1, fichierElf1);
 	sectionfusionee.header.sh_name = shstrtab->offsetCourant;
+	sectionfusionee.header.sh_addr = 0;
+
 
 	printf("\tFusion %s\n",shstrtab->names[shstrtab->nbNames]);
 
@@ -252,6 +254,7 @@ Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Shstrtab
   //header
   section.header = sectionHeader;
   section.header.sh_name = shstrtab->offsetCourant;
+  section.header.sh_addr = 0;
 
   shstrtab->offsetCourant += strlen(shstrtab->names[shstrtab->nbNames]) + 1;
   shstrtab->nbNames++;
