@@ -1,9 +1,5 @@
 #include "elf_reader.h"
 
-typedef struct realocation {
-
-} Realocation;
-
 Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2) {
   Elf32_Ehdr header_elfRes;
 
@@ -129,73 +125,69 @@ Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2) {
   return header_elfRes;
 }
 
-Section sectionShstrtab(Section section, Shstrtab * shstrtab) {
-  section.nbOctets = shstrtab->offsetCourant;
-  section.contenu = malloc(section.nbOctets);
-  section.header.sh_size = section.nbOctets;
+void sectionShstrtab(Section *section, Shstrtab * shstrtab) {
+	printf("\n\tCreation Shstrtab : ");
+	section->nbOctets = shstrtab->offsetCourant;
+	section->contenu = malloc(section->nbOctets);
+	section->header.sh_size = section->nbOctets;
 
-  int j;
-  int curseur = 0;
-  for (int i = 0; i < shstrtab->nbNames; i++) {
-    j = 0;
-    while ((section.contenu[curseur] = shstrtab->names[i][j]) != '\0') {
+	int j;
+	int curseur = 0;
+	for (int i = 0; i < shstrtab->nbNames; i++) {
+		j = 0;
+		printf("\t\t");
+		while ((section->contenu[curseur] = shstrtab->names[i][j]) != '\0') {
 			j++;
-      curseur++;
+			printf("%c",section->contenu[curseur]);
+			curseur++;
 		}
-    curseur++;
-  }
-
-
-  return section;
+	printf("\n");
+	curseur++;
+	}
+	printf("\tOk\n\n");
 }
 
-Section sectionStrtab(Section section, Strtab * strtab) {
-  section.nbOctets = strtab->offsetCourant;
-  section.contenu = malloc(section.nbOctets);
-  section.header.sh_size = section.nbOctets;
+void sectionStrtab(Section *section, Strtab * strtab) {
+	printf("\n\tCreation Strtab : ");
+  section->nbOctets = strtab->offsetCourant;
+  section->contenu = malloc(section->nbOctets);
+  section->header.sh_size = section->nbOctets;
 
   int j;
   int curseur = 0;
   for (int i = 0; i < strtab->nbNames; i++) {
     j = 0;
-    while ((section.contenu[curseur] = strtab->names[i][j]) != '\0') {
-			j++;
-      curseur++;
-		}
+    printf("\t\t");
+    while ((section->contenu[curseur] = strtab->names[i][j]) != '\0') {
+		j++;
+		printf("%c",section->contenu[curseur]);
+		curseur++;
+	}
     curseur++;
   }
-
-
-  return section;
+  printf("\tOk\n\n");
 }
-/*
-Section sectionRelFusion(int offsetTableSymb, Section sectionSymbole, Section sectionRel) {
-
-}
-
-Section sectionRelaFusion() {
-
-}*/
 
 Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab) {
 	Section sectionfusionee;
 
 	shstrtab->names[shstrtab->nbNames] = getSectionName(sectionHeader1, fichierElf1);
+	sectionfusionee.header.sh_name = shstrtab->offsetCourant;
 
-	printf("\t\tFusion %s\n",shstrtab->names[shstrtab->nbNames]);
+	printf("\tFusion %s\n",shstrtab->names[shstrtab->nbNames]);
 
 	switch(sectionHeader1.sh_type) {
-		case SHT_SYMTAB :
-			printf("Table des symboles à faire");
+		/*case SHT_SYMTAB :
+			printf("\t\tTable des symboles à faire\n");
 			break;
 		case SHT_REL :
 			//Seulement le header, on ne peut pas faire le contenu sans la section des symboles
-			printf("Table des relalocation à faire");
+			printf("\t\tTable des relalocation à faire\n");
 			break;
 		case SHT_RELA :
 			//Seulement le header, on ne peut pas faire le contenu sans la section des symboles
-			printf("Table des rela-alocation à faire");
-			break;
+			printf("\t\tTable des rela-alocation à faire\n");
+			break;*/
 		default : //Pour l'instant, on fait partout pareil
 		 sectionfusionee.nbOctets = sectionHeader1.sh_size + sectionHeader2.sh_size;
 		 sectionfusionee.contenu = malloc(sectionfusionee.nbOctets);
@@ -204,37 +196,40 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 		int i;
 		fseek(fichierElf1->fichierElf, sectionHeader1.sh_offset, SEEK_SET);
 		for (i = 0; i < (int)sectionHeader1.sh_size; i++) {
-		sectionfusionee.contenu[i] = fgetc(fichierElf1->fichierElf);
+			sectionfusionee.contenu[i] = fgetc(fichierElf1->fichierElf);
 		}
 		int j;
 		fseek(fichierElf2->fichierElf, sectionHeader2.sh_offset, SEEK_SET);
-		for (j = 0; j < (int)sectionHeader1.sh_size; j++) {
-		sectionfusionee.contenu[i+j] = fgetc(fichierElf2->fichierElf);
+		for (j = 0; j < (int)sectionHeader2.sh_size; j++) {
+			sectionfusionee.contenu[i+j] = fgetc(fichierElf2->fichierElf);
 		}
 
 		//Creation Header
 		sectionfusionee.header.sh_type = sectionHeader1.sh_type;
-		sectionfusionee.header.sh_name = shstrtab->offsetCourant;
 		sectionfusionee.header.sh_size = sectionfusionee.nbOctets;
 		sectionfusionee.header.sh_flags = sectionHeader1.sh_flags | sectionHeader2.sh_flags;
 		sectionfusionee.header.sh_addr = 0;
 		sectionfusionee.header.sh_link = SHN_UNDEF;
 		sectionfusionee.header.sh_info = 0;
 		if (sectionHeader1.sh_addralign != sectionHeader2.sh_addralign) {
-		  printf("\t\t\tpas le meme sh_addralign : %d et %d\n",sectionHeader1.sh_addralign,sectionHeader2.sh_addralign);
+		  printf("\t\tpas le meme sh_addralign : %d et %d\n",sectionHeader1.sh_addralign,sectionHeader2.sh_addralign);
 		} else {
 		   sectionfusionee.header.sh_addralign = sectionHeader1.sh_addralign;
 		}
 		if (sectionHeader1.sh_entsize != sectionHeader2.sh_entsize) {
-		  printf("\t\t\tpas le meme sh_entsize : %d et %d\n",sectionHeader1.sh_entsize,sectionHeader2.sh_entsize);
+		  printf("\t\tpas le meme sh_entsize : %d et %d\n",sectionHeader1.sh_entsize,sectionHeader2.sh_entsize);
 		} else {
 		  sectionfusionee.header.sh_entsize = sectionHeader1.sh_entsize;
 		}
 		//sh_offset sera etabli à l'écriture du fichier
 		break;
 	}
+	printf("\t\tsh_name %d\n",shstrtab->offsetCourant);
 	shstrtab->offsetCourant += strlen(shstrtab->names[shstrtab->nbNames]) + 1;
 	shstrtab->nbNames++;
+
+	printf("\t\tNbOctets %d\n",sectionfusionee.nbOctets);
+
 
 	return sectionfusionee;
 }
@@ -331,29 +326,29 @@ int recupIndexByName(char * sht_name, int e_shstrndx, int nbSections, Elf32_Shdr
 	return -1;
 }
 
-void ecritureFichierFusionnee(FILE *elfRes, Section * sections_elfRes, Elf32_Ehdr header_elfRes) {
+void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes) {
 	char * buffer = malloc(1);	
 	int i = 0, j =0;
-
-	//On se positionne après le header
-	fseek(elfRes, 52, SEEK_SET);
-
-	printf("OK\n");
-	/////////////////////////////////////////////////////////////////////
 
 	printf("\n");
 	/////////////////////////////////////////////////////////////////////
 	//Ecriture des sections
 	////////////////////////
-	printf("Ecriture des Sections : \n");
+	printf("\tEcriture des %d Sections : \n", fichierElfRes->header_elf.e_shnum);
 
 	//Ecriture du contenu des sections
 	//On place le curseur sur le 53e octets, on écrira le header plus tard
+	fseek(fichierElfRes->fichierElf, 52, SEEK_SET);
+	for (i = 0; i < fichierElfRes->header_elf.e_shnum; i++) {
+		fichierElfRes->sectionsTable[i] = sections_elfRes[i].header;
+		fichierElfRes->sectionsTable[i].sh_offset = ftell(fichierElfRes->fichierElf);
+		fichierElfRes->sectionsTable[i].sh_size = sections_elfRes[i].nbOctets;
 
-	for (i = 0; i < header_elfRes.e_shnum; i++) {
-		sections_elfRes[i].header.sh_offset = ftell(elfRes);
-		for (j = 0; j < sections_elfRes[i].nbOctets; j++) {
-			fputc(sections_elfRes[i].contenu[j],elfRes);
+		printf("\t\tsh_offset 0x%x\n", fichierElfRes->sectionsTable[i].sh_offset );
+		printf("\t\tnbOctets %d\n",sections_elfRes[i].nbOctets);
+		//Ecriture du contenu de la table
+		for (j = 0; j < (int) sections_elfRes[i].nbOctets ; j++) {
+			fputc(sections_elfRes[i].contenu[j], fichierElfRes->fichierElf);
 		}
 	}
 
@@ -365,38 +360,40 @@ void ecritureFichierFusionnee(FILE *elfRes, Section * sections_elfRes, Elf32_Ehd
 	/////////////////////////////////////////////////////////////////////
 	//Ecriture de la table des sections
 	////////////////////////////////////
-	printf("Ecriture de la table des Sections :\n");
-	int shoff = ftell(elfRes); //On sauvegarde l'offset du début de la table des sections pour le header
-	for (i = 0; i < header_elfRes.e_shnum; i++) {
-		buffer = (char *) &sections_elfRes[i].header;
+	printf("\tEcriture de la table des Sections : ");
+	int shoff = ftell(fichierElfRes->fichierElf); //On sauvegarde l'offset du début de la table des sections pour le header
+	for (i = 0; i < fichierElfRes->header_elf.e_shnum; i++) {
+		buffer = (char *) &fichierElfRes->sectionsTable[i];
 		for (j = 0; j < 40; j++) {
-			fputc(*buffer,elfRes);
+			fputc(*buffer,fichierElfRes->fichierElf);
 		buffer++;
 		}
 	}
+	printf("\tOK\n");
 
-	//e_shoff
-	header_elfRes.e_shoff = shoff;
-	//On se positionne au debut du fichier
-	fseek(elfRes, 0, SEEK_SET);
 
 	printf("\n");
 	/////////////////////////////////////////////////////////////////////
 	//Ecriture du header pour le nouveau fichier
 	////////////////////////////////////////////
-	printf("Ecriture du header :\n");
-	//On se replace au début du fichier
-	buffer = (char *) &header_elfRes;
+	printf("\tEcriture du header : ");
+
+	//e_shoff
+	fichierElfRes->header_elf.e_shoff = shoff;
+	//On se positionne au debut du fichier
+	fseek(fichierElfRes->fichierElf, 0, SEEK_SET);
+
+	buffer = (char *) &fichierElfRes->header_elf;
 	for (i = 0; i < 52; i++) {
-		fputc(*buffer,elfRes);
+		fputc(*buffer,fichierElfRes->fichierElf);
 		buffer++;
 	}
 
-	printf("OK\n");
+	printf("\tOK\n");
 	/////////////////////////////////////////////////////////////////////
 }
 
-void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
+void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichierElfRes) {
 	printf("\n");
 	/////////////////////////////////////////////////////////////////////////
 	// Initialisation
@@ -404,7 +401,6 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
 	printf("Initialisation de la Fusion:\n");
 
 	//Structure fichier elf
-	Elf32_Ehdr header_elfRes;
 	Section * sections_elfRes;
 
 	//Autre
@@ -458,6 +454,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
 				//QU ES CE QU ON FAIT ??????????????
 			} else {
 				sections_elfRes[i] = sectionfusion(fichierElf1->sectionsTable[i], *tmp, fichierElf1, fichierElf2, shstrtab, strtab); //Fusion
+				fichierElfRes->sectionsTable[i] = sections_elfRes[i].header;
 
 				//On garde les index de shstrtab ainsi que de strtab
 				if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".shstrtab") == 0) { //On sauvegarde l'index de shstrtab pour le header et pour ecrire cette section après les boucles
@@ -478,8 +475,8 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
 				}
 			}
 		} else { //Sinon, on ajoute simplement
-		sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf1->sectionsTable[i], fichierElf1, shstrtab); //Ajout
-
+			sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf1->sectionsTable[i], fichierElf1, shstrtab); //Ajout
+			fichierElfRes->sectionsTable[nbSectionEcrites] = sections_elfRes[nbSectionEcrites].header;
 		}
 		nbSectionEcrites++;
 	}
@@ -487,17 +484,22 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
 	for (i = 0; i < fichierElf2->header_elf.e_shnum; i++) { //Pour toutes les sections du fichier2
 		RechercheSectionByName(fichierElf1, getSectionName(fichierElf2->sectionsTable[i],fichierElf2), tmp, &present); //est-ce-que cette section est dans le fichier1 ?
 		if (!present) {  //Si oui, on ajoute simplement
-		sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf2->sectionsTable[i], fichierElf2, shstrtab); //Ajout
+			sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf2->sectionsTable[i], fichierElf2, shstrtab); //Ajout
+			fichierElfRes->sectionsTable[i] = sections_elfRes[nbSectionEcrites].header;
 			nbSectionEcrites++;
 		}
 	}
 
-	//Pour fusionner les sections de realocation il faut attendre d'avoir les sections de symbole finale
-
+	///////////////////////////////////////////////////
+	//A FAIRE
+	/////////////
+	//Placer sh_link pour la table des symbole
+	//Pour fusionner les sections de realocation il faut attendre d'avoir les sections de symbole finaux
+	//////////////////////////////////////////////////////
 
 	//finalement on s'occupe de shstrtab et de strtab car il a fallu parcourir toutes les sections pour avoir leur contenu
-	sections_elfRes[indexShstrtab] = sectionShstrtab(sections_elfRes[indexShstrtab],shstrtab);
-	sections_elfRes[indexStrtab] = sectionStrtab(sections_elfRes[indexStrtab],strtab);
+	sectionShstrtab(&sections_elfRes[indexShstrtab],shstrtab);
+	sectionStrtab(&sections_elfRes[indexStrtab],strtab);
 
 
 
@@ -510,19 +512,29 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
 	//Création du header pour le nouveau fichier
 	////////////////////////////////////////////
 	printf("Création du header :\n");
-	header_elfRes = header(fichierElf1, fichierElf2);
+	fichierElfRes->header_elf = header(fichierElf1, fichierElf2);
 	//On complete avec :
 	//e_shnum
-	header_elfRes.e_shnum = nbSectionEcrites;
+	fichierElfRes->header_elf.e_shnum = nbSectionEcrites;
 	//e_shstrndx
-	header_elfRes.e_shstrndx = indexShstrtab;
+	fichierElfRes->header_elf.e_shstrndx = indexShstrtab;
+	printf("\te_shstrndx %d \n",indexShstrtab);
 	//On ne saurra e_shoff qu'à l'ecriture
 
 	printf("OK\n");
 	//////////////////////////////////////////////////////////////////////
 
 
+	printf("\n");
 	//Enfin on ecrit la fusion des deux fichiers
-	ecritureFichierFusionnee(elfRes, sections_elfRes, header_elfRes);
+	printf("Ecriture du fichier fusionnee : \n");
+	ecritureFichierFusionnee(fichierElfRes, sections_elfRes);
 
+
+	free(tmp);
+	free(strtab);
+	free(shstrtab);
+	free(sections_elfRes);
+	free(indexesREL);
+	free(indexesRELA);
 }
