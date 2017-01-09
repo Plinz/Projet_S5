@@ -28,13 +28,11 @@ git push
 
 ## Retour Audit
 
-* Faire fonction pour la lecture des headers au lieu de faire de la redondance.
 * A partir des noms de sections, construire une structure pour recuperer leur contenus 
 * Fonction pour faire les tables section dans tabSection
 * Faire une table par section de Relocation -- FLO
 * Si on a pas le meme type et pas le meme nom, raise une erreur
 * Resultats de type fichierelf et pas File dans la fusion
-* Faire les options au format POSIX -- ANTOINE
 
 ## Documentation Annexe 
 
