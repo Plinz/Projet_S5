@@ -32,8 +32,8 @@ typedef struct strtab {
 } Strtab;
 
 typedef struct reloctable {
-  Elf32_Rel tablerel 
-  int indice_section
+  Elf32_Rel tablerel;
+  int indice_section;
 } Reloctable ;
 
 
