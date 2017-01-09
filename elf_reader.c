@@ -19,7 +19,7 @@ if ((fich = fopen(argv[1],"rb")) == NULL ){
   return 0;
 }
 
-if(argc!=3){
+if(argc>123456){
 		  printf("\nVeuillez choisir une option parmi les suivantes: \n");
   		  printf("h : affichage du ELF header.\n");
 		  printf("t: affichage de la table des sections.\n");
@@ -51,6 +51,10 @@ int secNum;
 Elf32_Sym *tabSymb = malloc(head.e_shentsize);	
 	int nbSym;
 	
+//Declaration pour la fusion de fichier
+FichierElf fichierElf1;
+FichierElf fichierElf2;
+
 //Choix de l'affichage
 switch(o){
 	case 'h' :
@@ -106,7 +110,52 @@ switch(o){
 		nbSym = lectureTableSymbole(tabSymb, head, TableSec, fich);
 		affichage_relocation(tabSymb, &head, TableSec, nbSym, fich);
 		break;
-	
+	case 'f' :
+		fclose(fich);
+		//Init fichier1
+		printf("0\n");
+		fichierElf1.fichierElf = fopen(argv[1],"r");
+		if (fichierElf1.fichierElf == NULL) {
+			printf("Erreur lors de l'ouverture du fichier1\n");
+			exit(1);
+		}
+		fichierElf1.header_elf = lectureheader(fichierElf1.fichierElf);
+		fichierElf1.sectionsTable = malloc(sizeof(Elf32_Shdr)*fichierElf1.header_elf.e_shnum);
+		fseek(fichierElf1.fichierElf, fichierElf1.header_elf.e_shoff, SEEK_SET);
+		lectureTableSection(fichierElf1.fichierElf, fichierElf1.header_elf,fichierElf1.sectionsTable);
+
+		printf("Décalage de %d pour la  table\n",fichierElf1.sectionsTable[fichierElf1.header_elf.e_shstrndx].sh_offset);
+
+
+		printf("1\n");
+		//Init fichier1
+		fichierElf2.fichierElf = fopen(argv[3],"r");
+		if (fichierElf2.fichierElf == NULL) {
+			printf("Erreur lors de l'ouverture du fichier2\n");
+			exit(1);
+		}
+		fichierElf2.header_elf = lectureheader(fichierElf2.fichierElf);
+		fichierElf2.sectionsTable = malloc(sizeof(Elf32_Shdr)*fichierElf2.header_elf.e_shnum);
+		fseek(fichierElf2.fichierElf, fichierElf2.header_elf.e_shoff, SEEK_SET);
+		lectureTableSection(fichierElf2.fichierElf, fichierElf2.header_elf,fichierElf2.sectionsTable);
+
+		printf("2\n");
+		FILE *fichierDest = fopen(argv[4],"w+");
+		if (fichierDest == NULL) {
+			printf("Erreur lors de l'ouverture du fichierDest\n");
+			exit(1);
+		}
+
+		printf("3\n");
+		fusion(&fichierElf1,&fichierElf2,fichierDest);
+
+
+		fclose(fichierElf1.fichierElf);
+		fclose(fichierElf2.fichierElf);
+		fclose(fichierDest);
+		//Les free ???
+		break;
+
 	default :
 		  printf("\nRelancez le programme en veillant à choisir une option existante: \n");
   		  printf("h : affichage du ELF header.\n");
@@ -119,4 +168,3 @@ switch(o){
 };
 printf("\n");
 }
-

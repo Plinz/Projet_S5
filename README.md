@@ -23,7 +23,7 @@ git push
 * Andre Valentin
 * Defosse Benjamin
 * Duquennoy Antoine
-* Marco Florian
+* X
 * Novel Mathias
 
 ## Work In Progress
@@ -70,3 +70,38 @@ Autres parsers :
 < gl >	souvent c'est fait via des algorithmes de coloration de graphes, mais il y a pas mal de methodes
 
 https://en.wikipedia.org/wiki/Register_allocation
+
+Gestion des erreurs : http://paste.suut.in/RuhovKXy.h
+
+## NOTE SUR LA FUSION :
+
+* Etape 7 : Fusion/Renumérotation des symboles :
+  -> Tous les symboles locaux des deux concanténés
+  
+  -> Symboles globaux fusionnés de la forme : 
+    
+    Concatene les symboles globaux unique à chacun 
+    
+    Même Nom : Definis // Non Definis :
+     
+    Les Deux définis => Echec
+    
+    Un defini, Un non défini => On prend le défini
+    
+    Deux symboles non défini => On en mets qu'un des deux. 
+    
+* Etape 6 (ou plus loin ) :
+
+On voit dans le sujet qu'on doit juste s'occuper de la section progbits, matthias t'es allé trop loin. Possible que les opérations sur les headers qu'on veut faire, faut faire ça à la fin
+
+SH_TYPE ----- SH_LINK  -----       SH_INFO
+
+SHT_Dynamics   -----   OSEF -----??????
+
+SHT_HASH    -----   header du symtab ou le hash s'affiche ---- 0
+
+SHT_REL/RELA    -----  Index de l'header de tab_symb associé ------ index de l'header de là ou il y a la relocation
+
+SHT_SYMTAB  -----      Index de l'header du strtab associé ------- 1 de plus que le dernier symbole local
+
+AUTRE :      -----     SHN_UNDEF  ------ 0
