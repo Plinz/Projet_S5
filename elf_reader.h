@@ -7,8 +7,20 @@
 typedef struct fichierElf {
 	Elf32_Ehdr	header_elf;
 	Elf32_Shdr	*sectionsTable;
-	FILE 	 	*fichierElf;	
+	FILE 	 	*fichierElf;
 } FichierElf;
+
+typedef struct section {
+ char * contenu;
+ int nbOctets;
+ Elf32_Shdr header;
+} Section;
+
+typedef struct shstrtab {
+  char ** names;
+  int offsetCourant;
+  int nbNames;
+} Shstrtab;
 
 Elf32_Ehdr lectureheader(FILE* f);
 void affichageheader(Elf32_Ehdr header_elf);
@@ -45,7 +57,7 @@ int lectureTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, Elf32_Ehdr head
 
 Elf32_Word rechercheOffsetSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
 
-void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset);
+void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset,char *c);
 
 
 //Relocation Etape 5
@@ -53,14 +65,22 @@ void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset);
 int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) ;
 
 int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
-  
+
 int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf);
 
 //Fusion Simple Etape 6
-void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr * res);
+Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2);
 
-char * getSectionName(Elf32_Shdr section, FichierElf * fichierElf);
+Section sectionShstrtab(Section section, Shstrtab * shstrtab);
+
+Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab);
+
+Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Shstrtab * shstrtab);
+
+void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr * res, int * present);
+
+char * getSectionName(Elf32_Shdr section, FichierElf * fichier);
+
+int recupIndexByName(char * sht_name, int e_shstrndx, int nbSections, Elf32_Shdr * sections ,FILE * elf);
 
 void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes);
-
-
