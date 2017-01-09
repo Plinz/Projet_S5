@@ -1,0 +1,47 @@
+Compilation :
+
+Le projet est divisé en deux phase :
+
+	- Pour compiler la 1er phase (Reader) lancer la commande :
+		
+		make reader
+
+	- Pour compiler la 2nd phase (Fusion) lancer la commande :
+	
+		make fusion
+
+	- Pour compiler tout le projet lancer la commande :
+
+		make all
+
+Clean :
+
+Pour nettoyer le projet lancer la commande :
+		
+		make clean
+
+Executable :
+
+Après compilation vous obtenez un exécutables par phase :
+
+	- Pour lancer la 1er phase (Reader) lancer la commande :
+
+		./reader [options] [fichier]
+	Avec :
+		- options : 	* [-a|--all] 				Affiche les options -h -S -s -r
+				* [-h|--file-header] 			Affiche l'entête du fichier ELF
+				* [-S|--sections] 			Affiche la table des sections
+				* [-n <name>|--section-name <name>]	Affiche le contenu de la section de nom <name>
+				* [-N <nb>|--section-number <nb>]	Affiche le contenu de la section d'index <nb>
+				* [-s|--symbols]			Affiche la table des symboles
+				* [-r|--relocs]				Affiche la table de réimplantation
+
+		- fichier : fichier ELF à lire
+
+	- Pour lancer la 2nd phase (Fusion) lancer la commande :
+
+		./fusion [fichier1] [fichier2] [fichier3]
+	Avec :
+		- fichier1 : 1er fichier ELF à fusionner
+		- fichier2 : 2nd fichier ELF à fusionner
+		- fichier3 : fichier résultat de la fusion

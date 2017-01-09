@@ -1,0 +1,16 @@
+Liste des fonctionnalités réalisés : 
+	-Etape 1 : Fait
+	-Etape 2 : Fait
+	-Etape 3 : Fait
+	-Etape 4 : Fait
+	-Etape 5 : Fait
+	
+Liste des fonctionnalité non réalisés :
+
+	-Etape 6
+	-Etape 7
+	-Etape 8
+	-Etape 9
+
+Pour un suivi en temps réel de l'implémentation des fonctionnalités vous pouvez voir le dashboard en suivant le lien suivant :
+https://github.com/Plinz/Projet_S5/projects/1
