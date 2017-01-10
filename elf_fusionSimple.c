@@ -165,7 +165,7 @@ Section sectionStrtab(Section section, Strtab * strtab) {
   return section;
 }
 
-Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab) {
+Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab) {
  Section sectionfusionee;
 
  shstrtab->names[shstrtab->nbNames] = getSectionName(sectionHeader1, fichierElf1);
@@ -375,7 +375,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FILE *elfRes) {
 	for (i = 0; i < fichierElf1->header_elf.e_shnum; i++) { //Pour toutes les sections du fichier1
 		RechercheSectionByName(fichierElf2, getSectionName(fichierElf1->sectionsTable[i],fichierElf1), tmp, &present); //est-ce-que cette section est dans le fichier2 ?
 		if (present) { //Si oui on les fusionne
-      		sections_elfRes[i] = sectionfusion(fichierElf1->sectionsTable[i], *tmp, fichierElf1, fichierElf2, shstrtab, strtab); //Fusion
+      		sections_elfRes[i] = sectionfusion(fichierElf1->sectionsTable[i], *tmp, fichierElf1, fichierElf2, shstrtab); //Fusion
 			if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".shstrtab") == 0) { //On sauvegarde l'index de shstrtab pour le header et pour ecrire cette section après les boucles
 			indexShstrtab = nbSectionEcrites;
 			}
