@@ -148,7 +148,7 @@ void sectionShstrtab(Section *section, Shstrtab * shstrtab) {
 }
 
 void sectionStrtab(Section *section, Strtab * strtab) {
-	printf("\nCreation Strtab : ");
+	printf("\nCreation Strtab : \n");
 	section->nbOctets = strtab->offsetCourant;
 	section->contenu = malloc(section->nbOctets);
 	section->header.sh_size = section->nbOctets;
@@ -156,14 +156,15 @@ void sectionStrtab(Section *section, Strtab * strtab) {
 	int j;
 	int curseur = 0;
 	for (int i = 0; i < strtab->nbNames; i++) {
-	j = 0;
-	printf("\t\t");
-	while ((section->contenu[curseur] = strtab->names[i][j]) != '\0') {
-		j++;
-		printf("%c",section->contenu[curseur]);
+		j = 0;
+		printf("\t\t");
+		while ((section->contenu[curseur] = strtab->names[i][j]) != '\0') {
+			j++;
+			printf("%c",section->contenu[curseur]);
+			curseur++;
+		}
+		printf("\n");
 		curseur++;
-	}
-	curseur++;
 	}
 	printf("Ok\n\n");
 }
@@ -204,22 +205,25 @@ void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr 
 	//sh_offset sera etabli à l'écriture du fichier
 }
 
-Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab) {
+Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, FichierElf * fichierElfRes, Shstrtab * shstrtab, Strtab * strtab) {
 	Section sectionfusionee;
-
-	//Traitement de du nom de la section
-	shstrtab->names[shstrtab->nbNames] = getSectionName(sectionHeader1, fichierElf1);
-	sectionfusionee.header.sh_name = shstrtab->offsetCourant;
-	sectionfusionee.header.sh_addr = 0;
-
+	
+	
+	//uniquement utile pour la fusion des symboles
+	int Size1 = getNbSymbols(fichierElf1);
+	int Size2 = getNbSymbols(fichierElf2);
+	int nbSymbolTotal;
+	
 
 	printf("\tFusion %s\n",shstrtab->names[shstrtab->nbNames]);
 
 	switch(sectionHeader1.sh_type) {
-		/*case SHT_SYMTAB :
-			printf("\t\tTable des symboles à faire\n");
+		case SHT_SYMTAB :
+			printf("\t\tTable des symboles à faire, %d symboles à parcourir (%d+%d)\n",Size1+Size2,Size1,Size2);
+			nbSymbolTotal = fusionTableSymbole(*fichierElf1, *fichierElf2, Size1, Size2, fichierElfRes->tabSymbole, strtab);
+			sectionfusionee = creerSectionTableSymbole(fichierElfRes->tabSymbole, nbSymbolTotal, *fichierElf1, *fichierElf2);
 			break;
-		case SHT_REL :
+		/*case SHT_REL :
 			//Seulement le header, on ne peut pas faire le contenu sans la section des symboles
 			printf("\t\tTable des relalocation à faire\n");
 			break;
@@ -231,6 +235,12 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 			sectionFusionSimple(&sectionfusionee, sectionHeader1, sectionHeader2, fichierElf1, fichierElf2, shstrtab);
 		break;
 	}
+	//Traitement de du nom de la section
+	shstrtab->names[shstrtab->nbNames] = getSectionName(sectionHeader1, fichierElf1);
+	sectionfusionee.header.sh_name = shstrtab->offsetCourant;
+	
+	sectionfusionee.header.sh_addr = 0;
+	
 	printf("\t\tsh_name %d\n",shstrtab->offsetCourant);
 	shstrtab->offsetCourant += strlen(shstrtab->names[shstrtab->nbNames]) + 1;
 	shstrtab->nbNames++;
@@ -271,13 +281,12 @@ void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr 
 	int i = 0;
 	char * currentName = malloc(50);
 	char courant;
-	int trouve = 0;
 	Elf32_Shdr currentSection;
-
+	*present = 0;
 	int offsetNameTable = fichierElf->sectionsTable[fichierElf->header_elf.e_shstrndx].sh_offset; //On prend l'offset de la section contenant les noms de sections
 
 	//On parcour chaque section jusqu'à trouver la bonne ou, toutes les parcourirs
-	while (!trouve && i < fichierElf->header_elf.e_shnum) {
+	while (!*present && i < fichierElf->header_elf.e_shnum) {
 		//On se place dans le fichier afin de retouver le nom de la section courante
 		currentSection = fichierElf->sectionsTable[i];
 		fseek(fichierElf->fichierElf, offsetNameTable + currentSection.sh_name, SEEK_SET); //offset nous ammène au début du stockage des noms, et sh_name contient l'index du nom de la section courante
@@ -292,18 +301,10 @@ void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr 
 
 		//Si le nom corespond à la recherche on arrête
 		if (strcmp(secName, currentName) == 0) {
-			trouve = 1;
+			*present = 1;
+			*res = currentSection;
 		}
-
 		i++;
-	}
-
-	//Une fois la bonne section trouvee on affiche son contenue
-	if (trouve) {
-    *present = 1;
-		*res = currentSection;
-	} else {
-		*present = 0;
 	}
 }
 
@@ -335,9 +336,8 @@ void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfR
 		fichierElfRes->sectionsTable[i] = sections_elfRes[i].header;
 		fichierElfRes->sectionsTable[i].sh_offset = ftell(fichierElfRes->fichierElf);
 		fichierElfRes->sectionsTable[i].sh_size = sections_elfRes[i].nbOctets;
-
-		printf("\t\tsh_offset 0x%x\n", fichierElfRes->sectionsTable[i].sh_offset );
-		printf("\t\tnbOctets %d\n",sections_elfRes[i].nbOctets);
+		printf("\t\t\tsh_offset 0x%x\n", fichierElfRes->sectionsTable[i].sh_offset );
+		printf("\t\t\tnbOctets %d\n",sections_elfRes[i].nbOctets);
 		//Ecriture du contenu de la table
 		for (j = 0; j < (int) sections_elfRes[i].nbOctets ; j++) {
 			fputc(sections_elfRes[i].contenu[j], fichierElfRes->fichierElf);
@@ -392,9 +392,10 @@ int getNbSymbols(FichierElf *f) {
 	int nbSymb =  sectionHeaderSymtab.sh_size / sectionHeaderSymtab.sh_entsize;
 	//printf("NbSymb : %d\n", nbSymb);
 	if (present) {
-		return -1;
-	} else {
 		return nbSymb;
+
+	} else {
+		return -1;
 	}
 
 }
@@ -436,8 +437,8 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 
 	//Structure qui va contenir le nom de tous les symboles
 	Strtab *strtab = malloc(sizeof(Strtab));
-	strtab->names = malloc((nbSectionMax)*sizeof(char*)); //A CHANGER PAR NBSYMBOLEMAX
-	for (i = 0; i < (nbSectionMax); i++) {
+	strtab->names = malloc((getNbSymbols(fichierElf1) + getNbSymbols(fichierElf2))*sizeof(char*)); //A CHANGER PAR NBSYMBOLEMAX
+	for (i = 0; i < (getNbSymbols(fichierElf1) + getNbSymbols(fichierElf2)); i++) {
 	strtab->names[i] = malloc(50);
 	}
 	strtab->offsetCourant = 0;
@@ -471,7 +472,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 			//Pour continuer
 			}else {
 				//On fusionne et on sauvegarde le nouveau header
-				sections_elfRes[i] = sectionfusion(fichierElf1->sectionsTable[i], *tmp, fichierElf1, fichierElf2, shstrtab, strtab); //Fonction chargee de la fusion
+				sections_elfRes[i] = sectionfusion(fichierElf1->sectionsTable[i], *tmp, fichierElf1, fichierElf2, fichierElfRes, shstrtab, strtab); //Fonction chargee de la fusion
 				fichierElfRes->sectionsTable[i] = sections_elfRes[i].header;
 
 				//On garde les index de shstrtab ainsi que de strtab car leur écriture doit etre realise apres avoir traiter toutes les sections

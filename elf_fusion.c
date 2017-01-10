@@ -19,16 +19,15 @@ int main (int argc, char *argv[])
 			printf("Erreur lors de l'ouverture du fichier1\n");
 			exit(1);
 		}
+		//header
 		fichierElf1.header_elf = lectureheader(fichierElf1.fichierElf);
+		//Section headers
 		fichierElf1.sectionsTable = malloc(sizeof(Elf32_Shdr)*fichierElf1.header_elf.e_shnum);
 		fseek(fichierElf1.fichierElf, fichierElf1.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf1.fichierElf, fichierElf1.header_elf,fichierElf1.sectionsTable);
-		/*
 		//symboles
-		Elf32_Sym tableSymbole1;
-		int nbSymbole = lectureTableSymbole(tableSymbole1, fichierElf1.header, fichierElf1.sectionsTable, fichierElf1.fichierElf);
-		fichierElf1.tabSymbole = tableSymbole1;
-		*/
+		fichierElf1.tabSymbole = malloc(fichierElf1.header_elf.e_shentsize);;
+		lectureTableSymbole(fichierElf1.tabSymbole, fichierElf1.header_elf, fichierElf1.sectionsTable, fichierElf1.fichierElf);
 
 	//Init fichier2
 		fichierElf2.fichierElf = fopen(argv[2],"r");
@@ -36,17 +35,15 @@ int main (int argc, char *argv[])
 			printf("Erreur lors de l'ouverture du fichier2\n");
 			exit(1);
 		}
+		//header
 		fichierElf2.header_elf = lectureheader(fichierElf2.fichierElf);
+		//Section headers
 		fichierElf2.sectionsTable = malloc(sizeof(Elf32_Shdr)*fichierElf2.header_elf.e_shnum);
 		fseek(fichierElf2.fichierElf, fichierElf2.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf2.fichierElf, fichierElf2.header_elf,fichierElf2.sectionsTable);
-		
-		/*
 		//symboles
-		Elf32_Sym tableSymbole2;
-		int nbSymbole2 = lectureTableSymbole(tableSymbole2, fichierElf2.header, fichierElf2.sectionsTable,fichierElf2.fichierElf);
-		fichierElf2.tabSymbole = tableSymbole2;
-		*/
+		fichierElf2.tabSymbole = malloc(fichierElf2.header_elf.e_shentsize);;
+		lectureTableSymbole(fichierElf2.tabSymbole, fichierElf2.header_elf, fichierElf2.sectionsTable, fichierElf2.fichierElf);
 		
 		//Init fichierRes
 		fichierElfRes.fichierElf = fopen(argv[3],"w+");
@@ -54,7 +51,10 @@ int main (int argc, char *argv[])
 			printf("Erreur lors de l'ouverture du fichierDest\n");
 			exit(1);
 		}
+		//Section headers
 		fichierElfRes.sectionsTable = malloc((fichierElf1.header_elf.e_shnum + fichierElf2.header_elf.e_shnum)*sizeof(Elf32_Shdr));
+		//symboles
+		fichierElfRes.tabSymbole = malloc(fichierElf1.header_elf.e_shentsize + fichierElf2.header_elf.e_shentsize);
 
 
 		fusion(&fichierElf1,&fichierElf2,&fichierElfRes);
