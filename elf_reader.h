@@ -49,6 +49,8 @@ void affichageMagicClasseEndianABIType(Elf32_Ehdr header_elf);
 
 void affichageMachine(Elf32_Ehdr header_elf);
 
+void affichageOthers(Elf32_Ehdr header_elf);
+
 uint32_t Swap32(uint32_t valeur, char endianess);
 
 uint16_t Swap16(uint16_t valeur, char endianess);
@@ -124,8 +126,6 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 Section creerSectionTableSymbole(Elf32_Sym *tableSymbole, int sizeTableSymbole, FichierElf structFichier1, FichierElf structFichier2);
 
 int getSizeOfSectionTable(Elf32_Sym *tabSymbole, int sizeTableSymbole);
-
-int getShEntSize(FichierElf structFichier1, FichierElf structFichier2);
 
 int getShInfo(Elf32_Sym* tableSymbole, int sizeTableSymbole);
 

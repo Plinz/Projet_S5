@@ -170,7 +170,7 @@ void affichageMachine(Elf32_Ehdr header_elf){
 	printf("\n");
 }
 
-void affichageOther(Elf32_Ehdr header_elf){
+void affichageOthers(Elf32_Ehdr header_elf){
 	printf("Version: ");
 	int version = header_elf.e_version;
 	if (version == 0)
