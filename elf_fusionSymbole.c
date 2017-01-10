@@ -1,56 +1,13 @@
 #include "elf_reader.h"
 
-
-
-/*Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName){
-	int i = 0;
-	char * currentName = malloc(40);
-	char courant;
-	int trouve = 0;
-	Elf32_Shdr currentSection;
-	
-	int offsetNameTable = sections_table[header_elf.e_shstrndx].sh_offset; //On prend l'offset de la section contenant les noms de sections
-
-	//On parcour chaque section jusqu'à trouver la bonne ou, toute les parcourirs
-	while (!trouve && i < header_elf.e_shnum) {
-		//On se place dans le fichier afin de retouver le nom de la section courante
-		currentSection = sections_table[i];
-		fseek(elf, offsetNameTable + currentSection.sh_name, SEEK_SET); //offset nous ammène au début du stockage des noms, et sh_name contient l'index du nom de la section courante
-
-		//On recupere le nom de la section courrante
-		int j =0;
-		while((courant = fgetc(elf))!= '\0'){
-			currentName[j] = courant;	
-			j++;		
-		}
-		currentName[j] = '\0';
-
-		//Si le nom corespond à la recherche on arrête
-		if (strcmp(secName, currentName) == 0) {
-			trouve = 1;
-			return sections_table[i];
-		}
-
-		i++;
-		return NULL;
-	}
-
-	//Une fois la bonne section trouvee on affiche son contenue
-	if (trouve) {
-		afficheContenue(currentSection, elf);
-	} else {
-		printf("Aucune section ne correspond à ce nom\n");
-	}
-	
-	free(currentName);
-}*/
-
-
 void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb) {
-	printf("AjoutStrtab %s à %d\n",nom,strtab->nbNames);
-	strtab->names[strtab->nbNames] = nom;
+	int i = 0;
+	while ((strtab->names[strtab->nbNames][i] = nom[i]) != '\0') {
+		i++;
+	}
 	symb->st_name = strtab->offsetCourant;
 	strtab->offsetCourant += strlen(strtab->names[strtab->nbNames]) + 1;
+	printf("\t\tAjoutStrtab position %d de %s\n",strtab->nbNames,strtab->names[strtab->nbNames]);
 	strtab->nbNames++;
 }
 
@@ -86,7 +43,6 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 							exit(0);
 						}else{
 							if(structFichier1.tabSymbole[i].st_shndx != SHN_UNDEF && structFichier2.tabSymbole[j].st_shndx == SHN_UNDEF){ //Le symbole est défini dans le premier fichier pas dans le deuxième
-
 								AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 								newTabSymbole[nbEntree] = structFichier1.tabSymbole[i];
 								nbEntree++;
@@ -112,7 +68,6 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 			}			
 		}
 		flag = 0;
-
 	}
 	
 	for(i=0; i<sizeTab2; i++){// boucle pour vérifier si un symbole n'apparait que dans la deuxième table
@@ -151,10 +106,14 @@ Section creerSectionTableSymbole(Elf32_Sym *tableSymbole, int sizeTableSymbole, 
 	Section newSection;
 	int i;
 	int temp_info = 0;
+
+	//Section header
 	newSection.header.sh_type = SHT_SYMTAB;
 	newSection.header.sh_info = getShInfo(tableSymbole, sizeTableSymbole);
-	newSection.header.sh_entsize = sizeof(Elf32_Sym);			
-	newSection.nbOctets = getSizeOfSectionTable(tableSymbole, sizeTableSymbole);
+	newSection.header.sh_entsize = sizeof(Elf32_Sym);
+
+	//Contenu section
+	newSection.nbOctets = sizeTableSymbole * newSection.header.sh_entsize;
 	EcrireContenu(tableSymbole, sizeTableSymbole, &newSection);
 	
 	printf("\t\tcreerSectionTableSymbole sh_entsize %d\n",newSection.header.sh_entsize);

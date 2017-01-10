@@ -397,7 +397,6 @@ int getNbSymbols(FichierElf *f) {
 	} else {
 		return -1;
 	}
-
 }
 
 void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichierElfRes) {
@@ -437,7 +436,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 
 	//Structure qui va contenir le nom de tous les symboles
 	Strtab *strtab = malloc(sizeof(Strtab));
-	strtab->names = malloc((getNbSymbols(fichierElf1) + getNbSymbols(fichierElf2))*sizeof(char*)); //A CHANGER PAR NBSYMBOLEMAX
+	strtab->names = malloc((getNbSymbols(fichierElf1) + getNbSymbols(fichierElf2))*sizeof(char*));
 	for (i = 0; i < (getNbSymbols(fichierElf1) + getNbSymbols(fichierElf2)); i++) {
 	strtab->names[i] = malloc(50);
 	}
@@ -478,11 +477,9 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 				//On garde les index de shstrtab ainsi que de strtab car leur écriture doit etre realise apres avoir traiter toutes les sections
 				if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".shstrtab") == 0) { 
 				indexShstrtab = nbSectionEcrites;
-				}
-				if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".strtab") == 0) {
+				} else if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".strtab") == 0) {
 				indexStrtab = nbSectionEcrites;
-				}
-
+				} else 
 				//On garde l'index de la table des symbole pour les realocation ainsi que pour lui attribuer correctement son sh_link
 				if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".symtab") == 0) { //On sauvegarde l'index de la table des symbole pour la fusion des tables de realocation
 				indexSymtab = nbSectionEcrites;

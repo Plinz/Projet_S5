@@ -4,7 +4,7 @@ int main (int argc, char *argv[])
 {
 	/* Verification du nombre d'arguments */
 	if (argc != 4){
-	  printf("Erreur : ./prog [fichier1 .o] [fichier2 .o] [fichier destination]");
+	  printf("Erreur : ./prog [fichier1 .o] [fichier2 .o] [fichier destination]\n");
 	  return 0;
 	}
 
@@ -79,4 +79,5 @@ int main (int argc, char *argv[])
 		//free(fichierElfRes.tabSymboleDynamique); //Pas encore alloué
 		fclose(fichierElfRes.fichierElf);
 		printf("OK\n");
+		return 0;
 }

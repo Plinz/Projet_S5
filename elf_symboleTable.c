@@ -127,15 +127,10 @@ Elf32_Word rechercheOffsetSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_ta
 
 void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset, char *c){
 	fseek(f, offset+index, SEEK_SET);
-	char courant;
 	int i = 0 ;
-	courant = fgetc(f);
-	while(courant != '\0'){
-		c[i] = courant;
-		courant = fgetc(f);
+	while((c[i] = fgetc(f))!= '\0'){
 		i++;
 	}
-	c[i] = '\0';
 }
 
 
