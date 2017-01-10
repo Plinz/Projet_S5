@@ -119,7 +119,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 
 Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
 
-int fusionTableSymbole(fichierElf structFichier1, fichierElf structFichier2, int sizeTab1, int sizeTab2, Elf32_Sym *newTabSymbole);
+int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Elf32_Sym *newTabSymbole);
 
 Section creerSectionTableSymbole(Elf32_Sym *tableSymbole, int sizeTableSymbole, FichierElf structFichier1, FichierElf structFichier2);
 
