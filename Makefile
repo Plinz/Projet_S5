@@ -27,7 +27,5 @@ reader : elf_reader.c elf_header.c elf_rechercheSection.c elf_relocate.c elf_sec
 fusion : elf_fusion.c elf_fusionSimple.c elf_header.c elf_sectionTable.c endian.c
 	$(CC) $(LDFLAGS) -o $@ $^
 
-clean :
-	@rm *.o
-cleaner : clean
+clean : 
 	@rm fusion reader

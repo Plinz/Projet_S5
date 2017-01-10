@@ -56,6 +56,10 @@ git push
 
 * Un Editeur de lien pour Android (donc ARM) en C++ : https://android.googlesource.com/platform/bionic/+/master/linker/linker.cpp
 
+* RODATA : http://webcache.googleusercontent.com/search?q=cache:http://blog.isis.poly.edu/exploitation%2520mitigation%2520techniques/exploitation%2520techniques/2011/06/02/relro-relocation-read-only/&gws_rd=cr&ei=lKFzWLbUHcynaIervegM 
+https://www.root-me.org/fr/Documentation/Applicatif/Memoire-protection-RELRO
+http://tk-blog.blogspot.fr/2009/02/relro-not-so-well-known-memory.html
+
 Autres parsers :
 * ELF Parser 2 : https://github.com/sifteo/node-elf
 * ELF Parser 3 : https://github.com/jacob-baines/elfparser
