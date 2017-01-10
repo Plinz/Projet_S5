@@ -92,6 +92,8 @@ void sectionShstrtab(Section *section, Shstrtab * shstrtab);
 
 void sectionStrtab(Section *section, Strtab * strtab);
 
+void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab);
+
 Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab);
 
 Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Shstrtab * shstrtab);
