@@ -451,14 +451,6 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	for (i = 0; i < fichierElf1->header_elf.e_shnum; i++) { //Pour toutes les sections du fichier1
 		RechercheSectionByName(fichierElf2, getSectionName(fichierElf1->sectionsTable[i],fichierElf1), tmp, &present); //est-ce-que cette section est dans le fichier2 ?
 		if (present) { //Si oui on les fusionne
-<<<<<<< HEAD
-      		sections_elfRes[i] = sectionfusion(fichierElf1->sectionsTable[i], *tmp, fichierElf1, fichierElf2, shstrtab); //Fusion
-			if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".shstrtab") == 0) { //On sauvegarde l'index de shstrtab pour le header et pour ecrire cette section après les boucles
-			indexShstrtab = nbSectionEcrites;
-			}
-			if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".strtab") == 0) { //On sauvegarde l'index de shstrtab pour le header et pour ecrire cette section après les boucles
-			indexStrtab = nbSectionEcrites;
-=======
 			//On vérifie que les sections de même nom sont du même type
 			if (fichierElf1->sectionsTable[i].sh_type != fichierElf2->sectionsTable[i].sh_type) {
 				printf("\t\t\tpas le meme type : %d et %d\n",fichierElf1->sectionsTable[i].sh_type,fichierElf2->sectionsTable[i].sh_type);
@@ -484,7 +476,6 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 					indexesREL[nbSectionTypeRela] = nbSectionEcrites;
 					nbSectionTypeRela++;
 				}
->>>>>>> a497a6aa783742314393b46b34b9f01b85b13892
 			}
 		} else { //Sinon, on ajoute simplement
 			sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf1->sectionsTable[i], fichierElf1, shstrtab); //Ajout
