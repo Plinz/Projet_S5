@@ -42,243 +42,153 @@ Elf32_Ehdr lectureheader(FILE* f){
 }
 
 void affichageheader(Elf32_Ehdr header_elf){
-	
-	int i;
 	printf("ELF Header:\n");
-	printf("Magic: ");
-	for(i=0;i<16;i++){
-		if(header_elf.e_ident[i]/16 == 0){
-			printf(" 0%x", header_elf.e_ident[i]);
-		}else{
-			printf(" %x",header_elf.e_ident[i]);
-		}
-	}
-	printf(" \n");
-	// Utilisation du Magic pour determiner classe, donnees et OS-ABI
-	printf("Classe : ");
-	switch(header_elf.e_ident[4]){
-		case 0 :
-			printf ("Aucun");
-			break;
-		case 1 :
-			printf ("ELF32");
-			break;
-		case 2 : 
-			printf("ELF64");
-			break;
-		default :
-			printf("Erreur");
-			break;
-	}
-	printf("\n");
+	affichageMagicClasseEndianABIType(header_elf);
+	affichageMachine(header_elf);
+	affichageOthers(header_elf);
+}
 
+void affichageNumMagic(Elf32_Ehdr header_elf){
+	char classe[3][6] = {"Aucun", "ELF32", "ELF64"};
+	char endian[3][6] = {"Aucun", "LSB", "MSB"};
+	char abi[20][15] = {"UNIX System V", "HP-UX", "NetBSD", "Linux", "Sun Solaris", "IBM AIX", "SGI IRIX", "FreeBSD", "Compaq TRU64", "Novell Modesto", "OpenBSD", "OpenVMS", "NonStop Kernel", "AROS", "Fenix OS", "CloudABI", "ARM Eabi", "Sortix", "ARM", "Standalone"};
+	int c = header_elf.e_ident[4];
+	int e = header_elf.e_ident[5];
+	int a = header_elf.e_ident[7];
+	printf("Magic: ");
+	for(int i=0; i<16; i++){
+		if(header_elf.e_ident[i]/16 == 0)
+			printf(" 0%x\n", header_elf.e_ident[i]);
+		else
+			printf(" %x\n",header_elf.e_ident[i]);
+	}
+	printf("Classe: ");
+	if (c < 3 && c > -1)
+		printf("%s\n", classe[c]);
+	else	
+		printf("Erreur\n");
+
+	printf("Endianness: ");
+	if (e < 3 && c > -1)
+		printf("%s\n", endian[e]);
+	else
+		printf("Erreur\n");
+
+	printf("ABI: ");
+	if (a < 20 && c > -1)
+		printf("%s\n", abi[a]);
+	else
+		printf("Erreur\n");
+
+}
+
+void affichageMagicClasseEndianABIType(Elf32_Ehdr header_elf){
+	char classe[3][6] = {"Aucun", "ELF32", "ELF64"};
+	char endian[3][6] = {"Aucun", "LSB", "MSB"};
+	char abi[20][15] = {"UNIX System V", "HP-UX", "NetBSD", "Linux", "Sun Solaris", "IBM AIX", "SGI IRIX", "FreeBSD", "Compaq TRU64", "Novell Modesto", "OpenBSD", "OpenVMS", "NonStop Kernel", "AROS", "Fenix OS", "CloudABI", "ARM Eabi", "Sortix", "ARM", "Standalone"};
+	char type[5][23] = {"Type Inconnu", "Fichier Repositionable", "Fichier Executable", "Objet partagé", "Fichier Core"};
+	int c = header_elf.e_ident[4];
+	int e = header_elf.e_ident[5];
+	int a = header_elf.e_ident[7];
+	int t = header_elf.e_type;
+	printf("Magic: ");
+	for(int i=0; i<16; i++){
+		if(header_elf.e_ident[i]/16 == 0)
+			printf(" 0%x", header_elf.e_ident[i]);
+		else
+			printf(" %x",header_elf.e_ident[i]);
+	}
+	printf("\nClasse : ");
+	if (c < 3 && c > -1)
+		printf("%s\n", classe[c]);
+	else	
+		printf("Erreur\n");
 
 	printf("Endianness : ");
-	switch(header_elf.e_ident[5]){
-		case 0 :
-			printf ("Aucun");
-			break;
-		case 1 :
-			printf ("LSB");
-			break;
-		case 2 : 
-			printf("MSB");
-			break;
-		default :
-			printf("Erreur");
-			break;
-	}
-	printf("\n");
+	if (e < 3 && e > -1)
+		printf("%s\n", endian[e]);
+	else
+		printf("Erreur\n");
 
 	printf("ABI : ");
-	switch(header_elf.e_ident[7]){
-		case 0 :
-			printf ("UNIX System V");
-			break;
-		case 1 :
-			printf ("HP-UX");
-			break;
-		case 2 : 
-			printf("NetBSD");
-			break;
-		case 3 : 
-			printf("Linux");
-			break;
-		case 6 : 
-			printf("Sun Solaris");
-			break;
-		case 7 : 
-			printf("IBM AIX");
-			break;
-		case 8 : 
-			printf("SGI IRIX");
-			break;
-		case 9 : 
-			printf("FreeBSD");
-			break;
-		case 10 : 
-			printf("Compaq TRU64");
-			break;
-		case 11 : 
-			printf("Novell Modesto");
-			break;
-		case 12 : 
-			printf("OpenBSD");
-			break;
-		case 13 : 
-			printf("OpenVMS");
-			break;
-		case 14 : 
-			printf("NonStop Kernel");
-			break;
-		case 15 : 
-			printf("AROS");
-			break;
-		case 16 : 
-			printf("Fenix OS");
-			break;
-		case 17 : 
-			printf("CloudABI");
-			break;
-		case 64 : 
-			printf("ARM Eabi");
-			break;
-		case 83 : 
-			printf("Sortix");
-			break;
-		case 97 : 
-			printf("ARM");
-			break;
-		case 255 : 
-			printf("Standalone");
-			break;
-		default :
-			printf("Erreur");
-			break;
-	}
-	printf("\n");
-	//différent cas de type de fichier pour affiché la traduction des code hexa
+	if (a < 20 && a > -1)
+		printf("%s\n", abi[a]);
+	else
+		printf("Erreur\n");
+	
 	printf("Type: ");
-	switch(header_elf.e_type){
-		case ET_NONE :
-			printf("Type inconnu");
-			break;
-		case ET_REL :
-			printf("Fichier repositionnable");
-			break;
-		case ET_EXEC :
-			printf("Fichier exécutable");
-			break;
-		case ET_DYN :
-			printf("Objet partagé");
-			break;
-		case 4 :
-			printf("Fichier core");
-			break;
-		default :
-			printf("Erreur");
-			break;
+	if (t < 5 && t > -1)
+		printf("%s\n", type[t]);
+	else
+		printf("Erreur\n");
+}
 
-	}
-	printf("\n");
-
-	//différent cas de type de machine où le code est écris pour affiché la traduction des code hexa
+void affichageMachine(Elf32_Ehdr header_elf){
 	printf("Machine: ");
 	switch(header_elf.e_machine){
-		case EM_NONE :
-			printf("Machine inconnue");
+		case EM_NONE : printf("Machine inconnue");
 			break;
-		case EM_M32 :
-			printf("AT&T WE 32100");
+		case EM_M32 : printf("AT&T WE 32100");
 			break;
-		case EM_SPARC :
-			printf("Sun Microsystems SPARC");
+		case EM_SPARC : printf("Sun Microsystems SPARC");
 			break;
-		case EM_386 :
-			printf("Intel 80386");
+		case EM_386 : printf("Intel 80386");
 			break;
-		case EM_68K :
-			printf("Motorola 68000");
+		case EM_68K : printf("Motorola 68000");
 			break;
-		case EM_88K :
-			printf("Motorola 88000");
+		case EM_88K : printf("Motorola 88000");
 			break;
-		case EM_860 :
-			printf("Intel 80860");
+		case EM_860 : printf("Intel 80860");
 			break;
-		case EM_MIPS :
-			printf("MIPS RS3000");
+		case EM_MIPS : printf("MIPS RS3000");
 			break;
-		case EM_PARISC :
-			printf("HP/PA");
+		case EM_PARISC : printf("HP/PA");
 			break;
-		case EM_SPARC32PLUS :
-			printf("SPARC avec jeu d'instruction étendu");
+		case EM_SPARC32PLUS : printf("SPARC avec jeu d'instruction étendu");
 			break;
-		case EM_PPC :
-			printf("PowerPC");
+		case EM_PPC : printf("PowerPC");
 			break;
-		case EM_PPC64 :
-			printf("PowerPC 64 bits");
+		case EM_PPC64 : printf("PowerPC 64 bits");
 			break;
-		case EM_S390 :
-			printf("BM S/390");
+		case EM_S390 : printf("BM S/390");
 			break;
-		case EM_ARM :
-			printf("Advanced RISC Machine (ARM)");
+		case EM_ARM : printf("Advanced RISC Machine (ARM)");
 			break;
-		case EM_SH :
-			printf("Renesas SuperH");
+		case EM_SH : printf("Renesas SuperH");
 			break;
-		case EM_SPARCV9 :
-			printf("Machine : SPARCC v9 64 bits");
+		case EM_SPARCV9 : printf("Machine : SPARCC v9 64 bits");
 			break;
-		case EM_IA_64 :
-			printf("Intel Itanium");
+		case EM_IA_64 : printf("Intel Itanium");
 			break;
-		case EM_X86_64 :
-			printf("AMD x86-64");
+		case EM_X86_64 : printf("AMD x86-64");
 			break;
-		case EM_VAX :
-			printf("DEC Vax");
+		case EM_VAX : printf("DEC Vax");
 			break;
-		default :
-			printf("Erreur");
+		default : printf("Erreur");
 			break;
 	}
 	printf("\n");
+}
 
-	//version du programe
+void affichageOther(Elf32_Ehdr header_elf){
 	printf("Version: ");
-	switch(header_elf.e_version){
-		case EV_NONE :
-			printf("Version invalide");
-			break;
-		case EV_CURRENT :
-			printf("Version actuelle");
-			break;
-	}
-	printf("\n");	
+	int version = header_elf.e_version;
+	if (version == 0)
+		printf("Version invalide\n");
+	else if (version == 1)
+		printf("Version actuelle\n");
+	else
+		printf("Erreur\n");
 
 	//affichage du reste des champs de l'en tête
 	printf("Adresse de point d'entrée : 0x%x\n",header_elf.e_entry);
-
 	printf("Debut de l'en-tête du programme : %d (octets)\n", header_elf.e_phoff);
-
 	printf("Debut de la table des sections : %d (octets)\n", header_elf.e_shoff);
-
 	printf("Flags : 0x%x\n",header_elf.e_flags);
-
 	printf("Taille de l'en-tête : %d (octets)\n", header_elf.e_ehsize);
-
 	printf("Taille de l'en-tête des sections : %d (octets)\n",header_elf.e_shentsize);
-
 	printf("Nombre d'en-tête de sections : %d\n",header_elf.e_shnum);
-
 	printf("Table d'indexes des chaînes d'entêtes de section : %d\n",header_elf.e_shstrndx);
-
 	printf("Taille de l'en-tête du programme (octets) : %d\n", header_elf.e_phentsize);
-
 	printf("Nombre d'en-tête du programme : %d\n", header_elf.e_phnum);
-
 }

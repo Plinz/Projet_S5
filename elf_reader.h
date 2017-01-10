@@ -40,7 +40,14 @@ typedef struct reloctable {
 
 
 Elf32_Ehdr lectureheader(FILE* f);
+
 void affichageheader(Elf32_Ehdr header_elf);
+
+void affichageNumMagic(Elf32_Ehdr header_elf);
+
+void affichageMagicClasseEndianABIType(Elf32_Ehdr header_elf);
+
+void affichageMachine(Elf32_Ehdr header_elf);
 
 uint32_t Swap32(uint32_t valeur, char endianess);
 
