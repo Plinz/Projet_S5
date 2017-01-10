@@ -1,11 +1,8 @@
-#include <elf.h>
-#include <stdio.h>
-#include <byteswap.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <getopt.h>
+Descriptif des différentes fonctions et structures réalisés au cours du projets :
 
+/*
+Structure globale d'un fichier ELF afin de simplifier les manipulation pendant la phase de fusion
+*/
 typedef struct fichierElf {
 	Elf32_Ehdr	header_elf;
 	Elf32_Shdr	*sectionsTable;
@@ -15,11 +12,15 @@ typedef struct fichierElf {
 	Elf32_Rel	*tabRel;
 } FichierElf;
 
+/*
+Structure spécifique pour une section
+*/
 typedef struct section {
  char * contenu;
  int nbOctets;
  Elf32_Shdr header;
 } Section;
+
 
 typedef struct shstrtab {
   char ** names;
@@ -42,8 +43,10 @@ typedef struct reloctable {
 Elf32_Ehdr lectureheader(FILE* f);
 void affichageheader(Elf32_Ehdr header_elf);
 
+/*
+Fonction permettant la prise en charge du bigEndian et littleEndian
+*/
 uint32_t Swap32(uint32_t valeur, char endianess);
-
 uint16_t Swap16(uint16_t valeur, char endianess);
 
 

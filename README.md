@@ -28,13 +28,11 @@ git push
 
 ## Retour Audit
 
-* Faire fonction pour la lecture des headers au lieu de faire de la redondance.
 * A partir des noms de sections, construire une structure pour recuperer leur contenus 
 * Fonction pour faire les tables section dans tabSection
 * Faire une table par section de Relocation -- FLO
 * Si on a pas le meme type et pas le meme nom, raise une erreur
 * Resultats de type fichierelf et pas File dans la fusion
-* Faire les options au format POSIX -- ANTOINE
 
 ## Documentation Annexe 
 
@@ -57,6 +55,10 @@ git push
 * Fichier contenant l'ensemble des types, structures et macros ELF : http://osxr.org:8080/glibc/source/elf/elf.h?v=glibc-2.18
 
 * Un Editeur de lien pour Android (donc ARM) en C++ : https://android.googlesource.com/platform/bionic/+/master/linker/linker.cpp
+
+* RODATA : http://webcache.googleusercontent.com/search?q=cache:http://blog.isis.poly.edu/exploitation%2520mitigation%2520techniques/exploitation%2520techniques/2011/06/02/relro-relocation-read-only/&gws_rd=cr&ei=lKFzWLbUHcynaIervegM 
+https://www.root-me.org/fr/Documentation/Applicatif/Memoire-protection-RELRO
+http://tk-blog.blogspot.fr/2009/02/relro-not-so-well-known-memory.html
 
 Autres parsers :
 * ELF Parser 2 : https://github.com/sifteo/node-elf

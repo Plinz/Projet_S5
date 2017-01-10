@@ -1,5 +1,4 @@
 Jour 1 : Mardi 03 Janvier 2017
-
 Decouverte du sujet.
 Lecture de la documentation à propos du format ELF.
 Creation du main (ouverture du fichier, includes...)
@@ -27,3 +26,5 @@ Audit de mi-projet
 Début de l'étape Fusion, renumérotation et correction des symboles
 Début de l'étape Fusion et correction des tables de réimplantations
 Debuggage de la fusion des headers et divers ajouts
+Création de main différent pour le reader et la fusion
+Prise en charge des options par getopt_long

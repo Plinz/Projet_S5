@@ -1,0 +1,8 @@
+Listes des bogues répertoriés :
+
+
+Pour ajouter un bogue ou suivre l'évolution d'un bug reportés par un membre extérieur au groupe vous pouvez voir la liste des issues en suivant le lien suivant :
+https://github.com/Plinz/Projet_S5/issues
+
+Si vous souhaitez ajouter un correctif de bogue ou suivre l'évolution d'un correctif vous pouvez voir la liste des requêtes en suivant le lien suivant :
+https://github.com/Plinz/Projet_S5/pulls
