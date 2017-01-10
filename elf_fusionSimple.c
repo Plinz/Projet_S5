@@ -215,12 +215,15 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 	int nbSymbolTotal;
 	
 
-	printf("\tFusion %s\n",shstrtab->names[shstrtab->nbNames]);
+	//printf("\tFusion %s\n",shstrtab->names[shstrtab->nbNames]);
 
 	switch(sectionHeader1.sh_type) {
 		case SHT_SYMTAB :
-			printf("\t\tTable des symboles à faire, %d symboles à parcourir (%d+%d)\n",Size1+Size2,Size1,Size2);
+			//printf("\t\tTable des symboles à faire, %d symboles à parcourir (%d+%d)\n",Size1+Size2,Size1,Size2);
 			nbSymbolTotal = fusionTableSymbole(*fichierElf1, *fichierElf2, Size1, Size2, fichierElfRes->tabSymbole, strtab);
+			/*printf("affichage de la nouvelle table des symboles\n");
+			affichageTableSymbole(fichierElfRes->tabSymbole, nbSymbolTotal, fichierElfRes->fichierElf, fichierElfRes->sectionsTable, fichierElfRes->header_elf);
+			printf("fin de l'affichage de la nouvelle table des symboles \n");*/
 			sectionfusionee = creerSectionTableSymbole(fichierElfRes->tabSymbole, nbSymbolTotal, *fichierElf1, *fichierElf2);
 			break;
 		/*case SHT_REL :
@@ -352,7 +355,7 @@ void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfR
 	/////////////////////////////////////////////////////////////////////
 	//Ecriture de la table des sections
 	////////////////////////////////////
-	printf("\tEcriture de la table des Sections : \n");
+	//printf("\tEcriture de la table des Sections : \n");
 	int shoff = ftell(fichierElfRes->fichierElf); //On sauvegarde l'offset du début de la table des sections pour le header
 	for (i = 0; i < fichierElfRes->header_elf.e_shnum; i++) {
 		buffer = (char *) &fichierElfRes->sectionsTable[i];
@@ -405,7 +408,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	/////////////////////////////////////////////////////////////////////////
 	// Initialisation
 	/////////
-	printf("Initialisation de la Fusion:\n");
+	//printf("Initialisation de la Fusion:\n");
 
 	//Structure fichier elf
 	Section * sections_elfRes;
@@ -552,7 +555,10 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	//Enfin on ecrit la fusion des deux fichiers
 	printf("Ecriture du fichier fusionnee : \n");
 	ecritureFichierFusionnee(fichierElfRes, sections_elfRes);
-
+	/*Elf32_Sym* tabSymboleFusionne;
+	tabSymboleFusionne = malloc(sizeof(Elf32_Sym));
+	int nbSymboleFichierFusionne = lectureTableSymbole(tabSymboleFusionne, fichierElfRes->header_elf, fichierElfRes->sectionsTable, fichierElfRes->fichierElf);
+	affichageTableSymbole(tabSymboleFusionne, nbSymboleFichierFusionne, fichierElfRes->fichierElf, fichierElfRes->sectionsTable, fichierElfRes->header_elf);*/
 
 	free(tmp);
 	free(strtab);

@@ -7,7 +7,7 @@ void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb) {
 	}
 	symb->st_name = strtab->offsetCourant;
 	strtab->offsetCourant += strlen(strtab->names[strtab->nbNames]) + 1;
-	printf("\t\tAjoutStrtab position %d de %s\n",strtab->nbNames,strtab->names[strtab->nbNames]);
+	//printf("\t\tAjoutStrtab position %d de %s\n",strtab->nbNames,strtab->names[strtab->nbNames]);
 	strtab->nbNames++;
 }
 
@@ -23,7 +23,7 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 	
 	int nbEntree = 0;
 	int flag = 0;
-	
+	newTabSymbole = malloc(sizeof(Elf32_Sym)*sizeTab2 + sizeof(Elf32_Sym)*sizeTab1);
 	int offsetStringTable1 = rechercheOffsetSection(structFichier1.header_elf, structFichier1.sectionsTable, f1, ".strtab");
 	int offsetStringTable2 = rechercheOffsetSection(structFichier2.header_elf, structFichier2.sectionsTable, f2, ".strtab");
 	for(i=0; i<sizeTab1; i++){
@@ -98,7 +98,7 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 	}
 	free(c1);
 	free(c2);
-	printf("\t\tfusionTableSymbole nbEntree %d\n",nbEntree);
+	//	printf("\t\tfusionTableSymbole nbEntree %d\n",nbEntree);
 	return nbEntree;
 }
 
@@ -116,7 +116,7 @@ Section creerSectionTableSymbole(Elf32_Sym *tableSymbole, int sizeTableSymbole, 
 	newSection.nbOctets = sizeTableSymbole * newSection.header.sh_entsize;
 	EcrireContenu(tableSymbole, sizeTableSymbole, &newSection);
 	
-	printf("\t\tcreerSectionTableSymbole sh_entsize %d\n",newSection.header.sh_entsize);
+	//printf("\t\tcreerSectionTableSymbole sh_entsize %d\n",newSection.header.sh_entsize);
 	return newSection;
 }
 
@@ -159,7 +159,7 @@ void EcrireContenu(Elf32_Sym *tableSymbole, int sizeTab, Section *section){
 			nbOctets++;
 		}
 	}
-	printf("\t\tEcrire Contenu nbOctets %d entsize %d  sizeTab %d \n",nbOctets, sh_entsize, sizeTab);
+	//printf("\t\tEcrire Contenu nbOctets %d entsize %d  sizeTab %d \n",nbOctets, sh_entsize, sizeTab);
 }
 
 
