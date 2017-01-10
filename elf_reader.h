@@ -107,3 +107,19 @@ int recupIndexByName(char * sht_name, int e_shstrndx, int nbSections, Elf32_Shdr
 void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes);
 
 void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichierElfRes);
+
+//Fusion Symbole Etape 7
+
+Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
+
+int fusionTableSymbole(fichierElf structFichier1, fichierElf structFichier2, int sizeTab1, int sizeTab2, Elf32_Sym *newTabSymbole);
+
+Section creerSectionTableSymbole(Elf32_Sym *tableSymbole, int sizeTableSymbole, FichierElf structFichier1, FichierElf structFichier2);
+
+int getSizeOfSectionTable(Elf32_Sym *tabSymbole, int sizeTableSymbole);
+
+int getShEntSize(FichierElf structFichier1, FichierElf structFichier2);
+
+int getShInfo(Elf32_Sym* tableSymbole, int sizeTableSymbole);
+
+void EcrireContenu(Elf32_Sym *tableSymbole, int sizeTab, Section *section);

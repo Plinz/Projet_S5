@@ -41,16 +41,20 @@ Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, F
 	} else {
 		printf("Aucune section ne correspond à ce nom\n");
 	}
+	
+	free(currentName);
 }
 
 
-int fusionTableSymbole(fichierElf structFichier1, fichierElf structFichier2, FILE* f1, FILE* f2, int sizeTab1, int sizeTab2, Elf32_Sym *newTabSymbole){
+int fusionTableSymbole(fichierElf structFichier1, fichierElf structFichier2, int sizeTab1, int sizeTab2, Elf32_Sym *newTabSymbole){
 	int i;
 	int j;
 	char *c1;
 	char *c2;
 	c1 = malloc(50);
 	c2 = malloc(50);
+	FILE* f1 = structFichier1.fichierElf;
+	FILE* f2 = structFichier2.fichierElf;
 	
 	Elf32_Sym* newTabSymbole;
 	int nbEntree = 0;
@@ -59,56 +63,68 @@ int fusionTableSymbole(fichierElf structFichier1, fichierElf structFichier2, FIL
 	int offsetStringTable1 = rechercheOffsetSection(structFichier1.header, structFichier1.sectionsTable, f1, ".strtab");
 	int offsetStringTable2 = rechercheOffsetSection(structFichier2.header, structFichier2.sectionsTable, f2, ".strtab");
 	for(i=0; i<sizeTab1; i++){
-		if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 1){ //Symboles locaux
+		if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 1){ //Symboles locaux de la première table
 			newTabSymbole[i].structFichier1.tabSymbole[i];
 			nbEntree++;
-		}else if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 0){ //symboles globaux
+		}else if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 0){ //symboles globaux de la première table
 			c1 = recupNomSymbole(structFichier1.tabSymbole[i].st_name, f1, offsetStringTable1);
 			for(j=0; j<sizeTab2; j++){
-				c2 = recupNomSymbole(structFichier2.tabSymbole[j].st_name, f2, offsetStringTable2);
-				if(strcmp(c1,c2) == 0){ // Les symboles ont le même nom
-					flag = 1;
-					if(structFichier1.tabSymbole[i].st_shndx != Sh_UNDEF && structFichier2.tabSymbole[j].st_shndx != Sh_UNDEF){ //Les symboles sont tous les deux définis
-					printf("Echec de l'édition de lien, deux symboles ont un nom identique\n");
-					exit(0);
-					}else{
-						if(structFichier1.tabSymbole[i].st_shndx != Sh_UNDEF && structFichier2.tabSymbole[j].st_shndx == Sh_UNDEF){ //Le symbole est défini dans le premier fichier pas dans le deuxième
-							newTabSymbole.tabSymbole[nbEntree] = structFichier1.tabSymbole[i];
-							nbEntree++;
-						}
-						if(structFichier1.tabSymbole[i].st_shndx == Sh_UNDEF && structFichier2.tabSymbole[j].st_shndx != Sh_UNDEF){ //Le symbole est défini dans le deuxième fichier pas dans le premier
-							newTabSymbole.tabSymbole[nbEntree] = structFichier2.tabSymbole[j];
-							nbEntree++;
-						}
-						if(structFichier1.tabSymbole[i].st_shndx == Sh_UNDEF && structFichier2.tabSymbole[j].st_shndx == Sh_UNDEF){ //Le symbole n'est défini dans aucune des deux tables
-							newTabSymbole.tabSymbole[nbEntree] = structFichier1.tabSymbole[i];
-							nbEntree++;
+				if(ELF32_ST_BIND(structFichier2.tabSymbole[j].st_info) == 0){ //symboles globaux de la seconde table
+					c2 = recupNomSymbole(structFichier2.tabSymbole[j].st_name, f2, offsetStringTable2);
+					if(strcmp(c1,c2) == 0){ // Les symboles ont le même nom
+						flag = 1;
+						if(structFichier1.tabSymbole[i].st_shndx != Sh_UNDEF && structFichier2.tabSymbole[j].st_shndx != Sh_UNDEF){ //Les symboles sont tous les deux définis
+							printf("Echec de l'édition de lien, deux symboles ont un nom identique\n");
+							exit(0);
+						}else{
+							if(structFichier1.tabSymbole[i].st_shndx != Sh_UNDEF && structFichier2.tabSymbole[j].st_shndx == Sh_UNDEF){ //Le symbole est défini dans le premier fichier pas dans le deuxième
+								newTabSymbole.tabSymbole[nbEntree] = structFichier1.tabSymbole[i];
+								nbEntree++;
+							}
+							if(structFichier1.tabSymbole[i].st_shndx == Sh_UNDEF && structFichier2.tabSymbole[j].st_shndx != Sh_UNDEF){ //Le symbole est défini dans le deuxième fichier pas dans le premier
+								newTabSymbole.tabSymbole[nbEntree] = structFichier2.tabSymbole[j];
+								nbEntree++;
+							}
+							if(structFichier1.tabSymbole[i].st_shndx == Sh_UNDEF && structFichier2.tabSymbole[j].st_shndx == Sh_UNDEF){ //Le symbole n'est défini dans aucune des deux tables
+								newTabSymbole.tabSymbole[nbEntree] = structFichier1.tabSymbole[i];
+								nbEntree++;
+							}
 						}
 					}
-				}
 			}
 			if(!flag){ // Si le symbole n'apparait que dans la première table
 				newTabSymbole[nbEntree] = structFichier1.tabSymbole[i];
 				nbEntree++;
 			}
 			flag=0;
+			}
 		}
 	}
 	for(i=0; i<sizeTab2; i++){// boucle pour vérifier si un symbole n'apparait que dans la deuxième table
-		c2 = recupNomSymbole(structFichier2.tabSymbole[i].st_name, f2, offsetStringTable2);
-		for(j=0; j<sizeTab1; j++){
-			c1 = recupNomSymbole(structFichier1.tabSymbole[j].st_name, f1, offsetStringTable1);
-			if(strcmp(c1,c2) == 0){
-				flag =1;
-			}
-		}
-		if(!flag){
-			newTabSymbole[nbEntree] = structFichier2.tabSymbole[i];
+		if(ELF32_ST_BIND(structFichier2.tabSymbole[i].st_info) == 1){ //Symboles locaux de la seconde table
+			newTabSymbole[i].structFichier2.tabSymbole[i];
 			nbEntree++;
 		}
-		flag =0;
+		else if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 0){ //symboles globaux de la seconde table
+			c2 = recupNomSymbole(structFichier2.tabSymbole[i].st_name, f2, offsetStringTable2);
+			for(j=0; j<sizeTab1; j++){
+				if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 0){ //symbole globaux de la première table
+					c1 = recupNomSymbole(structFichier1.tabSymbole[j].st_name, f1, offsetStringTable1);
+					if(strcmp(c1,c2) == 0){
+						flag =1;
+					}
+				}
+			}
+			if(!flag){
+				newTabSymbole[nbEntree] = structFichier2.tabSymbole[i];
+				nbEntree++;
+			}
+			flag =0;
+		}
 	}
-	return nbEntree
+	free(c1);
+	free(c2);
+	return nbEntree;
 }
 
 Section creerSectionTableSymbole(Elf32_Sym *tableSymbole, int sizeTableSymbole, FichierElf structFichier1, FichierElf structFichier2){
@@ -135,7 +151,7 @@ int getSizeOfSectionTable(Elf32_Sym *tabSymbole, int sizeTableSymbole){
 
 int getShEntSize(FichierElf structFichier1, FichierElf structFichier2){
 	int sh_entsize;
-	if(structFichier1.header.sh_entsize >= structFichier2.header.sh_entsize=){
+	if(structFichier1.header.sh_entsize >= structFichier2.header.sh_entsize){
 		return structFichier1.header.sh_entsize;
 	}else{
 			return structFichier2.header.sh_entsize;
@@ -154,3 +170,26 @@ int getShInfo(Elf32_Sym* tableSymbole, int sizeTableSymbole){
 	temp_info +=1;
 	return temp_info;
 }
+
+void EcrireContenu(Elf32_Sym *tableSymbole, int sizeTab, Section *section){
+	int sh_entsize = section.header.sh_entsize;
+	int i;
+	char* c;
+
+	c = malloc(sizeTab * sh_entsize);
+	for(i=0; i<sizeTab;i++){
+		strcat(c, tableSymbole[i].st_name);
+		strcat(c, tableSymbole[i].st_value);
+		strcat(c, tableSymbole[i].st_size);
+		strcat(c, tableSymbole[i].st_info);
+		strcat(c, tableSymbole[i].st_other);
+		strcat(c, tableSymbole[i].st_shndx);
+	}
+	section.contenu = c;
+}
+
+
+
+
+
+
