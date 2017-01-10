@@ -102,7 +102,7 @@ void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr 
 
 char * getSectionName(Elf32_Shdr section, FichierElf * fichier);
 
-int recupIndexByName(char * sht_name, int e_shstrndx, int nbSections, Elf32_Shdr * sections ,FILE * elf);
+int getNbSymbols(FichierElf *f);
 
 void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes);
 
