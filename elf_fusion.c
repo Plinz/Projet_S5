@@ -65,6 +65,6 @@ void initFichierELF(FichierElf fichierElf){
 void freeMemory(FichierElf fichierElf){
 	free(fichierElf.sectionsTable);
 	free(fichierElf.tabSymbole);
-	free(fichierElf.tabSymboleDynamique);
+	//free(fichierElf.tabSymboleDynamique);
 	fclose(fichierElf.fichierElf);
 }
