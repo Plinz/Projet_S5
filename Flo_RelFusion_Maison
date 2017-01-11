@@ -1,0 +1,45 @@
+// Yop, j'ai repris sur papier tout mon code, a tête reposée. je vais essayer de recoder toutes mes fonctions ce soir sans compiler donc surement plein d'erreur
+
+Elf_reader.h =>
+/* Structure : Super-Structure des relocalisation. 
+Ajout des informations concernant l'indice de la section de relocation et son nom, ainsi que le nombre de relocations à effectuer */
+typedef struct reloctable {
+  Elf32_Rel * tablerel;
+  int indice_section;
+  int nombre_relocation
+  char * nom_section
+} Reloctable ;
+
+
+/* Ajout du type Reloctable à la place du type Elf32_Rel */
+typedef struct fichierElf {
+	Elf32_Ehdr	header_elf;
+	Elf32_Shdr	*sectionsTable;
+	Symbole	*tabSymbole;
+	Elf32_Sym	*tabSymboleDynamique;
+	FILE 	 	*fichierElf;
+	Elf32_Rel	*Reloctable;
+} FichierElf;
+
+elf_fusionrel.c 
+
+int relsize(FichierElf * elfile) {
+	// Calcul de la taille de Rel - sert pour le malloc ??
+	
+	Elf32_Ehdr header = elfile->header_elf;
+	Elf32_Shdr* section_headers = elfile->sectionsTable;
+	
+
+	int nb_sec = header.e_shnum;
+	int taille = 0; 	
+	int nombre = 0;
+	for (int i = 0; i < nb_sec; i++) {
+		// Pour chacun des sections du programme, si on a un type Rela :
+		if (section_headers[i].sh_type == SHT_REL) {
+			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
+			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
+			taille += nombre;
+		}
+	} 
+	return taille;
+}
