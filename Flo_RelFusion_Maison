@@ -57,3 +57,99 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 	}	
 	return reltab;
 }
+
+Section RelUpdate (FichierElf* oldelf, FichierElf* newelf, Elf32_Shdr * OldSec, int nbnewsymbole) {
+// Si une section a besoin d'être mise a jour suite à la fusion. 
+// Appel de type reloctable[i] ?? On va tester ça.
+
+
+Elf32_Ehdr oldheader = oldelf->header_elf;
+Elf32_Shdr* oldsection_headers = oldelf->sectionsTable;
+Reloctable* oldlesrel = oldelf->tabRel;
+Elf32_Sym *oldsym = oldelf->tabSymbole;
+Elf32_Ehdr newheader = newelf->header_elf;
+Elf32_Shdr* newsection_headers = newelf->sectionsTable;
+Reloctable* newlesrel = newelf->tabRel;
+Elf32_Sym *newsym = newelf->tabSymbole;
+
+int parcoureltab = 0 ;
+// A VERIFIER LA BOUCLE
+while (strcmp(oldlesrel[parcoureltab].nom_section,oldsec.sh_name)){parcoureltab++;}
+
+int nombre = 0;
+// Verifier la valeur de parcoureltab si on a i=0... Pour pas que ça prenne un de plus
+int numsec = oldlesrel[parcoureltab].indice_section;
+int type = 0;
+int idsym = 0;
+int j=0;
+int found = 0;
+// Inutile ??
+nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_entsize;
+
+// Nombre de relocation inchangé
+newlesrel[parcoureltab].nombre_relocation = oldlesrel[parcoureltab].nombre_relocation
+
+//Nom de section inchangé 
+newlesrel[parcoureltab].nom_section = oldlesrel[parcoureltab].nom_section
+
+//Calcul du nouveal indice de section - A FAIRE JAI LA FLEMME CE SOIR
+
+	for (int i = 0; i<nombre ; i++) {
+	// Calcul de l'offset de reimplementation
+	// On va dire que l'offset ne change pas quand on ne fusionne pas 2 tables de relocation
+		newlesrel[parcoureltab].tablerel[i].r_offset = oldlesrel[parcoureltab].tablerel[i].r_offset;
+
+	// Calcul du numero de symbole a partir de la nouvelle table des symboles.
+	// Calcul du truc pour les sections. 
+		type  = ELF32_R_TYPE(oldlesrel[parcoureltab].tablerel[i].r_info);
+		idsym = ELF32_R_SYM(oldlesrel[parcoureltab].tablerel[i].r_info);
+		
+				// On fait symbole :D 
+				j = 0;
+				found = 0;
+				
+				while (j < nbnewsymbole && found == 0 ) {
+					if ( ( oldsym[idsym].st_value == newsym[j].st_value ) &&( oldsym[idsym].st_size == newsym[j].st_size ) &&( oldsym[idsym].st_info == newsym[j].st_info ) ) {
+						newlesrel[parcoureltab].tablerel[i].r_info = ELF32_R_INFO(j,type);
+						found = 1;
+						
+						}
+
+					j++;
+				} 
+			switch (type) {
+				// Que faire si on entre dans ces types ?
+				// Prendre la section en question et prendre les 4 premiers octets
+				// Les modifier dans le fichier ??
+				// Il faut ajouter pour chacun l'offset de la table des symboles
+				// plus le ndx du symbole en
+			case (2) : 
+				// R_ARM_ABS32
+				break;
+			case (5) :
+				// R_ARM_ABS16
+				break;
+			case (6) :
+				// R_ARM_ABS12
+				break;
+			case (8) :
+				// R_ARM_ABS8
+				break;
+			
+			case (29) :
+				// R_ARM_JUMP24
+				break;
+
+			case (28) :
+				// R_ARM_CALL -- PAS SUR DU TOUT CELUI LA
+				break;
+
+			default :
+				break ;
+
+		
+		}
+	}
+}
+
+
