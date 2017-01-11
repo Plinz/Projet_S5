@@ -115,7 +115,7 @@ int main (int argc, char *argv[])
 	if (symbols){
 		//Etape 4
 		//Affichage de la table des symboles
-		printf("===============================================================================================================\n");
+		printf("====================================================================================\n");
 		Symbole *tabSymbole = malloc(sizeof(Symbole));
 		int nbSymbole = lectureTableSymbole(tabSymbole, head, TableSec, fich);
 		affichageTableSymbole(tabSymbole, nbSymbole, fich, TableSec, head);
@@ -125,7 +125,7 @@ int main (int argc, char *argv[])
 		if(nbSymboleDynamique > 0){
 			affichageTableSymboleDynamique(tabSymbDynamique, nbSymboleDynamique, fich, TableSec, head);
 		}*/
-		printf("===============================================================================================================\n");
+		printf("====================================================================================\n");
 		printf("\n");
 	}
 	if (relocs){

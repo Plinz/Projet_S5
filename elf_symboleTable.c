@@ -146,13 +146,13 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 	stringTabSymb = ".strtab";
 	offset = rechercheOffsetSection(header, tabSection, f, stringTabSymb);
 
-	printf("num		value		size		bind		type			other			shndx 				nom\n");
+	printf("num	value	size	bind	type	  other		shndx 		   nom\n");
 	for(i=0; i<sizeTabSymbole; i++){
 		printf("[%3d]", i);
 		recupNomSymbole(tabSymbole[i].symbole.st_name, f, offset, nomSymbole);
-		printf("%15x", tabSymbole[i].symbole.st_value);
-		printf("%15d", tabSymbole[i].symbole.st_size);
-		printf("		");
+		printf("%8x", tabSymbole[i].symbole.st_value);
+		printf("%6d", tabSymbole[i].symbole.st_size);
+		printf("	");
 		switch(ELF32_ST_BIND(tabSymbole[i].symbole.st_info)){
 			case 0:
 				printf("LOCAL");
@@ -173,7 +173,7 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 				printf("??");
 				break;
 		}
-		printf("		");
+		printf("	");
 		switch(ELF32_ST_TYPE(tabSymbole[i].symbole.st_info)){
 			case 0:
 				printf("NOTYPE ");
@@ -200,8 +200,8 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 				printf("??     ");
 				break;
 		}
-		printf("%20d", tabSymbole[i].symbole.st_other);
-		printf("			");
+		printf("%6d", tabSymbole[i].symbole.st_other);
+		printf("		");
 		switch(tabSymbole[i].symbole.st_shndx){
 			case SHN_UNDEF:
 				printf("UNDEF");
@@ -210,10 +210,10 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 				printf("ABS");
 				break;
 			default:
-				printf("%2d", tabSymbole[i].symbole.st_shndx);
+				printf("%3d", tabSymbole[i].symbole.st_shndx);
 				break;
 		}
-		printf("%40s", nomSymbole);
+		printf("%20s", nomSymbole);
 		printf("\n");
 	}
 }
