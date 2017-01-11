@@ -266,30 +266,96 @@ int affichage_relocation(Symbole* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr
 =======================================================================================================================*/
 
 
+/*
+  fonction: Permet d'initialiser le contenu de la structure de fichier Elf
+  @Param: FichierElf fichierELf
+*/
 void initFichierELF(FichierElf fichierElf);
 
+/*
+  fonction: permet de libérer la mémoire allouer à la structure fichierElf passé en paramètre
+  @Param: FichierElf fichierELf
+*/
 void freeMemory(FichierElf fichierElf);
 
+/*
+  fonction: permet de fusionner deux en-têtes de fichier
+  @Param: FichierElf *fichierElf1: la structure du premier fichier à fusionner
+  @Param: FichierElf *fichierElf2: la structure du deuxième fichier à fusionner
+  @Return: Elf32_Ehdr: une structure contenant le nouvelle en-tête du fichier Elf
+*/
 Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2);
 
+
+/*
+  fonction: permet de recréer la section Shstrab (nom des sections)
+  @Param: Section *section: pointeur vers la structure de section qui va contenir les éléments de Shstrab
+  @Param: Strtab* shstratb: la table des chaines qui contient les éléménts nécessaires pour écrire la section
+  @SideEffect: la section est rempli
+*/
 void sectionShstrtab(Section *section, Strtab * shstrtab);
 
+/*
+  fonction: permet de recréer la section strab (table des chaines)
+  @Param: Section *section: pointeur vers la structure de section qui va contenir les éléments de strab
+  @Param: Strtab* stratb: la table des chaines qui contient les éléménts nécessaires pour écrire la section
+  @SideEffect: la section est rempli
+*/
 void sectionStrtab(Section *section, Strtab * strtab);
 
+/*
+  TODO
+*/
 void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Strtab * shstrtab);
 
+/*
+  TODO
+*/
 Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2,FichierElf * fichierElfRes, Strtab * shstrtab, Strtab * strtab);
 
+/*
+  TODO
+*/
 Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Strtab * shstrtab);
 
+/*
+  Fonction: permet de savoir si une section est présente dans un fichierElf
+  @Param: FichierElf * fichierElf: le fichier dans lequel on va rechercher la section
+  @Param: char * secName: le nom de la section à rechercher
+  @Param: Elf32_Shdr * res: la section qui a été retrouvé
+  @Param: int * present: un flag permettant de savoir si la sectiojn a été trouvé
+*/
 void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr * res, int * present);
 
+/*
+  @Fonction: permet de récupérer le nom d'une section
+  // to end
+*/
 char * getSectionName(Elf32_Shdr section, FichierElf * fichier);
 
+/*
+  Fonction: permet de connaitre le nombre de symbole dans un fichier elf
+  @Param:FichierELf *f: le fichier elf de référence
+  @Return: int: le nombre de symbole
+*/
 int getNbSymbols(FichierElf *f);
 
+/*
+  Fonction: Permet d'écrire le nouveau fichier après la fusion
+  @Param: FichierElf *ficherElfRes: la structure contenant le résultat de la fusion
+  @Param: Section *sections_elfRes: le tableau de structure de section contenant toutes les sections fusionnées
+  @Param: Strtab * shstrtab: La structure contenant les noms des en têtes de section
+  @SideEffect: écriture dans la structure fichierElfRes du nouveau fichier elf
+*/
 void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes, Strtab * shstrtab);
 
+/*
+  Fonction: Fonction permettant de fusionner les deux fichiers elf et d'obtenir le résultat dans un fichier fusion
+  @Param: FichierElf *fichierElf1: La structure contenant le premier fichier à fusionner
+  @Param: FichierElf *fichierElf2: La structure contenant le deuxième fichier à fusionner
+  @Param: FichierElf *fichierElf1: La structure contenant le résultat du fichier fusionné
+  @SideEffect: ecriture dans la structure contenant le fichier de la fusion
+*/
 void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichierElfRes);
 
 /*=====================================================================================================================
@@ -298,20 +364,72 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 
 //Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
 
+/*
+  Fonction: permet de créer une nouvelle table symbole en fusionnant celles des deux fichiers d'origine
+  @Param: FichierElf structFicher1: structure contenant le premier fichier à fusionner
+  @Param: FichierElf structFicher2: structure contenant le deuxième fichier à fusionner
+  @Param: int sizeTab1: la taille de la table des symboles du premier fichier
+  @Param: int sizeTab2: la taille de la table des symboles du deuxième fichier
+  @Param: Symbole *newTabSymbole: tableau de la structure qui contiendra lanouvelle table des symboles
+  @Param: Strtab *strtab: pointeur vers une structure strtab
+  @SideEffect: écriture de la nouvelle table de symbole et mise à jour de la table des chaines
+*/
 int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Symbole *newTabSymbole, Strtab * strtab);
 
+/*
+TODO
+*/
 void processAjoutSymboles(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, char *c1, char *c2, Symbole *newTabSymbole, Strtab * strtab, int nbEntree, int offsetStringTable1, int offsetStringTable2, FILE* f1, FILE* f2, int first);
 
+/*
+  Fonction: permet d'ajouter un nom dans la table des chaines
+  @Param: char * nom: le nom à ajouter
+  @Param: Strtat *strtab: pointeur vers la structure contenant la table des chaines
+  @Param: Elf32_Sym: pointeur vers une structure de symbole
+*/
 void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb);
 
+/*
+TODO
+*/
 void ajoutSymbole(Symbole *newTabSymbole, int nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
 
+/*
+TODO
+*/
 Section creerSectionTableSymbole(Symbole *tableSymbole, int sizeTableSymbole, Elf32_Shdr structFichier1, Elf32_Shdr structFichier2);
 
+/*
+  Fonction: permet de connaitre la taille d'une table section
+  @Param: Symbole *tabSymbole: la table des symbole
+  @Param: int sizeTableSymbole: la taille de la table des symboles
+  @Return: une structure section
+*/
 int getSizeOfSectionTable(Symbole *tabSymbole, int sizeTableSymbole);
 
+  
+/*
+  Fonction: permet de connaitre la valeur de ShInfo pour une section
+  @Param: Symbole *tabSymbole: la table des symbole
+  @Param: int sizeTableSymbole: la taille de la table des symboles
+  @Return: la taille de la section
+*/
 int getShInfo(Symbole* tableSymbole, int sizeTableSymbole);
 
+/*
+  Fonction: permet d'écrire l'attribut contenu d'une structure de section
+  @Param: Symbole *tableSymbole: les symboles que l'on doit écrire dans le contenu
+  @Param: int sizeTab: la taille de la table des symboles
+  @Param: Section *section: la section qui va contenir les symboles
+  @SideEffect: écriture du contenu dans la structure section passé en paramètre
+*/
 void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section);
 
+/*
+  Fonction: permet de connaitre la valeur de ShIndx pour une section
+  @Param: Symbole symbol: un symbole
+  @Param: fichierElf * fichierElf: un pointeur vers une structure fichierElf
+  @Param: int nbSections: le nombre de section
+  @Param: Strtab *shstrtab: un pointeur vers la section shstrtab
+*/
 int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Strtab *shstrtab);
