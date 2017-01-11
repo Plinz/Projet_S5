@@ -18,28 +18,42 @@ typedef struct fichierElf {
 	Symbole	*tabSymbole;
 	Elf32_Sym	*tabSymboleDynamique;
 	FILE 	 	*fichierElf;
-	Elf32_Rel	*Reloctable;
+	Reloctable	*tabRel;
 } FichierElf;
 
 elf_fusionrel.c 
 
-int relsize(FichierElf * elfile) {
-	// Calcul de la taille de Rel - sert pour le malloc ??
-	
+
+Reloctable* crea_rel_table (FichierElf * elfile) {
+	// Creation de la table de REL
+	// Avant : malloc le elf32_Rel de elfile en utilisant relsize.
 	Elf32_Ehdr header = elfile->header_elf;
 	Elf32_Shdr* section_headers = elfile->sectionsTable;
-	
+	// Faut-il le malloc ???
+	Reloctable* tabrel = elfile->tabRel;
+	FILE *elf = elfile->fichierElf;
 
-	int nb_sec = header.e_shnum;
-	int taille = 0; 	
+	int nb_sec = header.e_shnum;	
 	int nombre = 0;
-	for (int i = 0; i < nb_sec; i++) {
-		// Pour chacun des sections du programme, si on a un type Rela :
+	int trel = sizeof(Elf32_Rel);
+	int k=0;
+	int diffsec = 0;
+	for (int i=0; i < nb_sec; i++){
 		if (section_headers[i].sh_type == SHT_REL) {
-			// On divise la taille de la section par la taille de chaque entrée pour connaitre leur nombre
-			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
-			taille += nombre;
+			fseek(elf, section_headers[i].sh_offset, SEEK_SET);
+			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;
+			
+			tabrel[diffsec].indice_section = i;
+			tabrel[diffsec].nombre_relocation = nombre;
+			tabrel[diffsec].nom_section = 
+			for (int j=0; j < nombre; j++) {
+				fread(&(tabrel.tablerel[k]),trel, 1,elf);
+				k++;
+			}
+			diffsec ++;
 		}
-	} 
-	return taille;
+
+
+	}	
+	return reltab;
 }
