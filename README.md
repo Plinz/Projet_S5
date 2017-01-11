@@ -36,7 +36,7 @@ git push
 
 ## Documentation Annexe 
 
-* Cours de Verimag en français : http://www-verimag.imag.fr/~moy/cours/ldb-apprentissage/Edition-de-liens-nup.pdf
+* Cours de Verimag en français : http://www-verimag.imag.fr/~moy/cours/ldb-apprentissage/projetC.pdf
 * Les ELF Specif .C en Français : http://manpagesfr.free.fr/man/man5/elf.5.html
 * Les Headers ELF Expliqués en Français : https://fr.wikipedia.org/wiki/Executable_and_Linkable_Format
 * Logiciel ELF Viewer : https://sourceforge.net/p/elfviewer/code/ci/master/tree/

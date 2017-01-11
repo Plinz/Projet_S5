@@ -6,11 +6,16 @@
 #include <unistd.h>
 #include <getopt.h>
 
+
 typedef struct symbole {
   Elf32_Sym symbole;
   int fichier;
 } Symbole;
 
+/*
+  Structure: Super Structure regroupant toutes les composantes d'un fichier Elf
+  Utile afin d'avoir accès à tous les éléments d'un fichier Elf
+*/
 typedef struct fichierElf {
 	Elf32_Ehdr	header_elf;
 	Elf32_Shdr	*sectionsTable;
@@ -20,6 +25,12 @@ typedef struct fichierElf {
 	Elf32_Rel	*tabRel;
 } FichierElf;
 
+/*
+  Structure: Cette structure est crée pour chaque nouvelle section après la fusion
+    contenu: contenu brut de la section après fusion
+    nbOctets: taille de la section créée
+  Utile pour construire de manière générique le nouveau fichier objet
+*/
 typedef struct section {
  char * contenu;
  int nbOctets;
@@ -27,6 +38,9 @@ typedef struct section {
  Elf32_Shdr header;
 } Section;
 
+/*
+Structure: comme la structure section mais spécifique
+*/
 typedef struct shstrtab {
   char ** names;
   int offsetCourant;
