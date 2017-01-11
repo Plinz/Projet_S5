@@ -6,8 +6,16 @@ int main (int argc, char *argv[])
 	Elf32_Ehdr head; /* Header ELF de taille Fixe */
 	  
 	/* Verification du nombre d'arguments */
-	if (argc<2){
-	  printf("Erreur : ./prog [options] [fichier .o]");
+	if (argc<3){
+		printf("Erreur : ./reader [options] [fichier .o]\n");
+		printf("Relancez le programme en veillant à choisir une option existante: \n");
+		printf("a : affichage de toute les options\n");				
+		printf("h : affichage du ELF header.\n");
+		printf("S: affichage de la table des sections.\n");
+		printf("n: affichage du contenu d'une section via son nom.\n");
+		printf("N: affichage du contenu d'une section via son numéro.\n");
+		printf("s: affichage de la table des symboles.\n");
+		printf("r : affichage des tables de réimplantation.\n");
 	  return 0;
 	}
 
@@ -57,7 +65,7 @@ int main (int argc, char *argv[])
 
 	/* Ouverture du fichier */
 	if ((fich = fopen(argv[argc-1],"rb")) == NULL ){
-	 printf("Erreur ouverture fichier"); 
+	 printf("Erreur ouverture fichier\n"); 
 	  return 0;
 	}
 

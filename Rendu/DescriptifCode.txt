@@ -43,6 +43,14 @@ typedef struct reloctable {
 Elf32_Ehdr lectureheader(FILE* f);
 void affichageheader(Elf32_Ehdr header_elf);
 
+void affichageNumMagic(Elf32_Ehdr header_elf);
+
+void affichageMagicClasseEndianABIType(Elf32_Ehdr header_elf);
+
+void affichageMachine(Elf32_Ehdr header_elf);
+
+void affichageOthers(Elf32_Ehdr header_elf);
+
 /*
 Fonction permettant la prise en charge du bigEndian et littleEndian
 */
@@ -95,6 +103,8 @@ void sectionShstrtab(Section *section, Shstrtab * shstrtab);
 
 void sectionStrtab(Section *section, Strtab * strtab);
 
+void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab);
+
 Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab, Strtab * strtab);
 
 Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Shstrtab * shstrtab);
@@ -103,7 +113,7 @@ void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr 
 
 char * getSectionName(Elf32_Shdr section, FichierElf * fichier);
 
-int recupIndexByName(char * sht_name, int e_shstrndx, int nbSections, Elf32_Shdr * sections ,FILE * elf);
+int getNbSymbols(FichierElf *f);
 
 void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes);
 
@@ -112,6 +122,8 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 //Fusion Symbole Etape 7 
 
 Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
+
+void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb);
 
 int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Elf32_Sym *newTabSymbole);
 
