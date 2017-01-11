@@ -6,8 +6,8 @@ void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb) {
 		i++;
 	}
 	symb->st_name = strtab->offsetCourant;
+	//printf("\t\tAjoutStrtab position %d de %s avec offset de %x\n",strtab->nbNames,strtab->names[strtab->nbNames],strtab->offsetCourant);
 	strtab->offsetCourant += strlen(strtab->names[strtab->nbNames]) + 1;
-	//printf("\t\tAjoutStrtab position %d de %s\n",strtab->nbNames,strtab->names[strtab->nbNames]);
 	strtab->nbNames++;
 }
 
@@ -23,14 +23,13 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 	
 	int nbEntree = 0;
 	int flag = 0;
-	newTabSymbole = malloc(sizeof(Elf32_Sym)*sizeTab2 + sizeof(Elf32_Sym)*sizeTab1);
 	int offsetStringTable1 = rechercheOffsetSection(structFichier1.header_elf, structFichier1.sectionsTable, f1, ".strtab");
 	int offsetStringTable2 = rechercheOffsetSection(structFichier2.header_elf, structFichier2.sectionsTable, f2, ".strtab");
 	for(i=0; i<sizeTab1; i++){
 		recupNomSymbole(structFichier1.tabSymbole[i].st_name, f1, offsetStringTable1, c1);
 		if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 0){ //Symboles locaux de la première table
-			AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 			newTabSymbole[nbEntree] = structFichier1.tabSymbole[i];
+			AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 			nbEntree++;
 		}else if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 1){ //symboles globaux de la première table
 			for(j=0; j<sizeTab2; j++){
@@ -43,18 +42,18 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 							exit(0);
 						}else{
 							if(structFichier1.tabSymbole[i].st_shndx != SHN_UNDEF && structFichier2.tabSymbole[j].st_shndx == SHN_UNDEF){ //Le symbole est défini dans le premier fichier pas dans le deuxième
-								AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 								newTabSymbole[nbEntree] = structFichier1.tabSymbole[i];
+								AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 								nbEntree++;
 							}
 							else if(structFichier1.tabSymbole[i].st_shndx == SHN_UNDEF && structFichier2.tabSymbole[j].st_shndx != SHN_UNDEF){ //Le symbole est défini dans le deuxième fichier pas dans le premier
-								AjoutNomStrtab(c2, strtab, &newTabSymbole[nbEntree]);
 								newTabSymbole[nbEntree] = structFichier2.tabSymbole[j];
+								AjoutNomStrtab(c2, strtab, &newTabSymbole[nbEntree]);				
 								nbEntree++;
 							}
 							else if(structFichier1.tabSymbole[i].st_shndx == SHN_UNDEF && structFichier2.tabSymbole[j].st_shndx == SHN_UNDEF){ //Le symbole n'est défini dans aucune des deux tables
-								AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 								newTabSymbole[nbEntree] = structFichier1.tabSymbole[i];
+								AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 								nbEntree++;
 							}
 						}
@@ -62,8 +61,8 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 				}
 			}
 			if(!flag){ // Si le symbole n'apparait que dans la première table
-				AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 				newTabSymbole[nbEntree]  = structFichier1.tabSymbole[i];
+				AjoutNomStrtab(c1, strtab, &newTabSymbole[nbEntree]);
 				nbEntree++;
 			}			
 		}
@@ -73,8 +72,8 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 	for(i=0; i<sizeTab2; i++){// boucle pour vérifier si un symbole n'apparait que dans la deuxième table
 		recupNomSymbole(structFichier2.tabSymbole[i].st_name, f2, offsetStringTable2, c2);
 		if(ELF32_ST_BIND(structFichier2.tabSymbole[i].st_info) == 0){ //Symboles locaux de la seconde table
-			AjoutNomStrtab(c2, strtab, &newTabSymbole[nbEntree]);
 			newTabSymbole[nbEntree]  = structFichier2.tabSymbole[i];
+			AjoutNomStrtab(c2, strtab, &newTabSymbole[nbEntree]);
 			nbEntree++;
 		}
 		else if(ELF32_ST_BIND(structFichier1.tabSymbole[i].st_info) == 1){ //symboles globaux de la seconde table
@@ -88,8 +87,8 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 				}
 			}
 			if(!flag){
-				AjoutNomStrtab(c2, strtab, &newTabSymbole[nbEntree]);
 				newTabSymbole[nbEntree]  = structFichier2.tabSymbole[i];
+				AjoutNomStrtab(c2, strtab, &newTabSymbole[nbEntree]);
 				nbEntree++;
 			}
 		}
@@ -99,6 +98,7 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 	free(c1);
 	free(c2);
 	//	printf("\t\tfusionTableSymbole nbEntree %d\n",nbEntree);
+	
 	return nbEntree;
 }
 

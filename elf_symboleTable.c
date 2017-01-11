@@ -121,14 +121,14 @@ Elf32_Word rechercheOffsetSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_ta
 		return currentSection.sh_offset;
 	} else {
 		printf("erreur recherche section \n");
-		return NULL;
+		return -1;
 	}
 }
 
 void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset, char *c){
 	fseek(f, offset+index, SEEK_SET);
 	int i = 0 ;
-	while((c[i] = fgetc(f))!= '\0'){
+	while((c[i] = fgetc(f)) != '\0'){
 		i++;
 	}
 }
@@ -145,6 +145,7 @@ void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, 
 	stringTabSymb = malloc(50);
 	stringTabSymb = ".strtab";
 	offset = rechercheOffsetSection(header, tabSection, f, stringTabSymb);
+
 	printf("num		value		size		bind		type			other			shndx 				nom\n");
 	for(i=0; i<sizeTabSymbole; i++){
 		printf("[%3d]", i);

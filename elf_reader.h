@@ -113,7 +113,7 @@ char * getSectionName(Elf32_Shdr section, FichierElf * fichier);
 
 int getNbSymbols(FichierElf *f);
 
-void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes);
+void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes, Shstrtab * shstrtab);
 
 void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichierElfRes);
 
