@@ -66,19 +66,19 @@ int main (int argc, char *argv[])
 		printf("Phase de liberation de la memoire :\n");
 		printf("FichierElf1 : ");
 		free(fichierElf1.sectionsTable);
-		//free(fichierElf1.tabSymbole); //Pas encore alloué
+		free(fichierElf1.tabSymbole); //Pas encore alloué
 		//free(fichierElf1.tabSymboleDynamique); //Pas encore alloué
 		fclose(fichierElf1.fichierElf);
 		printf("OK\n");
 		printf("FichierElf2 : ");
 		free(fichierElf2.sectionsTable);
-		//free(fichierElf2.tabSymbole); //Pas encore alloué
+		free(fichierElf2.tabSymbole); //Pas encore alloué
 		//free(fichierElf2.tabSymboleDynamique); //Pas encore alloué
 		fclose(fichierElf2.fichierElf);
 		printf("OK\n");
 		printf("FichierElfRes : ");
 		free(fichierElfRes.sectionsTable);
-		//free(fichierElfRes.tabSymbole); //Pas encore alloué
+		free(fichierElfRes.tabSymbole); //Pas encore alloué
 		//free(fichierElfRes.tabSymboleDynamique); //Pas encore alloué
 		fclose(fichierElfRes.fichierElf);
 		printf("OK\n");

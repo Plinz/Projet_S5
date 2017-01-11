@@ -260,9 +260,16 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* l
 
 int affichage_relocation(Symbole* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf);
 
+
 /*=====================================================================================================================
                           GESTION FUSION SIMPLE ET SECTION // elf_fusionSimple.c
 =======================================================================================================================*/
+
+
+void initFichierELF(FichierElf fichierElf);
+
+void freeMemory(FichierElf fichierElf);
+
 Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2);
 
 void sectionShstrtab(Section *section, Strtab * shstrtab);
