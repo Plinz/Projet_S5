@@ -33,5 +33,12 @@ Jour 6 : Mardi 10 Janvier 2017
 Debuggage de la fusion des symboles
 Modification de la fusion des tables de réimplantations
 Affichage des symboles du fichier issu de la fusion
+Création des fichiers à rendre
+Nettoyage du code réalisé pour le reader
 
 Jour 7 : Mercredi 11 Janvier 2017
+Debuggage de la fusion des symboles (Voir Bogues)
+
+Jour 8 : Jeudi 12 Janvier 2017
+
+Jour 9 : Vendredi 13 Janvier 2017

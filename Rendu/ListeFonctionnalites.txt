@@ -1,16 +1,18 @@
 Liste des fonctionnalités réalisés : 
-	-Etape 1 : Fait
-	-Etape 2 : Fait
-	-Etape 3 : Fait
-	-Etape 4 : Fait
-	-Etape 5 : Fait
+	-Etape 1 : Affichage de l'en-tête
+	-Etape 2 : Affichage de la table des sections et des détails relatifs à chaque section
+	-Etape 3 : Affichage du contenu d'une section
+	-Etape 4 : Affichage de la table des symboles et des détails relatifs à chaque symbole
+	-Etape 5 : Affichage des tables de réimplantation et des détails relatifs à chaque entrée
+	-Etape 6 : Fusion et renumérotation des sections
 	
-Liste des fonctionnalité non réalisés :
+Liste des fonctionnalités non réalisés :
 
-	-Etape 6
-	-Etape 7
-	-Etape 8
-	-Etape 9
+	-Etape 7 : Fusion, renumérotation et correction des symboles
+	-Etape 8 : Fusion et correction des tables de réimplantation
+	-Etape 9 : Production d'un fichier résultat au format ELF
 
-Pour un suivi en temps réel de l'implémentation des fonctionnalités vous pouvez voir le dashboard en suivant le lien suivant :
+Suivi sur le dashboard de l'implémentation des fonctionnalités :
 https://github.com/Plinz/Projet_S5/projects/1
+
+

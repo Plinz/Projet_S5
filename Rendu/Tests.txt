@@ -1,24 +1,24 @@
-Liste des Tests pour chaque etapes :
+Liste des tests pour chaque étapes :
 
 Etape 1 : Affichage de l'en-tête
 Testé en comparaison avec readelf -h
 
-Etape 2 : Affichage de la table des sections
+Etape 2 : Affichage de la table des sections et des détails relatifs à chaque section
 Testé en comparaison avec readelf -S
 
 Etape 3 : Affichage du contenu d'une section
 Testé en comparaison avec readelf -x
 
-Etape 4 : Affichage de la table des symboles
+Etape 4 : Affichage de la table des symboles et des détails relatifs à chaque symbole
 Testé en comparaison avec readelf -s
 
-Etape 5 : Affichage des tables de réimplémentation
+Etape 5 : Affichage des tables de réimplantation et des détails relatifs à chaque entrée
 Testé en comparaison avec readelf -r
 
-# Etape 6 : 
+Etape 6 : Fusion et renumérotation des sections
 
-# Etape 7 : 
+Etape 7 : Fusion, renumérotation et correction des symboles
 
-# Etape 8 : 
+Etape 8 : Fusion et correction des tables de réimplantation
 
-# Etape 9 : 
+Etape 9 : Production d'un fichier résultat au format ELF
