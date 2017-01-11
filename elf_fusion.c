@@ -1,6 +1,6 @@
 #include "elf_reader.h"
 
-int main (int argc, char *argv[]) 
+int main (int argc, char *argv[])
 {
 	/* Verification du nombre d'arguments */
 	if (argc != 4){
@@ -26,7 +26,9 @@ int main (int argc, char *argv[])
 		fseek(fichierElf1.fichierElf, fichierElf1.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf1.fichierElf, fichierElf1.header_elf,fichierElf1.sectionsTable);
 		//symboles
-		fichierElf1.tabSymbole = malloc(fichierElf1.header_elf.e_shentsize);;
+		Elf32_Shdr symboleHeader = getSectionByName(fichierElf1.header_elf, fichierElf1.sectionsTable, fichierElf1.fichierElf, ".symtab");
+		//int nbSymbole = (symboleHeader.sh_size/symboleHeader.sh_entsize)* sizeof(Symbole);
+		fichierElf1.tabSymbole = malloc(sizeof(Symbole));
 		lectureTableSymbole(fichierElf1.tabSymbole, fichierElf1.header_elf, fichierElf1.sectionsTable, fichierElf1.fichierElf);
 
 	//Init fichier2
@@ -42,9 +44,10 @@ int main (int argc, char *argv[])
 		fseek(fichierElf2.fichierElf, fichierElf2.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf2.fichierElf, fichierElf2.header_elf,fichierElf2.sectionsTable);
 		//symboles
-		fichierElf2.tabSymbole = malloc(fichierElf2.header_elf.e_shentsize);;
+		symboleHeader = getSectionByName(fichierElf2.header_elf, fichierElf2.sectionsTable, fichierElf2.fichierElf, ".symtab");
+		fichierElf2.tabSymbole = malloc(sizeof(Symbole));
 		lectureTableSymbole(fichierElf2.tabSymbole, fichierElf2.header_elf, fichierElf2.sectionsTable, fichierElf2.fichierElf);
-		
+
 		//Init fichierRes
 		fichierElfRes.fichierElf = fopen(argv[3],"w+");
 		if (fichierElfRes.fichierElf == NULL) {

@@ -1,6 +1,6 @@
 #include "elf_reader.h"
 
-int lectureTableSymbole(Elf32_Sym* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f){	
+int lectureTableSymbole(Symbole* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f){	
 	int nbSection = header.e_shnum;
 	int i, j;
 	int nbEntree = 0;
@@ -11,30 +11,30 @@ int lectureTableSymbole(Elf32_Sym* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* ta
 		if(tabSection[i].sh_type == SHT_SYMTAB){
 			fseek(f, tabSection[i].sh_offset, SEEK_SET);
 			nbSymbole = tabSection[i].sh_size / tabSection[i].sh_entsize;
-			tabSymbole = realloc(tabSymbole, sizeof(Elf32_Sym)*nbSymbole);
-			if(tabSymbole == NULL){
-				printf("erreur alloc \n");
+			tabSymbole = realloc(tabSymbole, nbSymbole * sizeof(Symbole));
+			if (tabSymbole == NULL) {
+				printf("Erreur de réallocation pour lectureTableSymbole\n");
 				exit(1);
 			}
 			for(j = 0; j<nbSymbole; j++){		
 
-				fread(&tabSymbole[nbEntree].st_name, sizeof(Elf32_Word), 1, f);
-				tabSymbole[nbEntree].st_name = Swap32(tabSymbole[nbEntree].st_name, header.e_ident[5]);
+				fread(&tabSymbole[nbEntree].symbole.st_name, sizeof(Elf32_Word), 1, f);
+				tabSymbole[nbEntree].symbole.st_name = Swap32(tabSymbole[nbEntree].symbole.st_name, header.e_ident[5]);
 
-				fread(&tabSymbole[nbEntree].st_value, sizeof(Elf32_Addr), 1, f);
-				tabSymbole[nbEntree].st_value = Swap32(tabSymbole[nbEntree].st_value, header.e_ident[5]);	
+				fread(&tabSymbole[nbEntree].symbole.st_value, sizeof(Elf32_Addr), 1, f);
+				tabSymbole[nbEntree].symbole.st_value = Swap32(tabSymbole[nbEntree].symbole.st_value, header.e_ident[5]);	
 
-				fread(&tabSymbole[nbEntree].st_size, sizeof(Elf32_Word), 1, f);
-				tabSymbole[nbEntree].st_size = Swap16(tabSymbole[nbEntree].st_size, header.e_ident[5]);	
+				fread(&tabSymbole[nbEntree].symbole.st_size, sizeof(Elf32_Word), 1, f);
+				tabSymbole[nbEntree].symbole.st_size = Swap16(tabSymbole[nbEntree].symbole.st_size, header.e_ident[5]);	
 	
-				fread(&tabSymbole[nbEntree].st_info, sizeof(unsigned char), 1, f);
-				tabSymbole[nbEntree].st_info = Swap16(tabSymbole[nbEntree].st_info, header.e_ident[5]);
+				fread(&tabSymbole[nbEntree].symbole.st_info, sizeof(unsigned char), 1, f);
+				tabSymbole[nbEntree].symbole.st_info = Swap16(tabSymbole[nbEntree].symbole.st_info, header.e_ident[5]);
 
-				fread(&tabSymbole[nbEntree].st_other, sizeof(unsigned char), 1, f);
-				tabSymbole[nbEntree].st_other = Swap16(tabSymbole[nbEntree].st_other, header.e_ident[5]);
+				fread(&tabSymbole[nbEntree].symbole.st_other, sizeof(unsigned char), 1, f);
+				tabSymbole[nbEntree].symbole.st_other = Swap16(tabSymbole[nbEntree].symbole.st_other, header.e_ident[5]);
 
-				fread(&tabSymbole[nbEntree].st_shndx, sizeof(Elf32_Half), 1, f);
-				tabSymbole[nbEntree].st_shndx = Swap16(tabSymbole[nbEntree].st_shndx, header.e_ident[5]);			
+				fread(&tabSymbole[nbEntree].symbole.st_shndx, sizeof(Elf32_Half), 1, f);
+				tabSymbole[nbEntree].symbole.st_shndx = Swap16(tabSymbole[nbEntree].symbole.st_shndx, header.e_ident[5]);			
 				nbEntree++;
 
 			}
@@ -134,7 +134,7 @@ void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset, char *c){
 }
 
 
-void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header){
+void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header){
 		printf("\n-------------------Table des symboles // Nb Symbole: %d-----------------------------\n\n", sizeTabSymbole);
 
 	int i;
@@ -149,11 +149,11 @@ void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, 
 	printf("num		value		size		bind		type			other			shndx 				nom\n");
 	for(i=0; i<sizeTabSymbole; i++){
 		printf("[%3d]", i);
-		recupNomSymbole(tabSymbole[i].st_name, f, offset, nomSymbole);
-		printf("%15x", tabSymbole[i].st_value);
-		printf("%15d", tabSymbole[i].st_size);
+		recupNomSymbole(tabSymbole[i].symbole.st_name, f, offset, nomSymbole);
+		printf("%15x", tabSymbole[i].symbole.st_value);
+		printf("%15d", tabSymbole[i].symbole.st_size);
 		printf("		");
-		switch(ELF32_ST_BIND(tabSymbole[i].st_info)){
+		switch(ELF32_ST_BIND(tabSymbole[i].symbole.st_info)){
 			case 0:
 				printf("LOCAL");
 				break;
@@ -174,7 +174,7 @@ void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, 
 				break;
 		}
 		printf("		");
-		switch(ELF32_ST_TYPE(tabSymbole[i].st_info)){
+		switch(ELF32_ST_TYPE(tabSymbole[i].symbole.st_info)){
 			case 0:
 				printf("NOTYPE ");
 				break;
@@ -200,9 +200,9 @@ void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, 
 				printf("??     ");
 				break;
 		}
-		printf("%20d", tabSymbole[i].st_other);
+		printf("%20d", tabSymbole[i].symbole.st_other);
 		printf("			");
-		switch(tabSymbole[i].st_shndx){
+		switch(tabSymbole[i].symbole.st_shndx){
 			case SHN_UNDEF:
 				printf("UNDEF");
 				break;
@@ -210,7 +210,7 @@ void affichageTableSymbole( Elf32_Sym* tabSymbole, int sizeTabSymbole, FILE* f, 
 				printf("ABS");
 				break;
 			default:
-				printf("%2d", tabSymbole[i].st_shndx);
+				printf("%2d", tabSymbole[i].symbole.st_shndx);
 				break;
 		}
 		printf("%40s", nomSymbole);

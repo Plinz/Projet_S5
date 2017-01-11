@@ -81,8 +81,8 @@ int main (int argc, char *argv[])
 	//Déclaration pour l'affichage d'une section par son numero
 	//int secNum;
 
-	//Déclaration de la table des symboles
-	Elf32_Sym *tabSymb = malloc(head.e_shentsize);	
+	Elf32_Shdr recherche;
+
 	int nbSym;
 	
 	//Choix de l'affichage
@@ -101,35 +101,39 @@ int main (int argc, char *argv[])
 	if (sectionName != NULL){
 		//Etape 3
 		//Affichage du contenu d'une section dont le nom est donné en entrée
-		afficheSectionByName(head, TableSec, fich, sectionName);
+		recherche = getSectionByName(head, TableSec, fich, sectionName);
+		afficheContenue(recherche, fich);
 		printf("\n");
 	}
 	if (sectionNumber > -1){
 		//Etape 3
 		//Affichage du contenu d'une section dont le numéro est donné en entrée
-		afficheSectionByNum(head, TableSec,  fich, sectionNumber);
+		recherche = getSectionByIndex(head, TableSec,  fich, sectionNumber);
+		afficheContenue(recherche, fich);
 		printf("\n");
 	}
 	if (symbols){
 		//Etape 4
 		//Affichage de la table des symboles
 		printf("===============================================================================================================\n");
-		Elf32_Sym *tabSymbole = malloc(head.e_shentsize);
+		Symbole *tabSymbole = malloc(sizeof(Symbole));
 		int nbSymbole = lectureTableSymbole(tabSymbole, head, TableSec, fich);
 		affichageTableSymbole(tabSymbole, nbSymbole, fich, TableSec, head);
-		Elf32_Sym *tabSymbDynamique = malloc(head.e_shentsize);
+		
+		/*Elf32_Sym *tabSymbDynamique = malloc(head.e_shentsize);
 		int nbSymboleDynamique = lectureTableSymboleDynamique(tabSymbDynamique, head, TableSec, fich);
 		if(nbSymboleDynamique > 0){
 			affichageTableSymboleDynamique(tabSymbDynamique, nbSymboleDynamique, fich, TableSec, head);
-		}
+		}*/
 		printf("===============================================================================================================\n");
 		printf("\n");
 	}
 	if (relocs){
 		//Etape 5
 		//Affichage des tables de réimplantation
-		nbSym = lectureTableSymbole(tabSymb, head, TableSec, fich);
-		affichage_relocation(tabSymb, &head, TableSec, nbSym, fich);
+		Symbole *tabSymbole = malloc(sizeof(Symbole));
+		nbSym = lectureTableSymbole(tabSymbole, head, TableSec, fich);
+		affichage_relocation(tabSymbole, &head, TableSec, nbSym, fich);
 		printf("\n");
 	}
 	printf("\n");

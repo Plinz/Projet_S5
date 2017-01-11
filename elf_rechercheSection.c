@@ -8,7 +8,7 @@
 /		-elf 				:	Fichier au format elf
 /		-secName 			:	Nom de la section recherchee
 */
-void afficheSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName){
+Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName){
 	int i = 0;
 	char * currentName = malloc(40);
 	char courant;
@@ -41,9 +41,12 @@ void afficheSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FIL
 
 	//Une fois la bonne section trouvee on affiche son contenue
 	if (trouve) {
-		afficheContenue(currentSection, elf);
+		return currentSection;
 	} else {
 		printf("Aucune section ne correspond à ce nom\n");
+		Elf32_Shdr rrr;
+		rrr.sh_size = -1;
+		return rrr;
 	}
 }
 
@@ -56,12 +59,11 @@ void afficheSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FIL
 /		-elf 				:	Fichier au format elf
 /		-secNum 			:	Numero de la section recherchee
 */
-void afficheSectionByNum(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, int secNum) {
+Elf32_Shdr getSectionByIndex(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, int secNum) {
 	if (secNum < 0 || secNum > header_elf.e_shnum-1) {
 		printf("Aucune section ne correspond à ce numero\n");
 	} else {
-		Elf32_Shdr currentSection = sections_table[secNum];
-		afficheContenue(currentSection, elf);
+		return sections_table[secNum];
 	}
 
 }

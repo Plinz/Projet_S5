@@ -6,10 +6,15 @@
 #include <unistd.h>
 #include <getopt.h>
 
+typedef struct symbole {
+  Elf32_Sym symbole;
+  int fichier;
+} Symbole;
+
 typedef struct fichierElf {
 	Elf32_Ehdr	header_elf;
 	Elf32_Shdr	*sectionsTable;
-	Elf32_Sym	*tabSymbole;
+	Symbole	*tabSymbole;
 	Elf32_Sym	*tabSymboleDynamique;
 	FILE 	 	*fichierElf;
 	Elf32_Rel	*tabRel;
@@ -18,6 +23,7 @@ typedef struct fichierElf {
 typedef struct section {
  char * contenu;
  int nbOctets;
+ int indexHeader;
  Elf32_Shdr header;
 } Section;
 
@@ -65,19 +71,19 @@ void affichageTabsection(Elf32_Shdr *section_elf, Elf32_Ehdr header_elf, FILE* e
 
 
 //Recherche Section Etape 3
-void afficheSectionByName(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, char * secName);
+Elf32_Shdr getSectionByName(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, char * secName);
 
-void afficheSectionByNum(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, int secNum);
+Elf32_Shdr getSectionByIndex(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, int secNum);
 
 void afficheContenue(Elf32_Shdr currentSection, FILE* elf);
 
 
 //Etape 4
-void affichageTableSymbole( Elf32_Sym* tabSymboleDynamique, int sizeTabSymboleDynamique, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header);
+void affichageTableSymbole( Symbole* tabSymboleDynamique, int sizeTabSymboleDynamique, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header);
 
 void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabSymbole, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header);
 
-int lectureTableSymbole(Elf32_Sym* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f);
+int lectureTableSymbole(Symbole* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f);
 
 int lectureTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, Elf32_Ehdr header, Elf32_Shdr* tabSection, FILE* f);
 
@@ -92,7 +98,7 @@ int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela*
 
 int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
 
-int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf);
+int affichage_relocation(Symbole* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf);
 
 //Fusion Simple Etape 6
 Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2);
@@ -123,12 +129,14 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 
 void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb);
 
-int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Elf32_Sym *newTabSymbole, Strtab * strtab);
+int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Symbole *newTabSymbole, Strtab * strtab);
 
-Section creerSectionTableSymbole(Elf32_Sym *tableSymbole, int sizeTableSymbole, FichierElf structFichier1, FichierElf structFichier2);
+Section creerSectionTableSymbole(Symbole *tableSymbole, int sizeTableSymbole, Elf32_Shdr structFichier1, Elf32_Shdr structFichier2);
 
-int getSizeOfSectionTable(Elf32_Sym *tabSymbole, int sizeTableSymbole);
+int getSizeOfSectionTable(Symbole *tabSymbole, int sizeTableSymbole);
 
-int getShInfo(Elf32_Sym* tableSymbole, int sizeTableSymbole);
+int getShInfo(Symbole* tableSymbole, int sizeTableSymbole);
 
-void EcrireContenu(Elf32_Sym *tableSymbole, int sizeTab, Section *section);
+void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section);
+
+int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Shstrtab *shstrtab);

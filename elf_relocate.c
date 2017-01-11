@@ -84,7 +84,7 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 		return -1;
 	}*/
 
-int affichage_relocation(Elf32_Sym* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf) {
+int affichage_relocation(Symbole* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf) {
 	
 	Elf32_Rela* rela = malloc(sizeof(Elf32_Rela)) ;
 	Elf32_Rel* rel = malloc(sizeof(Elf32_Rel));
