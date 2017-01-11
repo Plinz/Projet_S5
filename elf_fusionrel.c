@@ -71,7 +71,7 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 
 
 
-Section RelFusion(fichierElf* oldelf1, fichierElf* oldelf2, fichierElf newelf, Reloctable reltab1, Reloctable reltab2, int nbnewsymbole) {
+Section RelFusion(FichierElf* oldelf1, FichierElf* oldelf2, FichierElf * newelf, Reloctable reltab1, Reloctable reltab2, int nbnewsymbole) {
 // Si deux sections ont le même nom : On concatene tout ca.
 Elf32_Ehdr oldheader1 = oldelf1->header_elf;
 Elf32_Shdr* oldsection_headers1 = oldelf1->sectionsTable;
@@ -90,12 +90,13 @@ int nombre1 = 0;
 int numsec1 = reltab1.indice_section;
 int nombre2 = 0;
 int numsec2 = reltab2.indice_section;
-int indicenew = 0
+int indicenew = 0;
 nombre1 = oldsection_headers1[numsec1].sh_size / oldsection_headers1[numsec1].sh_entsize;
 nombre2 = oldsection_headers2[numsec2].sh_size / oldsection_headers2[numsec2].sh_entsize;
 int type = 0;
 int idsym = 0;
-
+int j = 0;
+int found = 0 ;
 int lastoff = 0;
 
 for (int i = 0; i<nombre1 ; i++ ) {
@@ -110,14 +111,24 @@ for (int i = 0; i<nombre1 ; i++ ) {
 
 
 	// On mets le type & le nouvel id 
-	// A FAIRE
+	j = 0;
+	found = 0;
+				
+	while (j < nbnewsymbole && found == 0 ) {
+		if ( ( oldsym1[idsym].st_value == newsym[j].st_value ) &&( oldsym1[idsym].st_size == newsym[j].st_size ) &&( oldsym1[idsym].st_info == newsym[j].st_info ) ) {
+			newlesrel[i].r_info = ELF32_R_INFO(j,type);
+			found = 1;
+						
+			}
+
+		j++;}
 
 	// On stocke le dernier offset
 	lastoff = newlesrel[indicenew].r_offset;
 
 	// On incremente le nouvel indice que prendront la prochaine table
 	indicenew ++;
-}	IDA.Pro.v6.8.150423.and.HEX-Rays.Decompiler.ARM.x86.x64
+}
 
 for (int i = 0; i<nombre2 ; i ++ ) {
 // On concatene la seconde table des relocations
@@ -132,7 +143,18 @@ for (int i = 0; i<nombre2 ; i ++ ) {
 	idsym = ELF32_R_SYM(oldlesrel2[i].r_info);
 
 	// On mets le type & le nouvel id
-	// A FAIRE
+	j = 0;
+	found = 0;
+				
+	while (j < nbnewsymbole && found == 0 ) {
+		if ( ( oldsym2[idsym].st_value == newsym[j].st_value ) &&( oldsym2[idsym].st_size == newsym[j].st_size ) &&( oldsym2[idsym].st_info == newsym[j].st_info ) ) {
+			newlesrel[i].r_info = ELF32_R_INFO(j,type);
+			found = 1;
+						
+			}
+
+		j++;}
+
 
 	// On stocke le dernier offset
 	lastoff = newlesrel[indicenew].r_offset;
@@ -169,7 +191,7 @@ nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_ents
 	for (int i = 0; i<nombre ; i++) {
 	// Calcul de l'offset de reimplementation
 	// On va dire que l'offset ne change pas quand on ne fusionne pas 2 tables de relocation
-		newlesrel[i].r_offset = oldlesrel[i].r_offset
+		newlesrel[i].r_offset = oldlesrel[i].r_offset;
 
 	// Calcul du numero de symbole a partir de la nouvelle table des symboles.
 	// Calcul du truc pour les sections. 
@@ -180,7 +202,7 @@ nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_ents
 				// Prendre la section en question et prendre les 4 premiers octets
 				// Les modifier dans le fichier ??
 				// Il faut ajouter pour chacun l'offset de la table des symboles
-				// plus le ndx du symbole en question.
+				// plus le ndx du symbole en
 			case (2) : 
 				// R_ARM_ABS32
 				break;
@@ -209,7 +231,6 @@ nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_ents
 				
 				while (j < nbnewsymbole && found == 0 ) {
 					if ( ( oldsym[idsym].st_value == newsym[j].st_value ) &&( oldsym[idsym].st_size == newsym[j].st_size ) &&( oldsym[idsym].st_info == newsym[j].st_info ) ) {
-						// &&( oldsym[idsym].st_shdnx == newsym[j].st_shdnx )  aussi mais ça marche po :(IDA.Pro.v6.8.150423.and.HEX-Rays.Decompiler.ARM.x86.x64
 						newlesrel[i].r_info = ELF32_R_INFO(j,type);
 						found = 1;
 						
