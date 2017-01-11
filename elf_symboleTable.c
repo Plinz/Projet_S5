@@ -146,7 +146,7 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 	stringTabSymb = ".strtab";
 	offset = rechercheOffsetSection(header, tabSection, f, stringTabSymb);
 
-	printf("num	value	size	bind	type	  other		shndx 		   nom\n");
+	printf("num	value	size	bind	type	  other		shndx 		     nom\n");
 	for(i=0; i<sizeTabSymbole; i++){
 		printf("[%3d]", i);
 		recupNomSymbole(tabSymbole[i].symbole.st_name, f, offset, nomSymbole);
@@ -207,10 +207,10 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 				printf("UNDEF");
 				break;
 			case SHN_ABS:
-				printf("ABS");
+				printf("ABS  ");
 				break;
 			default:
-				printf("%3d", tabSymbole[i].symbole.st_shndx);
+				printf("%5d", tabSymbole[i].symbole.st_shndx);
 				break;
 		}
 		printf("%20s", nomSymbole);
