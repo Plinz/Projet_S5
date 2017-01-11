@@ -6,7 +6,10 @@
 #include <unistd.h>
 #include <getopt.h>
 
-
+/*
+Structure permettant de sauvegarder un symbole ainsi que son fichier d'origine
+  Utilse pour la fusion et connaitre l'origine d'un symbole
+*/
 typedef struct symbole {
   Elf32_Sym symbole;
   int fichier;
@@ -39,14 +42,12 @@ typedef struct section {
 } Section;
 
 /*
-Structure: comme la structure section mais spécifique
-*/
-typedef struct shstrtab {
-  char ** names;
-  int offsetCourant;
-  int nbNames;
-} Shstrtab;
+Structure: comme la structure section mais spécifique pour la section des chaines
+  names: tableau à deux entrées stockant les noms
+  offsetCourant: offset jusqu'où l'on écrit dans le fichier
+  nbNames: nombre d'entrées
 
+*/
 typedef struct strtab {
   char ** names;
   int offsetCourant;
@@ -117,15 +118,15 @@ int affichage_relocation(Symbole* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr
 //Fusion Simple Etape 6
 Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2);
 
-void sectionShstrtab(Section *section, Shstrtab * shstrtab);
+void sectionShstrtab(Section *section, Strtab * shstrtab);
 
 void sectionStrtab(Section *section, Strtab * strtab);
 
-void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab);
+void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Strtab * shstrtab);
 
-Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2,FichierElf * fichierElfRes, Shstrtab * shstrtab, Strtab * strtab);
+Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2,FichierElf * fichierElfRes, Strtab * shstrtab, Strtab * strtab);
 
-Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Shstrtab * shstrtab);
+Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Strtab * shstrtab);
 
 void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr * res, int * present);
 
@@ -133,7 +134,7 @@ char * getSectionName(Elf32_Shdr section, FichierElf * fichier);
 
 int getNbSymbols(FichierElf *f);
 
-void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes, Shstrtab * shstrtab);
+void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes, Strtab * shstrtab);
 
 void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichierElfRes);
 
@@ -153,4 +154,4 @@ int getShInfo(Symbole* tableSymbole, int sizeTableSymbole);
 
 void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section);
 
-int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Shstrtab *shstrtab);
+int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Strtab *shstrtab);

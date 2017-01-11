@@ -125,7 +125,7 @@ Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2) {
   return header_elfRes;
 }
 
-void sectionShstrtab(Section *section, Shstrtab * shstrtab) {
+void sectionShstrtab(Section *section, Strtab * shstrtab) {
 	printf("\nCreation Shstrtab : \n");
 	section->nbOctets = shstrtab->offsetCourant;
 	section->contenu = malloc(section->nbOctets);
@@ -170,7 +170,7 @@ void sectionStrtab(Section *section, Strtab * strtab) {
 	printf("Ok\n\n");
 }
 
-void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Shstrtab * shstrtab) {
+void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Strtab * shstrtab) {
 	fusion->nbOctets = sectionHeader1.sh_size + sectionHeader2.sh_size;
 	fusion->contenu = malloc(fusion->nbOctets);
 
@@ -205,7 +205,7 @@ void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr 
 	//sh_offset sera etabli à l'écriture du fichier
 }
 
-Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, FichierElf * fichierElfRes, Shstrtab * shstrtab, Strtab * strtab) {
+Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, FichierElf * fichierElfRes, Strtab * shstrtab, Strtab * strtab) {
 	Section sectionfusionee;
 	
 	
@@ -258,7 +258,7 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 	return sectionfusionee;
 }
 
-Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Shstrtab * shstrtab) {
+Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Strtab * shstrtab) {
   Section section;
   section.nbOctets = sectionHeader.sh_size;
   section.contenu = malloc(sectionHeader.sh_size);
@@ -326,7 +326,7 @@ char * getSectionName(Elf32_Shdr section, FichierElf * fichier) {
 	return res;
 }
 
-void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes, Shstrtab * shstrtab) {
+void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes, Strtab * shstrtab) {
 	char * buffer = malloc(1);	
 	int i = 0, j =0;
 
@@ -432,7 +432,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	sections_elfRes = malloc(nbSectionMax * sizeof(Section));
 
 	//Structure qui va contenir le nom de toutes les sections
-	Shstrtab *shstrtab = malloc(sizeof(Shstrtab));
+	Strtab *shstrtab = malloc(sizeof(Strtab));
 	shstrtab->names = malloc(nbSectionMax * sizeof(char*));
 	for (i = 0; i < (nbSectionMax); i++) {
 	shstrtab->names[i] = malloc(50);

@@ -177,7 +177,7 @@ void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section){
 	//printf("\t\tEcrire Contenu nbOctets %d entsize %d  sizeTab %d \n",nbOctets, sh_entsize, sizeTab);
 }
 
-int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Shstrtab *shstrtab) {
+int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Strtab *shstrtab) {
 	Elf32_Shdr section = fichierElf->sectionsTable[symbol.symbole.st_shndx]; //Section pointé par le st_shndx dans le fichier à fusionner
 	char * name = getSectionName(section, fichierElf);
 
