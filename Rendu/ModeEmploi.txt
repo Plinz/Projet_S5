@@ -1,6 +1,6 @@
 Compilation :
 
-Le projet est divisé en deux phase :
+Le projet est divisé en deux phases :
 
 	- Pour compiler la 1er phase (Reader) lancer la commande :
 		
@@ -12,21 +12,22 @@ Le projet est divisé en deux phase :
 
 	- Pour compiler tout le projet lancer la commande :
 
-		make all
+		make (all)
 
 Clean :
 
-Pour nettoyer le projet lancer la commande :
+Pour nettoyer le projet lancer la commande (supprime les exécutables reader et fusion):
 		
 		make clean
 
-Executable :
+Exécutable :
 
-Après compilation vous obtenez un exécutables par phase :
+Après compilation vous obtenez un exécutable par phase :
 
-	- Pour lancer la 1er phase (Reader) lancer la commande :
+	- Pour lancer la 1ère phase (Reader) lancer la commande :
 
 		./reader [options] [fichier]
+	
 	Avec :
 		- options : 	* [-a|--all] 				Affiche les options -h -S -s -r
 				* [-h|--file-header] 			Affiche l'entête du fichier ELF
@@ -41,6 +42,7 @@ Après compilation vous obtenez un exécutables par phase :
 	- Pour lancer la 2nd phase (Fusion) lancer la commande :
 
 		./fusion [fichier1] [fichier2] [fichier3]
+	
 	Avec :
 		- fichier1 : 1er fichier ELF à fusionner
 		- fichier2 : 2nd fichier ELF à fusionner

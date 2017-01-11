@@ -1,8 +1,13 @@
 Listes des bogues répertoriés :
 
+Bogue répertorié le mercredi 11/01 :
+Après la fusion de la table des symboles, l'affichage des noms des symboles par la commande readelf est corrompu.
+Par ailleurs notre reader affiche bien le nom des symboles.
+Nous avons vérifié l'offset de la table des chaines.
+Explication possible : Non prise en compte du décalage des index suite a la fusion dans le st_shndx
 
-Pour ajouter un bogue ou suivre l'évolution d'un bug reportés par un membre extérieur au groupe vous pouvez voir la liste des issues en suivant le lien suivant :
+Pour ajouter un bogue ou suivre l'évolution d'un bug reportés par un membre extérieur au groupe :
 https://github.com/Plinz/Projet_S5/issues
 
-Si vous souhaitez ajouter un correctif de bogue ou suivre l'évolution d'un correctif vous pouvez voir la liste des requêtes en suivant le lien suivant :
+Si vous souhaitez ajouter un correctif de bogue ou suivre l'évolution d'un correctif :
 https://github.com/Plinz/Projet_S5/pulls
