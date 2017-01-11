@@ -117,7 +117,7 @@ for (int i = 0; i<nombre1 ; i++ ) {
 
 	// On incremente le nouvel indice que prendront la prochaine table
 	indicenew ++;
-}	
+}	IDA.Pro.v6.8.150423.and.HEX-Rays.Decompiler.ARM.x86.x64
 
 for (int i = 0; i<nombre2 ; i ++ ) {
 // On concatene la seconde table des relocations
@@ -176,6 +176,11 @@ nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_ents
 		type  = ELF32_R_TYPE(oldlesrel[i].r_info);
 		idsym = ELF32_R_SYM(oldlesrel[i].r_info);
 		switch (type) {
+				// Que faire si on entre dans ces types ?
+				// Prendre la section en question et prendre les 4 premiers octets
+				// Les modifier dans le fichier ??
+				// Il faut ajouter pour chacun l'offset de la table des symboles
+				// plus le ndx du symbole en question.
 			case (2) : 
 				// R_ARM_ABS32
 				break;
@@ -204,7 +209,7 @@ nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_ents
 				
 				while (j < nbnewsymbole && found == 0 ) {
 					if ( ( oldsym[idsym].st_value == newsym[j].st_value ) &&( oldsym[idsym].st_size == newsym[j].st_size ) &&( oldsym[idsym].st_info == newsym[j].st_info ) ) {
-						// &&( oldsym[idsym].st_shdnx == newsym[j].st_shdnx )  aussi mais ça marche po :(
+						// &&( oldsym[idsym].st_shdnx == newsym[j].st_shdnx )  aussi mais ça marche po :(IDA.Pro.v6.8.150423.and.HEX-Rays.Decompiler.ARM.x86.x64
 						newlesrel[i].r_info = ELF32_R_INFO(j,type);
 						found = 1;
 						
