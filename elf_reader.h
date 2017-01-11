@@ -298,9 +298,13 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 
 //Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, char * secName);
 
+int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Symbole *newTabSymbole, Strtab * strtab);
+
+void processAjoutSymboles(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, char *c1, char *c2, Symbole *newTabSymbole, Strtab * strtab, int nbEntree, int offsetStringTable1, int offsetStringTable2, FILE* f1, FILE* f2, int first);
+
 void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb);
 
-int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Symbole *newTabSymbole, Strtab * strtab);
+void ajoutSymbole(Symbole *newTabSymbole, int nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
 
 Section creerSectionTableSymbole(Symbole *tableSymbole, int sizeTableSymbole, Elf32_Shdr structFichier1, Elf32_Shdr structFichier2);
 
