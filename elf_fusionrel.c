@@ -116,7 +116,7 @@ for (int i = 0; i<nombre1 ; i++ ) {
 				
 	while (j < nbnewsymbole && found == 0 ) {
 		if ( ( oldsym1[idsym].st_value == newsym[j].st_value ) &&( oldsym1[idsym].st_size == newsym[j].st_size ) &&( oldsym1[idsym].st_info == newsym[j].st_info ) ) {
-			newlesrel[i].r_info = ELF32_R_INFO(j,type);
+			newlesrel[indicenew].r_info = ELF32_R_INFO(j,type);
 			found = 1;
 						
 			}
@@ -125,6 +125,40 @@ for (int i = 0; i<nombre1 ; i++ ) {
 
 	// On stocke le dernier offset
 	lastoff = newlesrel[indicenew].r_offset;
+	
+	switch (type) {
+				// Que faire si on entre dans ces types ?
+				// Prendre la section en question et prendre les 4 premiers octets
+				// Les modifier dans le fichier ??
+				// Il faut ajouter pour chacun l'offset de la table des symboles
+				// plus le ndx du symbole en
+			case (2) : 
+				// R_ARM_ABS32
+				break;
+			case (5) :
+				// R_ARM_ABS16
+				break;
+			case (6) :
+				// R_ARM_ABS12
+				break;
+			case (8) :
+				// R_ARM_ABS8
+				break;
+			
+			case (29) :
+				// R_ARM_JUMP24
+				break;
+
+			case (28) :
+				// R_ARM_CALL -- PAS SUR DU TOUT CELUI LA
+				break;
+
+			default :
+				break ;
+
+		
+		}
+
 
 	// On incremente le nouvel indice que prendront la prochaine table
 	indicenew ++;
@@ -148,19 +182,54 @@ for (int i = 0; i<nombre2 ; i ++ ) {
 				
 	while (j < nbnewsymbole && found == 0 ) {
 		if ( ( oldsym2[idsym].st_value == newsym[j].st_value ) &&( oldsym2[idsym].st_size == newsym[j].st_size ) &&( oldsym2[idsym].st_info == newsym[j].st_info ) ) {
-			newlesrel[i].r_info = ELF32_R_INFO(j,type);
+			newlesrel[indicenew].r_info = ELF32_R_INFO(j,type);
 			found = 1;
 						
 			}
 
 		j++;}
 
-
+	
 	// On stocke le dernier offset
 	lastoff = newlesrel[indicenew].r_offset;
+	
+		switch (type) {
+				// Que faire si on entre dans ces types ?
+				// Prendre la section en question et prendre les 4 premiers octets
+				// Les modifier dans le fichier ??
+				// Il faut ajouter pour chacun l'offset de la table des symboles
+				// plus le ndx du symbole en
+			case (2) : 
+				// R_ARM_ABS32
+				break;
+			case (5) :
+				// R_ARM_ABS16
+				break;
+			case (6) :
+				// R_ARM_ABS12
+				break;
+			case (8) :
+				// R_ARM_ABS8
+				break;
+			
+			case (29) :
+				// R_ARM_JUMP24
+				break;
+
+			case (28) :
+				// R_ARM_CALL -- PAS SUR DU TOUT CELUI LA
+				break;
+
+			default :
+				break ;
+
+		
+		}	
 
 	// On incremente le nouvel indice que prendront la prochaine table
 	indicenew ++;
+
+
 }
 
 }
@@ -197,7 +266,21 @@ nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_ents
 	// Calcul du truc pour les sections. 
 		type  = ELF32_R_TYPE(oldlesrel[i].r_info);
 		idsym = ELF32_R_SYM(oldlesrel[i].r_info);
-		switch (type) {
+		
+				// On fait symbole :D 
+				j = 0;
+				found = 0;
+				
+				while (j < nbnewsymbole && found == 0 ) {
+					if ( ( oldsym[idsym].st_value == newsym[j].st_value ) &&( oldsym[idsym].st_size == newsym[j].st_size ) &&( oldsym[idsym].st_info == newsym[j].st_info ) ) {
+						newlesrel[i].r_info = ELF32_R_INFO(j,type);
+						found = 1;
+						
+						}
+
+					j++;
+				} 
+			switch (type) {
 				// Que faire si on entre dans ces types ?
 				// Prendre la section en question et prendre les 4 premiers octets
 				// Les modifier dans le fichier ??
@@ -225,19 +308,6 @@ nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_ents
 				break;
 
 			default :
-				// On fait symbole :D 
-				j = 0;
-				found = 0;
-				
-				while (j < nbnewsymbole && found == 0 ) {
-					if ( ( oldsym[idsym].st_value == newsym[j].st_value ) &&( oldsym[idsym].st_size == newsym[j].st_size ) &&( oldsym[idsym].st_info == newsym[j].st_info ) ) {
-						newlesrel[i].r_info = ELF32_R_INFO(j,type);
-						found = 1;
-						
-						}
-
-					j++;
-				} 
 				break ;
 
 		
