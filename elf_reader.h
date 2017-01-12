@@ -408,11 +408,7 @@ void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb);
 /*
 TODO
 */
-<<<<<<< HEAD
 void ajoutSymbole(Symbole *newTabSymbole, int * nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
-=======
-void ajoutSymbole(Symbole *newTabSymbole, int *nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
->>>>>>> f27608358eea3ead2429c6283169bba7ee131017
 
 /*
 TODO
