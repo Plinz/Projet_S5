@@ -19,6 +19,17 @@ typedef struct symbole {
   int fichier;
 } Symbole;
 
+
+
+/* Structure : Super-Structure des relocalisation. 
+Ajout des informations concernant l'indice de la section de relocation et son nom, ainsi que le nombre de relocations à effectuer */
+typedef struct reloctable {
+  Elf32_Rel * tablerel;
+  int indice_section;
+  int nombre_relocation;
+  char * nom_section;
+} Reloctable ;
+
 /*
   Structure: Super Structure regroupant toutes les composantes d'un fichier Elf
   Utile afin d'avoir accès à tous les éléments d'un fichier Elf
@@ -29,7 +40,7 @@ typedef struct fichierElf {
 	Symbole	*tabSymbole;
 	Elf32_Sym	*tabSymboleDynamique;
 	FILE 	 	*fichierElf;
-	Elf32_Rel	*tabRel;
+	Reloctable	*tabRel;
 } FichierElf;
 
 /*
@@ -57,15 +68,6 @@ typedef struct strtab {
   int offsetCourant;
   int nbNames;
 } Strtab;
-
-
-
-
-typedef struct reloctable {
-  Elf32_Rel tablerel;
-  int indice_section;
-} Reloctable ;
-
 
 
 
