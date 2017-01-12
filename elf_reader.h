@@ -376,10 +376,6 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 */
 int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Symbole *newTabSymbole, Strtab * strtab);
 
-/*
-TODO
-*/
-void processAjoutSymboles(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, char *c1, char *c2, Symbole *newTabSymbole, Strtab * strtab, int nbEntree, int offsetStringTable1, int offsetStringTable2, FILE* f1, FILE* f2, int first);
 
 /*
   Fonction: permet d'ajouter un nom dans la table des chaines
