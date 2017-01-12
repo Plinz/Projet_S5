@@ -82,8 +82,6 @@ int main (int argc, char *argv[])
 	//int secNum;
 
 	Elf32_Shdr recherche;
-
-	int nbSym;
 	
 	//Choix de l'affichage
 	if (fileHeader){
@@ -108,7 +106,7 @@ int main (int argc, char *argv[])
 	if (sectionNumber > -1){
 		//Etape 3
 		//Affichage du contenu d'une section dont le numéro est donné en entrée
-		recherche = getSectionByIndex(head, TableSec,  fich, sectionNumber);
+		recherche = getSectionByIndex(head, TableSec, sectionNumber);
 		afficheContenue(recherche, fich);
 		printf("\n");
 	}
@@ -134,8 +132,7 @@ int main (int argc, char *argv[])
 		//Etape 5
 		//Affichage des tables de réimplantation
 		Symbole *tabSymbole = malloc(sizeof(Symbole));
-		nbSym = lectureTableSymbole(tabSymbole, head, TableSec, fich);
-		affichage_relocation(tabSymbole, &head, TableSec, nbSym, fich);
+		affichage_relocation(&head, TableSec, fich);
 		printf("\n");
 
 		free(tabSymbole);

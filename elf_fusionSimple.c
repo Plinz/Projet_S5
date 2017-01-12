@@ -171,7 +171,7 @@ void sectionStrtab(Section *section, Strtab * strtab) {
 	printf("Ok\n\n");
 }
 
-void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Strtab * shstrtab) {
+void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2) {
 	fusion->nbOctets = sectionHeader1.sh_size + sectionHeader2.sh_size;
 	fusion->contenu = malloc(fusion->nbOctets);
 
@@ -235,7 +235,7 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 			break;*/
 		default : //Pour l'instant, on fait partout pareil
 		
-			sectionFusionSimple(&sectionfusionee, sectionHeader1, sectionHeader2, fichierElf1, fichierElf2, shstrtab);
+			sectionFusionSimple(&sectionfusionee, sectionHeader1, sectionHeader2, fichierElf1, fichierElf2);
 		break;
 	}
 	//Traitement de du nom de la section
@@ -532,7 +532,6 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	sections_elfRes[indexSymtab].header.sh_link = indexStrtab;
 	//Et trouver les nouveaux st_ndx pour chaque symboles
 	int nbsymboles = fichierElfRes->sectionsTable[indexSymtab].sh_size/fichierElfRes->sectionsTable[indexSymtab].sh_entsize;
-	char *nameSymb = malloc(50);
 	for (i = 0; i < nbsymboles; i++) {
 		if (fichierElfRes->tabSymbole[i].fichier == 1) {
 			fichierElfRes->tabSymbole[i].symbole.st_shndx = getSt_shndx(fichierElfRes->tabSymbole[i], fichierElf1, nbsymboles, shstrtab);

@@ -88,8 +88,6 @@ void ajoutSymbole(Symbole *newTabSymbole, int *nbEntree, FichierElf structFichie
 
 Section creerSectionTableSymbole(Symbole *tableSymbole, int sizeTableSymbole, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2){
 	Section newSection;
-	int i;
-	int temp_info = 0;
 
 	//Section header
 	newSection.header.sh_type = SHT_SYMTAB;
@@ -137,9 +135,7 @@ int getShInfo(Symbole* tableSymbole, int sizeTableSymbole){
 void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section){
 	int sh_entsize = section->header.sh_entsize;
 	int i,j;
-	char* c;
 	int nbOctets = 0;
-	
 
 	section->contenu = malloc(sizeTab * sh_entsize);
 	char * buffer = malloc(1);

@@ -160,7 +160,7 @@ Elf32_Shdr getSectionByName(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers,
   @Param: int secNum: un indice dans le tableau
   @Return: Elf32_Shdr: une structure d'en-tête de section
 */
-Elf32_Shdr getSectionByIndex(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers, FILE* elf, int secNum);
+Elf32_Shdr getSectionByIndex(Elf32_Ehdr fileHeader, Elf32_Shdr *sections_headers,int secNum);
 
 /*
   Fonction: permet d'afficher le contenue d'une section
@@ -233,5 +233,5 @@ int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela*
 
 int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
 
-int affichage_relocation(Symbole* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, int sizeTabSymbole, FILE* elf);
+int affichage_relocation(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers,FILE* elf);
 

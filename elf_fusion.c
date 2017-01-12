@@ -27,7 +27,6 @@ int main (int argc, char *argv[])
 		fseek(fichierElf1.fichierElf, fichierElf1.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf1.fichierElf, fichierElf1.header_elf,fichierElf1.sectionsTable);
 		//symboles
-		Elf32_Shdr symboleHeader = getSectionByName(fichierElf1.header_elf, fichierElf1.sectionsTable, fichierElf1.fichierElf, ".symtab");
 		fichierElf1.tabSymbole = malloc(sizeof(Symbole));
 		lectureTableSymbole(fichierElf1.tabSymbole, fichierElf1.header_elf, fichierElf1.sectionsTable, fichierElf1.fichierElf);
 
@@ -44,7 +43,6 @@ int main (int argc, char *argv[])
 		fseek(fichierElf2.fichierElf, fichierElf2.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf2.fichierElf, fichierElf2.header_elf,fichierElf2.sectionsTable);
 		//symboles
-		symboleHeader = getSectionByName(fichierElf2.header_elf, fichierElf2.sectionsTable, fichierElf2.fichierElf, ".symtab");
 		fichierElf2.tabSymbole = malloc(sizeof(Symbole));
 		lectureTableSymbole(fichierElf2.tabSymbole, fichierElf2.header_elf, fichierElf2.sectionsTable, fichierElf2.fichierElf);
 

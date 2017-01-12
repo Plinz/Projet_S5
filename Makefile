@@ -14,7 +14,7 @@
 ## eof Makefile
 
 CC = gcc
-CFLAGS = -W -Wall -static -g
+CFLAGS = -W -Wall -g
 LDFLAGS = 
  
 SRC = $(wildcard *.c)

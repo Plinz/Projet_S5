@@ -61,9 +61,12 @@ Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, F
 /		-elf 				:	Fichier au format elf
 /		-secNum 			:	Numero de la section recherchee
 */
-Elf32_Shdr getSectionByIndex(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, FILE* elf, int secNum) {
+Elf32_Shdr getSectionByIndex(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, int secNum) {
 	if (secNum < 0 || secNum > header_elf.e_shnum-1) {
 		printf("Aucune section ne correspond à ce numero\n");
+		Elf32_Shdr rrr;
+		rrr.sh_size = -1;
+		return rrr;
 	} else {
 		return sections_table[secNum];
 	}

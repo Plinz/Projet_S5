@@ -90,7 +90,7 @@ void sectionStrtab(Section *section, Strtab * strtab);
   @param: Strtab * strtab : structure qui va contenir les noms de tous les symboles
   @Return: Une structure Section qui possède le contenu à ecrire dans le nouveaux fichier
 */
-void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Strtab * shstrtab);
+void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2);
 
 /*
   Fonction: Permet de fusionner deux sections, elle va réaliser la fusion adéquate en fonction du type des deux section passer en parametre
