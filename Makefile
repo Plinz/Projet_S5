@@ -22,7 +22,7 @@ OBJS = $(SRC:.c=.o)
  
 all : fusion reader 
 
-reader : elf_reader.c elf_header.c elf_rechercheSection.c elf_relocate.c elf_sectionTable.c elf_symboleTable.c endian.c
+reader : elf_reader.c elf_header.c elf_rechercheSection.c elf_relocate.c elf_sectionTable.c elf_symboleTable.c endian.c elf_fusionSimple.c elf_fusionSymbole.c 
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 fusion : elf_fusion.c elf_fusionSimple.c elf_header.c elf_sectionTable.c endian.c elf_fusionSymbole.c elf_symboleTable.c elf_rechercheSection.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^

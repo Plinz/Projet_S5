@@ -31,6 +31,7 @@ int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela 
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;
 			lesrela = realloc(lesrela, taille * sizeof(Elf32_Rela));
+			if (lesrela == NULL) { printf("ERREUR REALLOC"); exit(1);}
 			for (int j=0; j<nombre; j++) {
 				// on recupere chaque element de type Rela
 				fseek(elf, section_headers[i].sh_offset, SEEK_SET);
@@ -56,7 +57,7 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 			fseek(elf, section_headers[i].sh_offset, SEEK_SET);
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;	
 			taille += nombre;
-			lesrel = realloc(lesrel, taille * sizeof(Elf32_Rel));
+			lesrel= realloc(lesrel, taille * sizeof(Elf32_Rel));
 			if (lesrel == NULL) { printf("ERREUR REALLOC"); exit(1);}
 			for (int j=0; j<nombre; j++) {
 				// on recupere chaque element de type Rel
@@ -83,11 +84,20 @@ int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *l
 		printf("Error reading file to be relocated.\n");
 		return -1;
 	}*/
+	
+int nbRel(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers) {
+	int cmp = 0;
+	for (int i =0; i < fileHeader->e_shnum; i++) {
+		if (sections_headers[i].sh_type == SHT_REL)
+			cmp++;
+	}
+	return cmp;
+}
 
 int affichage_relocation(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, FILE* elf) {
 	
 	Elf32_Rela* rela = malloc(sizeof(Elf32_Rela)) ;
-	Elf32_Rel* rel = malloc(sizeof(Elf32_Rel));
+	Elf32_Rel* rel = malloc(sizeof(Elf32_Rel)) ;
 	
 	
 	int trela = taillerela(fileHeader,sections_headers,rela,elf);
@@ -97,7 +107,7 @@ int affichage_relocation(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, F
 	int noms,nombres;
 	char c;	
 	const char* type;
-	unsigned int strtab = 1;	
+	unsigned int strtab = 1;		
 	unsigned int shstrtab = 0;
 	char* nomsec;
 	uint32_t info ;	
@@ -205,6 +215,7 @@ int affichage_relocation(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, F
 			free(nomsec);	
 		}		
 	}
+	
 	printf("\n");
 	return 1;
 	

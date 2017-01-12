@@ -27,7 +27,10 @@ int main (int argc, char *argv[])
 		fseek(fichierElf1.fichierElf, fichierElf1.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf1.fichierElf, fichierElf1.header_elf,fichierElf1.sectionsTable);
 		//symboles
-		fichierElf1.tabSymbole = malloc(sizeof(Symbole));
+		Elf32_Shdr header; int present;
+		RechercheSectionByName(&fichierElf1, ".symtab", &header, &present);
+		int sizeTableSymbole = header.sh_size/header.sh_entsize;
+		fichierElf1.tabSymbole = malloc(sizeTableSymbole*sizeof(Symbole));
 		lectureTableSymbole(fichierElf1.tabSymbole, fichierElf1.header_elf, fichierElf1.sectionsTable, fichierElf1.fichierElf);
 
 	//Init fichier2
@@ -43,7 +46,9 @@ int main (int argc, char *argv[])
 		fseek(fichierElf2.fichierElf, fichierElf2.header_elf.e_shoff, SEEK_SET);
 		lectureTableSection(fichierElf2.fichierElf, fichierElf2.header_elf,fichierElf2.sectionsTable);
 		//symboles
-		fichierElf2.tabSymbole = malloc(sizeof(Symbole));
+		RechercheSectionByName(&fichierElf2, ".symtab", &header, &present);
+		sizeTableSymbole = header.sh_size/header.sh_entsize;
+		fichierElf2.tabSymbole = malloc(sizeTableSymbole*sizeof(Symbole));
 		lectureTableSymbole(fichierElf2.tabSymbole, fichierElf2.header_elf, fichierElf2.sectionsTable, fichierElf2.fichierElf);
 
 		//Init fichierRes

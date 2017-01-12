@@ -5,12 +5,8 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 	int i, j, nbEntree = 0, flag = 0;
 	char *c1, *c2;
 	c1 = malloc(50);
-	if(c1==NULL){
-		printf("Problème d'allocation");
-		exit(1);
-	}
 	c2 = malloc(50);
-	if(c2==NULL){
+	if(c1==NULL || c2==NULL){
 		printf("Problème d'allocation");
 		exit(1);
 	}

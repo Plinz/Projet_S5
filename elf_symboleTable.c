@@ -11,7 +11,6 @@ int lectureTableSymbole(Symbole* tabSymbole, Elf32_Ehdr header, Elf32_Shdr* tabS
 		if(tabSection[i].sh_type == SHT_SYMTAB){
 			fseek(f, tabSection[i].sh_offset, SEEK_SET);
 			nbSymbole = tabSection[i].sh_size / tabSection[i].sh_entsize;
-			tabSymbole = realloc(tabSymbole, nbSymbole * sizeof(Symbole));
 			if (tabSymbole == NULL) {
 				printf("Erreur de réallocation pour lectureTableSymbole\n");
 				exit(1);

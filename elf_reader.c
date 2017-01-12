@@ -1,9 +1,9 @@
 #include "elf_reader.h"
+#include "elf_fusion.h"
 
 int main (int argc, char *argv[]) 
 {
-	FILE *fich; /* Fichier ELF qu'on va lire */
-	Elf32_Ehdr head; /* Header ELF de taille Fixe */
+	FichierElf fichierElf;
 	  
 	/* Verification du nombre d'arguments */
 	if (argc<3){
@@ -64,22 +64,18 @@ int main (int argc, char *argv[])
 	}
 
 	/* Ouverture du fichier */
-	if ((fich = fopen(argv[argc-1],"rb")) == NULL ){
+	if ((fichierElf.fichierElf = fopen(argv[argc-1],"rb")) == NULL ){
 	 printf("Erreur ouverture fichier\n"); 
 	  return 0;
 	}
 
 	/* Lecture de l'header ELF au début du fichier */
-	head = lectureheader(fich);
+	fichierElf.header_elf = lectureheader(fichierElf.fichierElf);
 
 	//Déclaration pour l'affichage d'une section par son nom
-	Elf32_Shdr * TableSec = malloc(sizeof(Elf32_Shdr)*head.e_shnum);
-	fseek(fich, head.e_shoff, SEEK_SET);
-	lectureTableSection(fich, head,TableSec);
-	//char * secName = malloc(50);
-
-	//Déclaration pour l'affichage d'une section par son numero
-	//int secNum;
+	fseek(fichierElf.fichierElf, fichierElf.header_elf.e_shoff, SEEK_SET);
+	fichierElf.sectionsTable = malloc(fichierElf.header_elf.e_shnum * sizeof(Elf32_Shdr));
+	lectureTableSection(fichierElf.fichierElf, fichierElf.header_elf,fichierElf.sectionsTable);
 
 	Elf32_Shdr recherche;
 	
@@ -87,43 +83,47 @@ int main (int argc, char *argv[])
 	if (fileHeader){
 		//Etape 1
 		/* Affichage de l'header de l'ELF */
-		affichageheader(head);
+		affichageheader(fichierElf.header_elf);
 		printf("\n");
 	}
 	if (sections){
 		//Etape 2
 		//Affichage de la table des sections
-		affichageTabsection(TableSec, head, fich);
+		affichageTabsection(fichierElf.sectionsTable, fichierElf.header_elf, fichierElf.fichierElf);
 		printf("\n");
 	}
 	if (sectionName != NULL){
 		//Etape 3
 		//Affichage du contenu d'une section dont le nom est donné en entrée
-		recherche = getSectionByName(head, TableSec, fich, sectionName);
-		afficheContenue(recherche, fich);
+		recherche = getSectionByName(fichierElf.header_elf, fichierElf.sectionsTable, fichierElf.fichierElf, sectionName);
+		afficheContenue(recherche, fichierElf.fichierElf);
 		printf("\n");
 	}
 	if (sectionNumber > -1){
 		//Etape 3
 		//Affichage du contenu d'une section dont le numéro est donné en entrée
-		recherche = getSectionByIndex(head, TableSec, sectionNumber);
-		afficheContenue(recherche, fich);
+		recherche = getSectionByIndex(fichierElf.header_elf, fichierElf.sectionsTable, sectionNumber);
+		afficheContenue(recherche, fichierElf.fichierElf);
 		printf("\n");
 	}
 	if (symbols){
 		//Etape 4
 		//Affichage de la table des symboles
 		printf("====================================================================================\n");
-		Symbole *tabSymbole = malloc(sizeof(Symbole));
-		int nbSymbole = lectureTableSymbole(tabSymbole, head, TableSec, fich);
-		affichageTableSymbole(tabSymbole, nbSymbole, fich, TableSec, head);
+		
+		Elf32_Shdr header; int present;
+		RechercheSectionByName(&fichierElf, ".symtab", &header, &present);
+		int sizeTableSymbole = header.sh_size/header.sh_entsize;
+		fichierElf.tabSymbole = malloc(sizeTableSymbole*sizeof(Symbole));
+		int nbSymbole = lectureTableSymbole(fichierElf.tabSymbole, fichierElf.header_elf, fichierElf.sectionsTable, fichierElf.fichierElf);
+		affichageTableSymbole(fichierElf.tabSymbole, nbSymbole, fichierElf.fichierElf, fichierElf.sectionsTable, fichierElf.header_elf);
 		/*Elf32_Sym *tabSymbDynamique = malloc(head.e_shentsize);
 		int nbSymboleDynamique = lectureTableSymboleDynamique(tabSymbDynamique, head, TableSec, fich);
 		if(nbSymboleDynamique > 0){
 			affichageTableSymboleDynamique(tabSymbDynamique, nbSymboleDynamique, fich, TableSec, head);
 		}*/
 
-		free(tabSymbole);
+		free(fichierElf.tabSymbole);
 
 		printf("====================================================================================\n");
 		printf("\n");
@@ -131,13 +131,16 @@ int main (int argc, char *argv[])
 	if (relocs){
 		//Etape 5
 		//Affichage des tables de réimplantation
-		Symbole *tabSymbole = malloc(sizeof(Symbole));
-		affichage_relocation(&head, TableSec, fich);
+		Elf32_Shdr header; int present;
+		RechercheSectionByName(&fichierElf, ".symtab", &header, &present);
+		int sizeTableSymbole = header.sh_size/header.sh_entsize;
+		fichierElf.tabSymbole = malloc(sizeTableSymbole*sizeof(Symbole));
+		affichage_relocation(&fichierElf.header_elf, fichierElf.sectionsTable, fichierElf.fichierElf);
 		printf("\n");
 
-		free(tabSymbole);
+		free(fichierElf.tabSymbole);
 	}
 
-	free(TableSec);
+	free(fichierElf.sectionsTable);
 	printf("\n");
 }
