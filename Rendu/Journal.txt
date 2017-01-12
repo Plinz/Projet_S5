@@ -38,7 +38,16 @@ Nettoyage du code réalisé pour le reader
 
 Jour 7 : Mercredi 11 Janvier 2017
 Debuggage de la fusion des symboles (Voir Bogues)
+Modification de la fusion des tables de réimplantations
+Recherche de fuites de mémoire potentielles
 
 Jour 8 : Jeudi 12 Janvier 2017
+Finalisation de la fusion des symboles
+Création d'un header pour la fusion
+Debuggage de la fusion des tables de réimplantations
+Correction des fuites de mémoire
 
 Jour 9 : Vendredi 13 Janvier 2017
+Interrogation écrite
+Préparation de la soutenance
+Soutenance
