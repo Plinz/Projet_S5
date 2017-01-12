@@ -58,7 +58,8 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 	return reltab;
 }
 
-Section RelUpdate (FichierElf* oldelf, FichierElf* newelf, Elf32_Shdr * OldSec, int nbnewsymbole) {
+
+Section RelUpdate (FichierElf* oldelf, FichierElf* newelf, Elf32_Shdr OldSec, int nbnewsymbole) {
 // Si une section a besoin d'être mise a jour suite à la fusion. 
 // Appel de type reloctable[i] ?? On va tester ça.
 
@@ -74,7 +75,10 @@ Elf32_Sym *newsym = newelf->tabSymbole;
 
 int parcoureltab = 0 ;
 // A VERIFIER LA BOUCLE
-while (strcmp(oldlesrel[parcoureltab].nom_section,oldsec.sh_name)){parcoureltab++;}
+while (strcmp(oldlesrel[parcoureltab].nom_section,getSectionName(OldSec,oldelf))==0){parcoureltab++;}
+
+int indice_new_rel = 0;
+while ( newlesrel[indice_new_rel].indice_section != -1 ) { indice_new_rel ++ ; }
 
 int nombre = 0;
 // Verifier la valeur de parcoureltab si on a i=0... Pour pas que ça prenne un de plus
@@ -87,17 +91,23 @@ int found = 0;
 nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_entsize;
 
 // Nombre de relocation inchangé
-newlesrel[parcoureltab].nombre_relocation = oldlesrel[parcoureltab].nombre_relocation
+newlesrel[indice_new_rel].nombre_relocation = oldlesrel[parcoureltab].nombre_relocation;
 
 //Nom de section inchangé 
-newlesrel[parcoureltab].nom_section = oldlesrel[parcoureltab].nom_section
+newlesrel[indice_new_rel].nom_section = oldlesrel[parcoureltab].nom_section;
 
-//Calcul du nouveal indice de section - A FAIRE JAI LA FLEMME CE SOIR
+//Calcul du nouvel indice de section
+int nouvel_ind_sec = 0;
+while (strcmp(oldlesrel[parcoureltab].nom_section,getSectionName(newsection_headers[nouvel_ind_sec],newelf))==0) {
+	nouvel_ind_sec ++;
+	if (nouvel_ind_sec > 100 ) { printf ("Boucle dans le vide");  } } 
+	newlesrel[indice_new_rel].indice_section = nouvel_ind_sec ;
+// VERIFIER la valeur de nouvel_ind_sec 
 
 	for (int i = 0; i<nombre ; i++) {
 	// Calcul de l'offset de reimplementation
 	// On va dire que l'offset ne change pas quand on ne fusionne pas 2 tables de relocation
-		newlesrel[parcoureltab].tablerel[i].r_offset = oldlesrel[parcoureltab].tablerel[i].r_offset;
+		newlesrel[indice_new_rel].tablerel[i].r_offset = oldlesrel[parcoureltab].tablerel[i].r_offset;
 
 	// Calcul du numero de symbole a partir de la nouvelle table des symboles.
 	// Calcul du truc pour les sections. 
@@ -110,7 +120,7 @@ newlesrel[parcoureltab].nom_section = oldlesrel[parcoureltab].nom_section
 				
 				while (j < nbnewsymbole && found == 0 ) {
 					if ( ( oldsym[idsym].st_value == newsym[j].st_value ) &&( oldsym[idsym].st_size == newsym[j].st_size ) &&( oldsym[idsym].st_info == newsym[j].st_info ) ) {
-						newlesrel[parcoureltab].tablerel[i].r_info = ELF32_R_INFO(j,type);
+						newlesrel[indice_new_rel].tablerel[i].r_info = ELF32_R_INFO(j,type);
 						found = 1;
 						
 						}
@@ -151,5 +161,4 @@ newlesrel[parcoureltab].nom_section = oldlesrel[parcoureltab].nom_section
 		}
 	}
 }
-
 
