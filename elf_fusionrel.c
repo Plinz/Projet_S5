@@ -89,7 +89,6 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 			for (int j=0; j < nombre; j++) {
 				
 				fread(&(tabrel[diffsec].tablerel[j]),trel, 1,elf);
-				printf ("ZOUBIDOU %d %d \n",tabrel[diffsec].tablerel[j].r_info, tabrel[diffsec].tablerel[j].r_offset);
 			}
 			diffsec ++;
 		}
@@ -184,7 +183,6 @@ Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, F
 
 		// On stocke le dernier offset
 		lastoff = newlesrel[indice_new_rel].tablerel[i].r_offset;
-		printf("LAST OFF US : %x \n",lastoff);
 		switch (type) {
 				// Que faire si on entre dans ces types ?
 				// Prendre la section en question et prendre les 4 premiers octets
@@ -419,6 +417,7 @@ void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_S
 	printf("SH ENTSIZE : %d \n",sh_entsize);
 	section->contenu = malloc(taillerel * sh_entsize);
 	char * buffer = malloc(1);
+	char *init=buffer;
 	for(i=0; i<taillerel;i++){
 		buffer = (char *) &tabrel[i];
 		for (j=0; j < sh_entsize; j++) {
@@ -430,5 +429,6 @@ void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_S
 	printf("NBOCTEEEET : %d \n", nbOctets);
 	section->nbOctets = nbOctets;
 	section->header = headsec;
+	free(init);
 
 }
