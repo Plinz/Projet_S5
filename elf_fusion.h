@@ -46,6 +46,19 @@ typedef struct reloctable {
   char * nom_section;
 } Reloctable ;
 
+/*
+  Structure: Super Structure regroupant toutes les composantes d'un fichier Elf
+  Utile afin d'avoir accès à tous les éléments d'un fichier Elf
+*/
+typedef struct fichierElf {
+  Elf32_Ehdr  header_elf;
+  Elf32_Shdr  *sectionsTable;
+  Symbole *tabSymbole;
+  Elf32_Sym *tabSymboleDynamique;
+  FILE    *fichierElf;
+  Reloctable  *tabRel;
+} FichierElf;
+
 
 /*=====================================================================================================================
                           GESTION FUSION SIMPLE ET SECTION // elf_fusionSimple.c

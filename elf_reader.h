@@ -19,19 +19,6 @@ typedef struct symbole {
   int fichier;
 } Symbole;
 
-/*
-  Structure: Super Structure regroupant toutes les composantes d'un fichier Elf
-  Utile afin d'avoir accès à tous les éléments d'un fichier Elf
-*/
-typedef struct fichierElf {
-	Elf32_Ehdr	header_elf;
-	Elf32_Shdr	*sectionsTable;
-	Symbole	*tabSymbole;
-	Elf32_Sym	*tabSymboleDynamique;
-	FILE 	 	*fichierElf;
-	Reloctable	*tabRel;
-} FichierElf;
-
 
 /*=====================================================================================================
                         FONCTION D'EN TETE //elf_header.c
