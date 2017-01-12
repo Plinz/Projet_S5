@@ -39,7 +39,7 @@ int relsize(FichierElf * elfile) {
 	return taille;
 }
 
-int init_new_rel (FichierElf * new_elf, FichierElf * oldelf1, FichierElf * oldelf2) {
+void init_new_rel (FichierElf * new_elf, FichierElf * oldelf1, FichierElf * oldelf2) {
 
 	int nb_sec1 = oldelf1->header_elf.e_shnum;
 	int nb_sec2 = oldelf1->header_elf.e_shnum ;
@@ -56,12 +56,11 @@ int init_new_rel (FichierElf * new_elf, FichierElf * oldelf1, FichierElf * oldel
 	reltab = malloc(sizeof(Reloctable) * nb_rel);
 	realrel = malloc(sizeof(Elf32_Rel) * nb_rel);
 	reltab->tablerel = realrel;
-	if ( reltab == NULL ) { return -1 ;} 
+	if ( reltab == NULL ) { printf("Erreur Allocation"); exit(1) ;} 
 	else { new_elf->tabRel = reltab; ; } 
 	for (int i = 0; i < nb_rel ; i++) {
 		new_elf->tabRel->indice_section = -1;
 	}
-
 }
 
 Reloctable* crea_rel_table (FichierElf * elfile) {
@@ -106,15 +105,12 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 
 Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, FichierElf* oldelf2, FichierElf * newelf, int nbnewsymbole, int newindex) {
 	// Si deux sections ont le même nom : On concatene tout ca.
-	Elf32_Ehdr oldheader1 = oldelf1->header_elf;
 	Elf32_Shdr* oldsection_headers1 = oldelf1->sectionsTable;
 	Reloctable * oldlesrel1 = oldelf1->tabRel;
 	Symbole *oldsym1 = oldelf1->tabSymbole;
-	Elf32_Ehdr oldheader2 = oldelf2->header_elf;
 	Elf32_Shdr* oldsection_headers2 = oldelf2->sectionsTable;
 	Reloctable* oldlesrel2 = oldelf2->tabRel;
 	Symbole *oldsym2 = oldelf2->tabSymbole;
-	Elf32_Ehdr newheader = newelf->header_elf;
 	Elf32_Shdr* newsection_headers = newelf->sectionsTable;
 	Reloctable * newlesrel = newelf->tabRel;
 	Symbole *newsym = newelf->tabSymbole;
@@ -311,11 +307,9 @@ Section RelUpdate (FichierElf* oldelf, FichierElf* newelf, Elf32_Shdr OldSec, in
 // Appel de type reloctable[i] ?? On va tester ça.
 
 
-Elf32_Ehdr oldheader = oldelf->header_elf;
 Elf32_Shdr* oldsection_headers = oldelf->sectionsTable;
 Reloctable* oldlesrel = oldelf->tabRel;
 Symbole *oldsym = oldelf->tabSymbole;
-Elf32_Ehdr newheader = newelf->header_elf;
 Elf32_Shdr* newsection_headers = newelf->sectionsTable;
 Reloctable* newlesrel = newelf->tabRel;
 Symbole *newsym = newelf->tabSymbole;
