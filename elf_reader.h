@@ -304,17 +304,37 @@ void sectionShstrtab(Section *section, Strtab * shstrtab);
 void sectionStrtab(Section *section, Strtab * strtab);
 
 /*
-  TODO
+  Fonction: Permet de fusionner par concatenation simple deux sections, elle va éraliser la fusion adéquate en fonction du type des deux section passer en parametre
+  @Param: Elf32_Shdr sectionHeader1 : Header de section de la première section à fusionner
+  @Param: Elf32_Shdr sectionHeader1 : Header de section de la seconde section à fusionner
+  @param: FichierElf * fichierElf1 : la structure du premier fichier à fusionner
+  @param: FichierElf * fichierElf2: la structure du second fichier à fusionner
+  @param: FichierElf * fichierElfRes: la structure du fichier fusion resultat
+  @param: Strtab * shstrtab : structure qui va contenir les noms de toutes les sections
+  @param: Strtab * strtab : structure qui va contenir les noms de tous les symboles
+  @Return: Une structure Section qui possède le contenu à ecrire dans le nouveaux fichier
 */
 void sectionFusionSimple(Section *fusion, Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2, Strtab * shstrtab);
 
 /*
-  TODO
+  Fonction: Permet de fusionner deux sections, elle va réaliser la fusion adéquate en fonction du type des deux section passer en parametre
+  @Param: Elf32_Shdr sectionHeader1 : Header de section de la première section à fusionner
+  @Param: Elf32_Shdr sectionHeader1 : Header de section de la seconde section à fusionner
+  @param: FichierElf * fichierElf1 : la structure du premier fichier à fusionner
+  @param: FichierElf * fichierElf2: la structure du second fichier à fusionner
+  @param: FichierElf * fichierElfRes: la structure du fichier fusion resultat
+  @param: Strtab * shstrtab : structure qui va contenir les noms de toutes les sections
+  @param: Strtab * strtab : structure qui va contenir les noms de tous les symboles
+  @Return: Une structure Section qui possède le contenu à ecrire dans le nouveaux fichier
 */
 Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, FichierElf * fichierElf1, FichierElf * fichierElf2,FichierElf * fichierElfRes, Strtab * shstrtab, Strtab * strtab);
 
 /*
-  TODO
+  Fonction: Permet d'ajouter une section
+  @Param: Elf32_Shdr sectionHeader : Header de section de la section à ajouter
+  @param: FichierElf * fichierElf : la structure du fichier cotenant la fusion à ajouter
+  @param: Strtab * shstrtab : structure qui va contenir les noms de toutes les sections
+  @Return: Une structure Section qui possède le contenu à ecrire dans le nouveaux fichier 
 */
 Section SectionAjout(Elf32_Shdr sectionHeader, FichierElf * fichierElf, Strtab * shstrtab);
 
@@ -392,7 +412,7 @@ void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb);
 /*
 TODO
 */
-void ajoutSymbole(Symbole *newTabSymbole, int nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
+void ajoutSymbole(Symbole *newTabSymbole, int * nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
 
 /*
 TODO
