@@ -19,17 +19,6 @@ typedef struct symbole {
   int fichier;
 } Symbole;
 
-
-
-/* Structure : Super-Structure des relocalisation. 
-Ajout des informations concernant l'indice de la section de relocation et son nom, ainsi que le nombre de relocations à effectuer */
-typedef struct reloctable {
-  Elf32_Rel * tablerel;
-  int indice_section;
-  int nombre_relocation;
-  char * nom_section;
-} Reloctable ;
-
 /*
   Structure: Super Structure regroupant toutes les composantes d'un fichier Elf
   Utile afin d'avoir accès à tous les éléments d'un fichier Elf
