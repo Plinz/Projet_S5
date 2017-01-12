@@ -392,7 +392,7 @@ void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb);
 /*
 TODO
 */
-void ajoutSymbole(Symbole *newTabSymbole, int nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
+void ajoutSymbole(Symbole *newTabSymbole, int *nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
 
 /*
 TODO
