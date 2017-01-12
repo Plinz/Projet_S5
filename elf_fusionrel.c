@@ -1,6 +1,7 @@
 #include "elf_reader.h"
 #include "elf_fusion.h"
 
+
 /*const char* relType[] =
 	{
 		"R_ARM_NONE", "R_ARM_PC24", "R_ARM_ABS32", "R_ARM_REL32", "R_ARM_LDR_PC_G0",
@@ -38,23 +39,28 @@ int relsize(FichierElf * elfile) {
 	return taille;
 }
 
-int init_new_rel (FichierElf new_elf, FichierElf oldelf1, FichierElf oldelf2) {
+int init_new_rel (FichierElf * new_elf, FichierElf * oldelf1, FichierElf * oldelf2) {
 
-int nb_sec1 = oldelf1.header_elf.e_shnum;
-int nb_sec2 = oldelf1.header_elf.e_shnum ;
-int nb_rel = 0 ;
-Reloctable * reltab;
-for (int i=0; i<nb_sec1; i++) {
-	if ( oldelf1.sectionsTable[i].sh_type == SHT_REL ) { nb_rel ++ ; } 
-}
-for (int i=0; i<nb_sec2; i++) {
-	if ( oldelf2.sectionsTable[i].sh_type == SHT_REL ) { nb_rel ++ ; } 
-}
+	int nb_sec1 = oldelf1->header_elf.e_shnum;
+	int nb_sec2 = oldelf1->header_elf.e_shnum ;
+	int nb_rel = 0 ;
+	Reloctable * reltab;
+	Elf32_Rel * realrel;
+	for (int i=0; i<nb_sec1; i++) {
+		if ( oldelf1->sectionsTable[i].sh_type == SHT_REL ) { nb_rel ++ ; } 
+	}
+	for (int i=0; i<nb_sec2; i++) {
+		if ( oldelf2->sectionsTable[i].sh_type == SHT_REL ) { nb_rel ++ ; } 
+	}
 
-reltab = malloc(sizeof(Reloctable) * nb_rel);
-if ( reltab == NULL ) { return -1 ;} 
-else { new_elf.tabRel = reltab; return 1 ; } 
-
+	reltab = malloc(sizeof(Reloctable) * nb_rel);
+	realrel = malloc(sizeof(Elf32_Rel) * nb_rel);
+	reltab->tablerel = realrel;
+	if ( reltab == NULL ) { return -1 ;} 
+	else { new_elf->tabRel = reltab; ; } 
+	for (int i = 0; i < nb_rel ; i++) {
+		new_elf->tabRel->indice_section = -1;
+	}
 
 }
 
@@ -66,11 +72,9 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 	// Faut-il le malloc ???
 	Reloctable* tabrel = elfile->tabRel;
 	FILE *elf = elfile->fichierElf;
-
 	int nb_sec = header.e_shnum;	
 	int nombre = 0;
 	int trel = sizeof(Elf32_Rel);
-	int k=0;
 	int diffsec = 0;
 	for (int i=0; i < nb_sec; i++){
 		if (section_headers[i].sh_type == SHT_REL) {
@@ -78,11 +82,15 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 			nombre = section_headers[i].sh_size / section_headers[i].sh_entsize;
 			
 			tabrel[diffsec].indice_section = i;
+			
 			tabrel[diffsec].nombre_relocation = nombre;
+			
 			tabrel[diffsec].nom_section = getSectionName(section_headers[i],elfile);
+			tabrel[diffsec].tablerel = malloc (sizeof(Elf32_Rel)*nombre);
 			for (int j=0; j < nombre; j++) {
-				fread(&(tabrel[diffsec].tablerel[k]),trel, 1,elf);
-				k++;
+				
+				fread(&(tabrel[diffsec].tablerel[j]),trel, 1,elf);
+				printf ("ZOUBIDOU %d %d \n",tabrel[diffsec].tablerel[j].r_info, tabrel[diffsec].tablerel[j].r_offset);
 			}
 			diffsec ++;
 		}
@@ -96,99 +104,92 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 
 
 
-Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, FichierElf* oldelf2, FichierElf * newelf, int nbnewsymbole) {
-// Si deux sections ont le même nom : On concatene tout ca.
-Elf32_Ehdr oldheader1 = oldelf1->header_elf;
-Elf32_Shdr* oldsection_headers1 = oldelf1->sectionsTable;
-Reloctable * oldlesrel1 = oldelf1->tabRel;
-Elf32_Sym *oldsym1 = oldelf1->tabSymbole;
-Elf32_Ehdr oldheader2 = oldelf2->header_elf;
-Elf32_Shdr* oldsection_headers2 = oldelf2->sectionsTable;
-Reloctable* oldlesrel2 = oldelf2->tabRel;
-Elf32_Sym *oldsym2 = oldelf2->tabSymbole;
-Elf32_Ehdr newheader = newelf->header_elf;
-Elf32_Shdr* newsection_headers = newelf->sectionsTable;
-Reloctable * newlesrel = newelf->tabRel;
-Elf32_Sym *newsym = newelf->tabSymbole;
+Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, FichierElf* oldelf2, FichierElf * newelf, int nbnewsymbole, int newindex) {
+	// Si deux sections ont le même nom : On concatene tout ca.
+	Elf32_Ehdr oldheader1 = oldelf1->header_elf;
+	Elf32_Shdr* oldsection_headers1 = oldelf1->sectionsTable;
+	Reloctable * oldlesrel1 = oldelf1->tabRel;
+	Symbole *oldsym1 = oldelf1->tabSymbole;
+	Elf32_Ehdr oldheader2 = oldelf2->header_elf;
+	Elf32_Shdr* oldsection_headers2 = oldelf2->sectionsTable;
+	Reloctable* oldlesrel2 = oldelf2->tabRel;
+	Symbole *oldsym2 = oldelf2->tabSymbole;
+	Elf32_Ehdr newheader = newelf->header_elf;
+	Elf32_Shdr* newsection_headers = newelf->sectionsTable;
+	Reloctable * newlesrel = newelf->tabRel;
+	Symbole *newsym = newelf->tabSymbole;
+	int parcoureltab1 = 0 ;
+	// A VERIFIER LA BOUCLE
+	while (strcmp(oldlesrel1[parcoureltab1].nom_section,getSectionName(OldSec1,oldelf1))!=0){
+		parcoureltab1++;}
+	int parcoureltab2 = 0 ;
+	while (strcmp(oldlesrel2[parcoureltab2].nom_section,getSectionName(OldSec2,oldelf2))!=0){parcoureltab2++;}
+	// Verifier la valeur de parcoureltab si on a i=0... Pour pas que ça prenne un de plus
+	int indice_new_rel = 0;
+	while ( newlesrel[indice_new_rel].indice_section != -1 ) { indice_new_rel ++ ; }
 
-int parcoureltab1 = 0 ;
-// A VERIFIER LA BOUCLE
-while (strcmp(oldlesrel1[parcoureltab1].nom_section,getSectionName(OldSec1,oldelf1))==0){parcoureltab1++;}
+	
 
-int parcoureltab2 = 0 ;
-while (strcmp(oldlesrel2[parcoureltab2].nom_section,getSectionName(OldSec2,oldelf2))==0){parcoureltab2++;}
-// Verifier la valeur de parcoureltab si on a i=0... Pour pas que ça prenne un de plus
+	int nombre1 = 0;
 
-int indice_new_rel = 0;
-while ( newlesrel[indice_new_rel].indice_section != -1 ) { indice_new_rel ++ ; }
+	int numsec1 = oldlesrel1[parcoureltab1].indice_section;
+	int nombre2 = 0;
+	int numsec2 = oldlesrel2[parcoureltab2].indice_section;
+	int indicenew = 0;
+	nombre1 = oldsection_headers1[numsec1].sh_size / oldsection_headers1[numsec1].sh_entsize;
+	nombre2 = oldsection_headers2[numsec2].sh_size / oldsection_headers2[numsec2].sh_entsize;
+	int type = 0;
+	int idsym = 0;
+	int j = 0;
+	int found = 0 ;
+	int lastoff = 0;
+	int taille = 0;
+	Section secrel;
+	
+	// Somme du nombre de relocation
+	newlesrel[indice_new_rel].nombre_relocation = oldlesrel1[parcoureltab1].nombre_relocation + oldlesrel2[parcoureltab2].nombre_relocation;
 
+	
+	//Nom de section inchangé 
+	newlesrel[indice_new_rel].nom_section = oldlesrel1[parcoureltab1].nom_section;
 
+	//Calcul du nouvel indice de section - Il est peut-etre inutile 
+	/*
+	int nouvel_ind_sec = 1;
+	printf ("initialise ? %d \n",newsection_headers[nouvel_ind_sec].sh_name);
+	while (strcmp(oldlesrel1[parcoureltab1].nom_section,getSectionName(newsection_headers[nouvel_ind_sec],newelf))!=0) {
+		printf("A \n");
+		nouvel_ind_sec ++;
+		if (nouvel_ind_sec > 100 ) { printf ("Boucle dans le vide");  } } 
+		newlesrel[indice_new_rel].indice_section = nouvel_ind_sec ;
+	*/
+	newlesrel[indice_new_rel].indice_section =newindex;
+	
+	for (int i = 0; i<nombre1 ; i++ ) {
+	// On s'occupe de la premiere table des relocations
+		// On calcule le nouvel offset;
+		newlesrel[indice_new_rel].tablerel[indicenew].r_offset = oldlesrel1[parcoureltab1].tablerel[i].r_offset;
+		// On enregistre le type et l'ID précédent.
+		type  = ELF32_R_TYPE(oldlesrel1[parcoureltab1].tablerel[i].r_info);
+		idsym = ELF32_R_SYM(oldlesrel1[parcoureltab1].tablerel[i].r_info);
 
+		// On mets le type & le nouvel id
+		j = 0;
+		found = 0;
 
-
-
-
-
-
-int nombre1 = 0;
-
-int numsec1 = oldlesrel1[parcoureltab1].indice_section;
-int nombre2 = 0;
-int numsec2 = oldlesrel2[parcoureltab2].indice_section;
-int indicenew = 0;
-nombre1 = oldsection_headers1[numsec1].sh_size / oldsection_headers1[numsec1].sh_entsize;
-nombre2 = oldsection_headers2[numsec2].sh_size / oldsection_headers2[numsec2].sh_entsize;
-int type = 0;
-int idsym = 0;
-int j = 0;
-int found = 0 ;
-int lastoff = 0;
-int taille = 0;
-Section secrel;
-
-// Somme du nombre de relocation
-newlesrel[indice_new_rel].nombre_relocation = oldlesrel1[parcoureltab1].nombre_relocation + oldlesrel2[parcoureltab2].nombre_relocation;
-
-
-//Nom de section inchangé 
-newlesrel[indice_new_rel].nom_section = oldlesrel1[parcoureltab1].nom_section;
-
-//Calcul du nouvel indice de section
-int nouvel_ind_sec = 0;
-while (strcmp(oldlesrel1[parcoureltab1].nom_section,getSectionName(newsection_headers[nouvel_ind_sec],newelf))==0) {
-	nouvel_ind_sec ++;
-	if (nouvel_ind_sec > 100 ) { printf ("Boucle dans le vide");  } } 
-	newlesrel[indice_new_rel].indice_section = nouvel_ind_sec ;
-// VERIFIER la valeur de nouvel_ind_sec 
-
-for (int i = 0; i<nombre1 ; i++ ) {
-// On s'occupe de la premiere table des relocations
-
-	// On calcule le nouvel offset
-	newlesrel[indice_new_rel].tablerel[indicenew].r_offset = oldlesrel1[parcoureltab1].tablerel[i].r_offset;
-
-	// On enregistre le type et l'ID précédent.
-	type  = ELF32_R_TYPE(oldlesrel1[parcoureltab1].tablerel[i].r_info);
-	idsym = ELF32_R_SYM(oldlesrel1[parcoureltab1].tablerel[i].r_info);
-
-
-	// On mets le type & le nouvel id
-	j = 0;
-	found = 0;
-
-	while (j < nbnewsymbole && found == 0 ) {
-		if ( ( oldsym1[idsym].st_value == newsym[j].st_value ) &&( oldsym1[idsym].st_size == newsym[j].st_size ) &&( oldsym1[idsym].st_info == newsym[j].st_info ) ) {
-			newlesrel[indice_new_rel].tablerel[i].r_info = ELF32_R_INFO(j,type);
-			found = 1;
+		while (j < nbnewsymbole && found == 0 ) {
+			if ( ( oldsym1[idsym].symbole.st_value == newsym[j].symbole.st_value ) &&( oldsym1[idsym].symbole.st_size == newsym[j].symbole.st_size ) &&( oldsym1[idsym].symbole.st_info == newsym[j].symbole.st_info ) ) {
+				newlesrel[indice_new_rel].tablerel[i].r_info = ELF32_R_INFO(j,type);
+				found = 1;
 
 			}
+			j++;
+		}
 
-		j++;}
-
-	// On stocke le dernier offset
-	lastoff = newlesrel[indice_new_rel].tablerel[i].r_offset;
-
-	switch (type) {
+		// On stocke le dernier offset
+		lastoff = newlesrel[indice_new_rel].tablerel[i].r_offset;
+		printf("LAST OFF US : %x \n",lastoff);
+		switch (type) {
 				// Que faire si on entre dans ces types ?
 				// Prendre la section en question et prendre les 4 premiers octets
 				// Les modifier dans le fichier ??
@@ -206,54 +207,46 @@ for (int i = 0; i<nombre1 ; i++ ) {
 			case (8) :
 				// R_ARM_ABS8
 				break;
-
 			case (29) :
 				// R_ARM_JUMP24
 				break;
-
 			case (28) :
 				// R_ARM_CALL -- PAS SUR DU TOUT CELUI LA
 				break;
-
 			default :
 				break ;
-
-
 		}
 
+		// On incremente le nouvel indice que prendront la prochaine table
+		indicenew ++;
+	}
 
-	// On incremente le nouvel indice que prendront la prochaine table
-	indicenew ++;
-}
+	for (int i = 0; i<nombre2 ; i ++ ) {
+	// On concatene la seconde table des relocations
 
-for (int i = 0; i<nombre2 ; i ++ ) {
-// On concatene la seconde table des relocations
-
-	// On calcule le nouvel offset
-	newlesrel[indice_new_rel].tablerel[indicenew].r_offset = lastoff + oldsection_headers2[numsec2].sh_entsize;
+		// On calcule le nouvel offset
+		newlesrel[indice_new_rel].tablerel[indicenew].r_offset = lastoff + oldsection_headers2[numsec2].sh_entsize;
+		printf(" OFFSET : %x \n",lastoff);
 
 
+		// On enregistre le type et l'ID précédent.
+		type  = ELF32_R_TYPE(oldlesrel2[parcoureltab2].tablerel[i].r_info);
+		idsym = ELF32_R_SYM(oldlesrel2[parcoureltab2].tablerel[i].r_info);
 
-	// On enregistre le type et l'ID précédent.
-	type  = ELF32_R_TYPE(oldlesrel2[parcoureltab2].tablerel[i].r_info);
-	idsym = ELF32_R_SYM(oldlesrel2[parcoureltab2].tablerel[i].r_info);
+		// On mets le type & le nouvel id
+		j = 0;
+		found = 0;
 
-	// On mets le type & le nouvel id
-	j = 0;
-	found = 0;
-
-	while (j < nbnewsymbole && found == 0 ) {
-		if ( ( oldsym2[idsym].st_value == newsym[j].st_value ) &&( oldsym2[idsym].st_size == newsym[j].st_size ) &&( oldsym2[idsym].st_info == newsym[j].st_info ) ) {
-			newlesrel[indice_new_rel].tablerel[indicenew].r_info = ELF32_R_INFO(j,type);
-			found = 1;
-
+		while (j < nbnewsymbole && found == 0 ) {
+			if ( ( oldsym2[idsym].symbole.st_value == newsym[j].symbole.st_value ) &&( oldsym2[idsym].symbole.st_size == newsym[j].symbole.st_size ) &&( oldsym2[idsym].symbole.st_info == newsym[j].symbole.st_info ) ) {
+				newlesrel[indice_new_rel].tablerel[indicenew].r_info = ELF32_R_INFO(j,type);
+				found = 1;
 			}
+			j++;
+		}
 
-		j++;}
-
-
-	// On stocke le dernier offset
-	lastoff = newlesrel[indice_new_rel].tablerel[indicenew].r_offset;
+		// On stocke le dernier offset
+		lastoff = newlesrel[indice_new_rel].tablerel[indicenew].r_offset;
 
 		switch (type) {
 				// Que faire si on entre dans ces types ?
@@ -285,16 +278,28 @@ for (int i = 0; i<nombre2 ; i ++ ) {
 			default :
 				break ;
 
-
 		}
 
-	// On incremente le nouvel indice que prendront la prochaine table
-	indicenew ++;
+		// On incremente le nouvel indice que prendront la prochaine table
+		indicenew ++;
 
-
-}
-	taille = relsize(newelf);
-	// EcritureStruct(newreltab[indicenew].tablerel,taille,&secrel,newsection_headers);
+	}
+	taille = newlesrel[indice_new_rel].nombre_relocation;
+	printf("taille = %d \n",taille);
+	newsection_headers[newindex].sh_type=oldsection_headers1[numsec1].sh_type;
+	newsection_headers[newindex].sh_flags=oldsection_headers1[numsec1].sh_flags;
+	newsection_headers[newindex].sh_addr=oldsection_headers1[numsec1].sh_addr;
+	newsection_headers[newindex].sh_offset=newlesrel[indice_new_rel].tablerel[0].r_offset ;
+	newsection_headers[newindex].sh_size=oldsection_headers1[numsec1].sh_size+oldsection_headers2[numsec2].sh_size;
+	newsection_headers[newindex].sh_link=oldsection_headers1[numsec1].sh_link;
+	newsection_headers[newindex].sh_info=oldsection_headers1[numsec1].sh_info;
+	newsection_headers[newindex].sh_addralign=oldsection_headers1[numsec1].sh_addralign;
+	newsection_headers[newindex].sh_entsize=oldsection_headers1[numsec1].sh_entsize;
+	printf("Que faut il changer ? %d %d %d \n",newsection_headers[newindex].sh_name,newsection_headers[newindex].sh_type,newsection_headers[newindex].sh_flags);
+	printf("Que faut il changer ? %d %d %d %d %d \n",newsection_headers[newindex].sh_size,newsection_headers[newindex].sh_link,newsection_headers[newindex].sh_info,newsection_headers[newindex].sh_addralign,newsection_headers[newindex].sh_entsize);
+	EcritureStruct(newlesrel[indice_new_rel].tablerel,taille,&secrel,newsection_headers[newindex]);
+	printf("ZOZOZOZOZOZOZOOZZOOZZOZOZO \n");
+	printf("%s \n",secrel.contenu);
 	return secrel;
 }
 
@@ -309,11 +314,11 @@ Section RelUpdate (FichierElf* oldelf, FichierElf* newelf, Elf32_Shdr OldSec, in
 Elf32_Ehdr oldheader = oldelf->header_elf;
 Elf32_Shdr* oldsection_headers = oldelf->sectionsTable;
 Reloctable* oldlesrel = oldelf->tabRel;
-Elf32_Sym *oldsym = oldelf->tabSymbole;
+Symbole *oldsym = oldelf->tabSymbole;
 Elf32_Ehdr newheader = newelf->header_elf;
 Elf32_Shdr* newsection_headers = newelf->sectionsTable;
 Reloctable* newlesrel = newelf->tabRel;
-Elf32_Sym *newsym = newelf->tabSymbole;
+Symbole *newsym = newelf->tabSymbole;
 
 int parcoureltab = 0 ;
 // A VERIFIER LA BOUCLE
@@ -329,6 +334,8 @@ int type = 0;
 int idsym = 0;
 int j=0;
 int found = 0;
+int taille = 0;
+Section secrel;
 // Inutile ??
 nombre = oldsection_headers[numsec].sh_size / oldsection_headers[numsec].sh_entsize;
 
@@ -340,9 +347,10 @@ newlesrel[indice_new_rel].nom_section = oldlesrel[parcoureltab].nom_section;
 
 //Calcul du nouvel indice de section
 int nouvel_ind_sec = 0;
+/*
 while (strcmp(oldlesrel[parcoureltab].nom_section,getSectionName(newsection_headers[nouvel_ind_sec],newelf))==0) {
 	nouvel_ind_sec ++;
-	if (nouvel_ind_sec > 100 ) { printf ("Boucle dans le vide");  } } 
+	if (nouvel_ind_sec > 100 ) { printf ("Boucle dans le vide");  } } */
 	newlesrel[indice_new_rel].indice_section = nouvel_ind_sec ;
 // VERIFIER la valeur de nouvel_ind_sec 
 
@@ -361,7 +369,7 @@ while (strcmp(oldlesrel[parcoureltab].nom_section,getSectionName(newsection_head
 				found = 0;
 				
 				while (j < nbnewsymbole && found == 0 ) {
-					if ( ( oldsym[idsym].st_value == newsym[j].st_value ) &&( oldsym[idsym].st_size == newsym[j].st_size ) &&( oldsym[idsym].st_info == newsym[j].st_info ) ) {
+					if ( ( oldsym[idsym].symbole.st_value == newsym[j].symbole.st_value ) &&( oldsym[idsym].symbole.st_size == newsym[j].symbole.st_size ) &&( oldsym[idsym].symbole.st_info == newsym[j].symbole.st_info ) ) {
 						newlesrel[indice_new_rel].tablerel[i].r_info = ELF32_R_INFO(j,type);
 						found = 1;
 						
@@ -402,14 +410,19 @@ while (strcmp(oldlesrel[parcoureltab].nom_section,getSectionName(newsection_head
 		
 		}
 	}
+	taille = newlesrel[indice_new_rel].nombre_relocation;
+	printf("taille = %d",taille);
+	EcritureStruct(newlesrel[indice_new_rel].tablerel,taille,&secrel,newsection_headers[0]);
+	printf("%s \n",secrel.contenu);
+	return secrel;
 }
 
-void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_Shdr* headsec) {
-	int sh_entsize = headsec->sh_entsize;
+void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_Shdr headsec) {
+	int sh_entsize = headsec.sh_entsize;
 	int i,j;
 	int nbOctets = 0;
 
-
+	printf("SH ENTSIZE : %d \n",sh_entsize);
 	section->contenu = malloc(taillerel * sh_entsize);
 	char * buffer = malloc(1);
 	for(i=0; i<taillerel;i++){
@@ -420,19 +433,8 @@ void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_S
 			nbOctets++;
 		}
 	}
+	printf("NBOCTEEEET : %d \n", nbOctets);
 	section->nbOctets = nbOctets;
-	section->header = *headsec;
+	section->header = headsec;
 
 }
-/*
-  Structure: Cette structure est crée pour chaque nouvelle section après la fusion
-    contenu: contenu brut de la section après fusion
-    nbOctets: taille de la section créée
-  Utile pour construire de manière générique le nouveau fichier objet
-
-typedef struct section {
- char * contenu;
- int nbOctets;
- Elf32_Shdr header;
-} Section;
-*/
