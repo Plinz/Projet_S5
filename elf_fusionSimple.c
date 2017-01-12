@@ -219,15 +219,10 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 
 	switch(sectionHeader1.sh_type) {
 		case SHT_SYMTAB :
-			//printf("\t\tTable des symboles à faire, %d symboles à parcourir (%d+%d)\n",Size1+Size2,Size1,Size2);
+
 			fichierElfRes->tabSymbole = malloc(nbSymbolTotal*sizeof(Symbole));
 			nbSymbolTotal = fusionTableSymbole(*fichierElf1, *fichierElf2, Size1, Size2, fichierElfRes->tabSymbole, strtab);
-			/*printf("affichage de la nouvelle table des symboles\n");
-			affichageTableSymbole(fichierElfRes->tabSymbole, nbSymbolTotal, fichierElfRes->fichierElf, fichierElfRes->sectionsTable, fichierElfRes->header_elf);
-			printf("fin de l'affichage de la nouvelle table des symboles \n");*/
-
 			sectionfusionee = creerSectionTableSymbole(fichierElfRes->tabSymbole, nbSymbolTotal, sectionHeader1, sectionHeader2);
-
 			break;
 		/*case SHT_REL :
 			//Seulement le header, on ne peut pas faire le contenu sans la section des symboles
@@ -238,6 +233,7 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 			printf("\t\tTable des rela-alocation à faire\n");
 			break;*/
 		default : //Pour l'instant, on fait partout pareil
+		
 			sectionFusionSimple(&sectionfusionee, sectionHeader1, sectionHeader2, fichierElf1, fichierElf2, shstrtab);
 		break;
 	}
@@ -330,7 +326,6 @@ void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfR
 	char * buffer = malloc(1);	
 	int i = 0, j =0;
 
-	printf("1SH LINK %d\n",fichierElfRes->sectionsTable[8].sh_link);
 	printf("\n");
 	/////////////////////////////////////////////////////////////////////
 	//Ecriture des sections
@@ -574,21 +569,8 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	printf("\n");
 	//On ecrit la fusion des deux fichiers
 	printf("Ecriture du fichier fusionnee : \n");
-	printf("SH LINK %d\n",fichierElfRes->sectionsTable[indexSymtab].sh_link);
 	ecritureFichierFusionnee(fichierElfRes, sections_elfRes, shstrtab);
-	printf("SH LINK %d\n",fichierElfRes->sectionsTable[indexSymtab].sh_link);
 
-/*
-	Elf32_Sym* tabSymboleFusionne;
-	tabSymboleFusionne = malloc(sizeof(Elf32_Sym));
-	int nbSymboleFichierFusionne = lectureTableSymbole(tabSymboleFusionne, fichierElfRes->header_elf, fichierElfRes->sectionsTable, fichierElfRes->fichierElf);
-	int p;
-	Elf32_Shdr s;
-	RechercheSectionByName(fichierElfRes, ".strtab", &s, &p);
-
-	affichageTableSymbole(tabSymboleFusionne, nbSymboleFichierFusionne, fichierElfRes->fichierElf, fichierElfRes->sectionsTable, fichierElfRes->header_elf);
-
-*/
 
 	free(tmp);
 	free(strtab);

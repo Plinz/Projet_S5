@@ -27,7 +27,6 @@ int main (int argc, char *argv[])
 		lectureTableSection(fichierElf1.fichierElf, fichierElf1.header_elf,fichierElf1.sectionsTable);
 		//symboles
 		Elf32_Shdr symboleHeader = getSectionByName(fichierElf1.header_elf, fichierElf1.sectionsTable, fichierElf1.fichierElf, ".symtab");
-		//int nbSymbole = (symboleHeader.sh_size/symboleHeader.sh_entsize)* sizeof(Symbole);
 		fichierElf1.tabSymbole = malloc(sizeof(Symbole));
 		lectureTableSymbole(fichierElf1.tabSymbole, fichierElf1.header_elf, fichierElf1.sectionsTable, fichierElf1.fichierElf);
 
@@ -72,13 +71,13 @@ int main (int argc, char *argv[])
 		printf("OK\n");
 		printf("FichierElf2 : ");
 		free(fichierElf2.sectionsTable);
-		free(fichierElf2.tabSymbole); //Pas encore alloué
+		free(fichierElf2.tabSymbole);
 		//free(fichierElf2.tabSymboleDynamique); //Pas encore alloué
 		fclose(fichierElf2.fichierElf);
 		printf("OK\n");
 		printf("FichierElfRes : ");
 		free(fichierElfRes.sectionsTable);
-		free(fichierElfRes.tabSymbole); //Pas encore alloué
+		free(fichierElfRes.tabSymbole);
 		//free(fichierElfRes.tabSymboleDynamique); //Pas encore alloué
 		fclose(fichierElfRes.fichierElf);
 		printf("OK\n");

@@ -125,6 +125,9 @@ int main (int argc, char *argv[])
 		if(nbSymboleDynamique > 0){
 			affichageTableSymboleDynamique(tabSymbDynamique, nbSymboleDynamique, fich, TableSec, head);
 		}*/
+
+		free(tabSymbole);
+
 		printf("====================================================================================\n");
 		printf("\n");
 	}
@@ -135,6 +138,10 @@ int main (int argc, char *argv[])
 		nbSym = lectureTableSymbole(tabSymbole, head, TableSec, fich);
 		affichage_relocation(tabSymbole, &head, TableSec, nbSym, fich);
 		printf("\n");
+
+		free(tabSymbole);
 	}
+
+	free(TableSec);
 	printf("\n");
 }
