@@ -1,4 +1,5 @@
 #include "elf_reader.h"
+#include "elf_fusion.h"
 
 /*const char* relType[] =
 	{

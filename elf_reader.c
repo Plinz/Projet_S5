@@ -119,7 +119,6 @@ int main (int argc, char *argv[])
 		Symbole *tabSymbole = malloc(sizeof(Symbole));
 		int nbSymbole = lectureTableSymbole(tabSymbole, head, TableSec, fich);
 		affichageTableSymbole(tabSymbole, nbSymbole, fich, TableSec, head);
-		
 		/*Elf32_Sym *tabSymbDynamique = malloc(head.e_shentsize);
 		int nbSymboleDynamique = lectureTableSymboleDynamique(tabSymbDynamique, head, TableSec, fich);
 		if(nbSymboleDynamique > 0){

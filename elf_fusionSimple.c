@@ -1,4 +1,5 @@
 #include "elf_reader.h"
+#include "elf_fusion.h"
 
 Elf32_Ehdr header(FichierElf *fichierElf1, FichierElf *fichierElf2) {
   Elf32_Ehdr header_elfRes;

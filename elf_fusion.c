@@ -1,4 +1,5 @@
 #include "elf_reader.h"
+#include "elf_fusion.h"
 
 int main (int argc, char *argv[])
 {

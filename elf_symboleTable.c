@@ -141,12 +141,9 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 
 	int i;
 	Elf32_Word offset;
-	char * stringTabSymb;
 	char *nomSymbole;
 	nomSymbole = malloc(50);
-	stringTabSymb = malloc(50);
-	stringTabSymb = ".strtab";
-	offset = rechercheOffsetSection(header, tabSection, f, stringTabSymb);
+	offset = rechercheOffsetSection(header, tabSection, f, ".strtab");
 
 	printf("num	value	size	bind	type	  other		shndx 		     nom\n");
 	for(i=0; i<sizeTabSymbole; i++){
@@ -219,7 +216,6 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 		printf("\n");
 	}
 	free(nomSymbole);
-	free(stringTabSymb);
 }
 
 void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabSymboleDynamique, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header){
@@ -303,6 +299,6 @@ void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabS
 		printf("\n");
 	}
 	free(nomSymboleDynamique);
-	free(stringTabSymbDynamique);
+	free(tabSymbdynamique);
 }
 

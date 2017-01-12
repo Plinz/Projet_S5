@@ -1,4 +1,5 @@
 #include "elf_reader.h"
+#include "elf_fusion.h"
 
 int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int sizeTab1, int sizeTab2, Symbole *newTabSymbole, Strtab * strtab){
 	int i, j, nbEntree = 0, flag = 0;
