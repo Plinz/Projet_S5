@@ -212,15 +212,3 @@ Elf32_Word rechercheOffsetSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_ta
   @SideEffet: remplissage de la chaine de caractère c
 */
 void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset,char *c);
-
-
-/*=====================================================================================================================
-                          GESTION TABLE DE REIMPLANTATION // elf_relocate.c
-=======================================================================================================================*/
-
-int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) ;
-
-int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
-
-int affichage_relocation(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers,FILE* elf);
-
