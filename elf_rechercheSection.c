@@ -38,6 +38,8 @@ Elf32_Shdr getSectionByName(Elf32_Ehdr header_elf, Elf32_Shdr *sections_table, F
 
 		i++;
 	}
+	
+	free(currentName);
 
 	//Une fois la bonne section trouvee on affiche son contenue
 	if (trouve) {

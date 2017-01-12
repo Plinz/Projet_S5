@@ -309,6 +309,7 @@ void RechercheSectionByName(FichierElf * fichierElf, char * secName, Elf32_Shdr 
 		}
 		i++;
 	}
+	free(currentName);
 }
 
 char * getSectionName(Elf32_Shdr section, FichierElf * fichier) {
@@ -323,7 +324,8 @@ char * getSectionName(Elf32_Shdr section, FichierElf * fichier) {
 }
 
 void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfRes, Strtab * shstrtab) {
-	char * buffer = malloc(1);	
+	char * buffer = malloc(1);
+	char *init = buffer;	
 	int i = 0, j =0;
 
 	printf("\n");
@@ -383,6 +385,7 @@ void ecritureFichierFusionnee(FichierElf *fichierElfRes, Section * sections_elfR
 		buffer++;
 	}
 
+	free(init);
 	printf("\tOK\nOK\n");
 	/////////////////////////////////////////////////////////////////////
 }

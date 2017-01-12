@@ -115,6 +115,8 @@ Elf32_Word rechercheOffsetSection(Elf32_Ehdr header_elf, Elf32_Shdr *sections_ta
 
 		i++;
 	}
+	
+	free(currentName);
 
 	//Une fois la bonne section trouvee on affiche son contenue
 	if (trouve) {
@@ -216,6 +218,8 @@ void affichageTableSymbole( Symbole* tabSymbole, int sizeTabSymbole, FILE* f, El
 		printf("%20s", nomSymbole);
 		printf("\n");
 	}
+	free(nomSymbole);
+	free(stringTabSymb);
 }
 
 void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabSymboleDynamique, FILE* f, Elf32_Shdr* tabSection, Elf32_Ehdr header){
@@ -298,5 +302,7 @@ void affichageTableSymboleDynamique(Elf32_Sym* tabSymboleDynamique, int sizeTabS
 		printf("%40s", nomSymboleDynamique);
 		printf("\n");
 	}
+	free(nomSymboleDynamique);
+	free(stringTabSymbDynamique);
 }
 
