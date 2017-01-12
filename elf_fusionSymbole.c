@@ -4,7 +4,15 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 	int i, j, nbEntree = 0, flag = 0;
 	char *c1, *c2;
 	c1 = malloc(50);
+	if(c1==NULL){
+		printf("Problème d'allocation");
+		exit(1);
+	}
 	c2 = malloc(50);
+	if(c2==NULL){
+		printf("Problème d'allocation");
+		exit(1);
+	}
 	FILE* f1 = structFichier1.fichierElf;
 	FILE* f2 = structFichier2.fichierElf;
 
@@ -134,6 +142,11 @@ void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section){
 
 	section->contenu = malloc(sizeTab * sh_entsize);
 	char * buffer = malloc(1);
+	char * init = buffer;
+	if(buffer==NULL){
+		printf("Problème d'allocation");
+		exit(1);
+	}
 	for(i=0; i<sizeTab;i++){
 		buffer = (char *) &tableSymbole[i].symbole;
 		for (j=0; j < sh_entsize; j++) {
@@ -142,7 +155,7 @@ void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section){
 			nbOctets++;
 		}
 	}
-	//printf("\t\tEcrire Contenu nbOctets %d entsize %d  sizeTab %d \n",nbOctets, sh_entsize, sizeTab);
+	free(init);
 }
 
 int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Strtab *shstrtab) {
