@@ -453,15 +453,16 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	int indexShstrtab = -1;
 	int indexStrtab = -1;
 	int indexSymtab = -1;
-	Elf32_Shdr **SectionHeaderRel = malloc(80 * sizeof(Elf32_Shdr* ));
-	for (int kl = 0; kl < 80; kl++) {
+	int tmaxrel = 80;//nbRel(fichierElf1->header_elf,fichierElf1->sectionsTable)+nbRel(fichierElf2->header_elf,fichierElf2->sectionsTable);
+	Elf32_Shdr **SectionHeaderRel = malloc(tmaxrel * sizeof(Elf32_Shdr* ));
+	for (int kl = 0; kl < tmaxrel; kl++) {
 		SectionHeaderRel[kl] = malloc(sizeof(Elf32_Shdr) * 2);
 	}
-	Elf32_Shdr *SectionHeaderRelSeul1 = malloc(80 * sizeof(Elf32_Shdr));
+	Elf32_Shdr *SectionHeaderRelSeul1 = malloc(tmaxrel * sizeof(Elf32_Shdr));
 	int nbSectionTypeRelSeul1 = 0;
-	Elf32_Shdr *SectionHeaderRelSeul2 = malloc(80 * sizeof(Elf32_Shdr));
+	Elf32_Shdr *SectionHeaderRelSeul2 = malloc(tmaxrel * sizeof(Elf32_Shdr));
 	int nbSectionTypeRelSeul2 = 0;
-
+	
 	Elf32_Shdr * tmp = malloc(sizeof(Elf32_Shdr));
 	printf("Fusion sections : \n");
 	for (i = 0; i < fichierElf1->header_elf.e_shnum; i++) { //Pour toutes les sections du fichier1
@@ -569,15 +570,12 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	fichierElf2->tabRel = reloctable2;
 	reloctable1 = crea_rel_table(fichierElf1);
 	reloctable2 = crea_rel_table(fichierElf2);
-	printf("CEST LA ZOUBIDA : %x \n",reloctable1[0].tablerel[0].r_offset);
 	//fichierElf1->tabRel = reloctable1;
 	//fichierElf2->tabRel = reloctable2;
 	init_new_rel(fichierElfRes,fichierElf1,fichierElf2);
-	printf("WALLAYE BILLAYE \n");
 	//Fusion des Sections de type Rel :
 	for (i=0; i < nbSectionTypeRel ; i++) {
 		sections_elfRes[indexesREL[i]]=RelFusion(fichierElf1, SectionHeaderRel[i][0], SectionHeaderRel[i][1], fichierElf2,fichierElfRes, nbsymboles, indexesREL[i]);	
-		printf("WALLAYE BILLAYE 2\n");
 	}
 	// Mise à jour des Sections de type Rel pour chaque fichier:
 	for (i = 0; i < nbSectionTypeRelSeul1++; i++) {
