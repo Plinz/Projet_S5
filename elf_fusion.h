@@ -37,6 +37,16 @@ typedef struct strtab {
   int nbNames;
 } Strtab;
 
+/* Structure : Super-Structure des relocalisation. 
+Ajout des informations concernant l'indice de la section de relocation et son nom, ainsi que le nombre de relocations à effectuer */
+typedef struct reloctable {
+  Elf32_Rel * tablerel;
+  int indice_section;
+  int nombre_relocation;
+  char * nom_section;
+} Reloctable ;
+
+
 /*=====================================================================================================================
                           GESTION FUSION SIMPLE ET SECTION // elf_fusionSimple.c
 =======================================================================================================================*/
