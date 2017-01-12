@@ -237,10 +237,10 @@ void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section);
 int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Strtab *shstrtab);
 
 // ELF FUSION REL
-
 int relsize(FichierElf * elfile);
 Reloctable* crea_rel_table (FichierElf * elfile);
-Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, FichierElf* oldelf2, FichierElf * newelf, int nbnewsymbole);
+Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, FichierElf* oldelf2, FichierElf * newelf, int nbnewsymbole, int newindex);
 Section RelUpdate (FichierElf* oldelf, FichierElf* newelf, Elf32_Shdr OldSec, int nbnewsymbole);
-void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_Shdr* headsec);
+void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_Shdr headsec);
 int init_new_rel (FichierElf* new_elf, FichierElf* oldelf1, FichierElf* oldelf2);
+int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *lesrel, FILE* elf);
