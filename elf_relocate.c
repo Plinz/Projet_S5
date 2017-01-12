@@ -151,7 +151,7 @@ int affichage_relocation(Symbole* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr
 			for (int l = 0; l < nombres; l++) {
 				type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
 				info = rela[j].r_info;
-				printf("%d  %10x  %15s  %8x    ",rela[j].r_offset, rela[j].r_info, type, ELF32_R_SYM(info));
+				printf("%3d  %10x  %15s  %10x    ",rela[j].r_offset, rela[j].r_info, type, ELF32_R_SYM(info));
 				printf("\n");				
 			}		
 			free(nomsec);	
@@ -189,14 +189,14 @@ int affichage_relocation(Symbole* tabSymbole, Elf32_Ehdr *fileHeader, Elf32_Shdr
 
 			printf("Relocation :  Nom Section : %s  à l'adresse 0x%x avec %d éléments \n", nomsec, sections_headers[k].sh_offset, nombres);
 			printf("REL - Symboles \n");
-			printf("offset :   info :   Type :       Index Symbole : \n");
+			printf("offset     info       Type       	Index Symbole \n");
 
 			// Elf32_Word offsetStringTable = rechercheOffsetSection(*fileHeader, sections_headers, elf, strtab);
 			for (int l = 0; l < nombres; l++) {
 				// get type
 						type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
 						info = rel[j].r_info;
-						printf("%d  %10x  %15s  %8x    ",rel[j].r_offset, rel[j].r_info, type, ELF32_R_SYM(info));
+						printf("%3d  %10x  %15s  %8x    ",rel[j].r_offset, rel[j].r_info, type, ELF32_R_SYM(info));
 						//recupNomSymbole(rel[j].r_offset, elf, strtab);
 						printf("\n");
 
