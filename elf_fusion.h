@@ -205,23 +205,12 @@ int fusionTableSymbole(FichierElf structFichier1, FichierElf structFichier2, int
 void AjoutNomStrtab(char * nom, Strtab * strtab, Elf32_Sym * symb);
 
 /*
-  Fonction: permet d'ajouter des symboles à la nouvelle table
-  @Param: Symbole *newTabSymbole: Le tableau dans lequel on va ajouter les symboles
-  @Param: int * nbEntree: le nombre d'entrée dans le tableau de symbole
-  @Param: FichierElf structFichierSrc: La structure contenant le fichier source dans lequel on va lire les symboles
-  @Param: int indexScr: l'index courant vers lequel on va ajouter le symbole dans la table des symboles
-  @Param: char * symbole: le symbole que l'on va ajouter
-  @Param: Strtab strtab: Pointeur vers la structure contenant la table des chaines
-  @Param: int numFichier: le numéro identifiant le fichier source
+TODO
 */
 void ajoutSymbole(Symbole *newTabSymbole, int * nbEntree, FichierElf structFichierSrc, int indexSrc, char *symbole, Strtab *strtab, int numFichier);
 
 /*
-  Fonction: permet de créer la structure de section contenant la table des symboles après fusion
-  @Param: Symbole * tableSymbole: le tableau de la structure de symbole que l'on va parcourir
-  @Param: int sizeTableSymbole: la taille de la table des symboles
-  @Param: Elf32_Shdr structFichier1: la structure du premier fichier à fusionner
-  @Param: Elf32_Shdr structFichier2: la structure du deuxième fichier à fusionner
+TODO
 */
 Section creerSectionTableSymbole(Symbole *tableSymbole, int sizeTableSymbole, Elf32_Shdr structFichier1, Elf32_Shdr structFichier2);
 
@@ -260,67 +249,11 @@ void EcrireContenu(Symbole *tableSymbole, int sizeTab, Section *section);
 */
 int getSt_shndx(Symbole symbol, FichierElf * fichierElf, int nbSections, Strtab *shstrtab);
 
-/*=====================================================================================================================
-                          GESTION FUSION TABLE DE RELOCATION // elf_fusionrel.c
-=======================================================================================================================*/
-
-
-/*
-  Fonction: permet de recuperer la taille de l'ensemble des tables de relocations
-  @Param: FichierElf * elfile: Un pointeur vers une structure fichierElf
-  @Return : La taille des tables de relocation
-*/
+// ELF FUSION REL
 int relsize(FichierElf * elfile);
-
-/*
-  Fonction : Permet de recupérer une table de Relocation et la mettre dans la structure Reloctable
-  @Param : FichierElf * elfile: Un pointeur vers une structure fichierElf
-  @Return : Une structure Reloctable correctement initialisé 
-*/
 Reloctable* crea_rel_table (FichierElf * elfile);
-
-/*
-  Fonction : Permet de fusionner deux tables de Relocation ayant le même nom de section
-  @Param : FichierElf * oldelf1: Un pointeur vers une structure fichierElf
-  @Param : Elf32_Shdr OldSec1 : Contenu de l'entête de section que l'on veut fusionner
-  @Param : Elf32_Shdr OldSec2 : Contenu de l'entête de section que l'on veut fusionner
-  @Param : FichierElf * oldelf2: Un pointeur vers une structure fichierElf
-  @Param : FichierElf * newelf: Un pointeur vers une structure fichierElf
-  @Param : int nbnewsymbole: Un integer contenant le nombre de symbole des deux tables concantenées
-  @Param : int newindex : Un integer contenant le nouvel index de la section fusionnée
-  @Return : une structure Section correctement fusionnée
-*/
 Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, FichierElf* oldelf2, FichierElf * newelf, int nbnewsymbole, int newindex);
-
-
-/*
-  Fonction : Permet de mettre à jour une table de Relocation présente uniquement dans un fichier
-  @Param : FichierElf * oldelf: Un pointeur vers une structure fichierElf
-  @Param : FichierElf * newelf: Un pointeur vers une structure fichierElf
-  @Param : Elf32_Shdr OldSec : Contenu de l'entête de section que l'on veut mettre à jour
-  @Param : int nbnewsymbole: Un integer contenant le nombre de symbole des deux tables concantenées
-  @Return : une structure section correctement mise à jour
-*/
 Section RelUpdate (FichierElf* oldelf, FichierElf* newelf, Elf32_Shdr OldSec, int nbnewsymbole);
-
-
-/*
-  Fonction : Permets d'ecrire dans le fichier elf fusionne les sections.
-  @Param : Elf32_Rel *tabrel : un pointeur vers une section de relocation
-  @Param : int taillerel : la taille de la section de Relocation
-  @Param : Section *section : Une structure de section de relocation
-  @Param : Elf32_Shdr headsec : le header de la section que l'on va écrire
-*/
 void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_Shdr headsec);
-
-/*
-  Fonction : Permets d'initialiser les structures.
-  @Param : FichierElf * oldelf1: Un pointeur vers une structure fichierElf
-  @Param : FichierElf * oldelf2: Un pointeur vers une structure fichierElf
-  @Param : FichierElf * newelf: Un pointeur vers une structure fichierElf
-
-*/
-
 void init_new_rel (FichierElf* new_elf, FichierElf* oldelf1, FichierElf* oldelf2);
-
-
+int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel *lesrel, FILE* elf);
