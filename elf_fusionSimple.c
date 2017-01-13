@@ -225,10 +225,14 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 			nbSymbolTotal = fusionTableSymbole(*fichierElf1, *fichierElf2, Size1, Size2, fichierElfRes->tabSymbole, strtab);
 			sectionfusionee = creerSectionTableSymbole(fichierElfRes->tabSymbole, nbSymbolTotal, sectionHeader1, sectionHeader2);
 			break;
-		case SHT_REL :
-			//Fusion de deux Table des Relocations 
-
+		/*case SHT_REL :
+			//Seulement le header, on ne peut pas faire le contenu sans la section des symboles
+			printf("\t\tTable des relalocation à faire\n");
 			break;
+		case SHT_RELA :
+			//Seulement le header, on ne peut pas faire le contenu sans la section des symboles
+			printf("\t\tTable des rela-alocation à faire\n");
+			break;*/
 		default : //Pour l'instant, on fait partout pareil
 		
 			sectionFusionSimple(&sectionfusionee, sectionHeader1, sectionHeader2, fichierElf1, fichierElf2);
@@ -419,8 +423,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 
 	//Tableau qui contient les index des sections de type REL et REAL
 	int * indexesREL = malloc(nbSectionMax * sizeof(int)); //Il ne peut pas y avoir plus de sections dans le fichier final que dans les deux fichier à fusioner confondu
-	int * indexesREL1 = malloc(nbSectionMax * sizeof(int));
-	int * indexesREL2 = malloc(nbSectionMax * sizeof(int));
+	int * indexesRELA = malloc(nbSectionMax * sizeof(int));
 	int nbSectionTypeRel = 0;
 	int nbSectionTypeRela = 0;
 
@@ -455,15 +458,6 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	int indexShstrtab = -1;
 	int indexStrtab = -1;
 	int indexSymtab = -1;
-	Elf32_Shdr **SectionHeaderRel = malloc(80 * sizeof(Elf32_Shdr* ));
-	for (int kl = 0; kl < 80; kl++) {
-		SectionHeaderRel[kl] = malloc(sizeof(Elf32_Shdr) * 2);
-	}
-	Elf32_Shdr *SectionHeaderRelSeul1 = malloc(80 * sizeof(Elf32_Shdr));
-	int nbSectionTypeRelSeul1 = 0;
-	Elf32_Shdr *SectionHeaderRelSeul2 = malloc(80 * sizeof(Elf32_Shdr));
-	int nbSectionTypeRelSeul2 = 0;
-
 	Elf32_Shdr * tmp = malloc(sizeof(Elf32_Shdr));
 	printf("Fusion sections : \n");
 	for (i = 0; i < fichierElf1->header_elf.e_shnum; i++) { //Pour toutes les sections du fichier1
@@ -493,28 +487,26 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 				indexShstrtab = nbSectionEcrites;
 				} else if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".strtab") == 0) {
 				indexStrtab = nbSectionEcrites;
-				} else if (fichierElf1->sectionsTable[i].sh_type == SHT_REL ) {
-					SectionHeaderRel[nbSectionTypeRel][0] = fichierElf1->sectionsTable[i];
-					SectionHeaderRel[nbSectionTypeRel][1] = *tmp;
-					indexesREL[nbSectionTypeRel] = i;
-					nbSectionTypeRel++;
 				} else 
 				//On garde l'index de la table des symbole pour les realocation ainsi que pour lui attribuer correctement son sh_link
 				if (strcmp(getSectionName(fichierElf1->sectionsTable[i],fichierElf1),".symtab") == 0) { //On sauvegarde l'index de la table des symbole pour la fusion des tables de realocation
 				indexSymtab = nbSectionEcrites;
 				}
 
+				//On garde les index de toutes les sections de type REL ou RELA pour pouvoir les fusionner après la fusion des symboles
+				if (fichierElf1->sectionsTable[i].sh_type == SHT_REL) {
+					indexesREL[nbSectionTypeRel] = nbSectionEcrites;
+					nbSectionTypeRel++;
+				}
+				if (fichierElf1->sectionsTable[i].sh_type == SHT_RELA) {
+					indexesREL[nbSectionTypeRela] = nbSectionEcrites;
+					nbSectionTypeRela++;
+				}
 			}
 		} else { //Sinon, on ajoute simplement
- 			if (fichierElf1->sectionsTable[i].sh_type == SHT_REL ) {
-					SectionHeaderRelSeul1[nbSectionTypeRelSeul1] = fichierElf1->sectionsTable[i];
-					indexesREL1[nbSectionTypeRelSeul1] = i;
-					nbSectionTypeRelSeul1++;
-			} else {
-				sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf1->sectionsTable[i], fichierElf1, shstrtab); //Ajout
-				sections_elfRes[nbSectionEcrites].indexHeader = nbSectionEcrites;
-				fichierElfRes->sectionsTable[nbSectionEcrites] = sections_elfRes[nbSectionEcrites].header;
-			}
+			sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf1->sectionsTable[i], fichierElf1, shstrtab); //Ajout
+			sections_elfRes[nbSectionEcrites].indexHeader = nbSectionEcrites;
+			fichierElfRes->sectionsTable[nbSectionEcrites] = sections_elfRes[nbSectionEcrites].header;
 		}
 		nbSectionEcrites++;
 	}
@@ -522,15 +514,9 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	for (i = 0; i < fichierElf2->header_elf.e_shnum; i++) { //Pour toutes les sections du fichier2
 		RechercheSectionByName(fichierElf1, getSectionName(fichierElf2->sectionsTable[i],fichierElf2), tmp, &present); //est-ce-que cette section est dans le fichier1 ?
 		if (!present) {  //Si oui, on ajoute simplement
-			 if (fichierElf1->sectionsTable[i].sh_type == SHT_REL ) {
-				SectionHeaderRelSeul2[nbSectionTypeRelSeul2] = fichierElf2->sectionsTable[i];
-				indexesREL2[nbSectionTypeRelSeul2] = i;
-				nbSectionTypeRelSeul2++;
-			} else {
 			sections_elfRes[nbSectionEcrites] = SectionAjout(fichierElf2->sectionsTable[i], fichierElf2, shstrtab); //Ajout
 			sections_elfRes[nbSectionEcrites].indexHeader = nbSectionEcrites;
 			fichierElfRes->sectionsTable[i] = sections_elfRes[nbSectionEcrites].header;
-			}
 			nbSectionEcrites++;
 		}
 	}
@@ -560,36 +546,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	sectionShstrtab(&sections_elfRes[indexShstrtab],shstrtab);
 	sectionStrtab(&sections_elfRes[indexStrtab],strtab);
 
-	// Pas sur de ou on doit le placer alors je mets tout ici ;)
-	int relsize1 = 0;
-	relsize1 = relsize(fichierElf1);
-	int relsize2 = 0;
-	relsize2 = relsize(fichierElf2);
-	Reloctable* reloctable1 = malloc(sizeof(Reloctable)*relsize1);
-	Reloctable* reloctable2 = malloc(sizeof(Reloctable)*relsize2);
-	fichierElf1->tabRel = reloctable1;
-	fichierElf2->tabRel = reloctable2;
-	reloctable1 = crea_rel_table(fichierElf1);
-	reloctable2 = crea_rel_table(fichierElf2);
-	printf("CEST LA ZOUBIDA : %x \n",reloctable1[0].tablerel[0].r_offset);
-	//fichierElf1->tabRel = reloctable1;
-	//fichierElf2->tabRel = reloctable2;
-	init_new_rel(fichierElfRes,fichierElf1,fichierElf2);
-	printf("WALLAYE BILLAYE \n");
-	//Fusion des Sections de type Rel :
-	for (i=0; i < nbSectionTypeRel ; i++) {
-		sections_elfRes[indexesREL[i]]=RelFusion(fichierElf1, SectionHeaderRel[i][0], SectionHeaderRel[i][1], fichierElf2,fichierElfRes, nbsymboles, indexesREL[i]);	
-		printf("WALLAYE BILLAYE 2\n");
-	}
-	// Mise à jour des Sections de type Rel pour chaque fichier:
-	for (i = 0; i < nbSectionTypeRelSeul1++; i++) {
-		sections_elfRes[indexesREL1[i]]=RelUpdate (fichierElf1,fichierElfRes, SectionHeaderRelSeul1[i],nbsymboles);
-	}
-		for (i = 0; i < nbSectionTypeRelSeul2++; i++) {
-		sections_elfRes[indexesREL2[i]]=RelUpdate (fichierElf2,fichierElfRes, SectionHeaderRelSeul2[i],nbsymboles);
-	}
 
-	// CA RENVOIT DES SECTIONS ET ON EN FAIT RIEN :3 JE MODIFIE JUSTE LES RELOCTABLE.. 
 
 	/////////////////////////////////////////////////////////////////////
 
@@ -623,6 +580,5 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	free(shstrtab);
 	free(sections_elfRes);
 	free(indexesREL);
-	free(indexesREL1);
-	free(indexesREL2);
+	free(indexesRELA);
 }
