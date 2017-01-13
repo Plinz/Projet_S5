@@ -205,9 +205,43 @@ void recupNomSymbole(Elf32_Word index, FILE* f, Elf32_Word offset,char *c);
                           GESTION TABLE DE REIMPLANTATION // elf_relocate.c
 =======================================================================================================================*/
 
+/* Fonction : permet de recuperer la taille et de construire une structure de type Rela
+  @Param : ELf32_Ehdr *file_header : Pointeur vers le header du fichier lu.
+  @Param : Elf32_Shdr *section_headers : Pointeur vers les en-têtes de section
+  @Param : Elf32_Rela * lesrela : Pointeur vers les tables de type Rela
+  @Param : FILE* elf : Pointeur vers le fichier à lire
+  @Return : La taille de l'ensemble des sections Rela.
+*/
+
+
 int taillerela(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rela* lesrela, FILE* elf) ;
+
+
+/* 
+  Fonction : permet de recuperer la taille et de construire une structure de type Rel
+  @Param : ELf32_Ehdr *file_header : Pointeur vers le header du fichier lu.
+  @Param : Elf32_Shdr *section_headers : Pointeur vers les en-têtes de section
+  @Param : Elf32_Rel * lesrel : Pointeur vers les tables de type Rel
+  @Param : FILE* elf : Pointeur vers le fichier à lire
+  @Return : La taille de l'ensemble des sections Rel.
+*/
 
 int taillerel(Elf32_Ehdr *file_header, Elf32_Shdr *section_headers, Elf32_Rel* lesrel, FILE* elf);
 
+/*
+  Fonction : Permet d'afficher le contenu des tables de relocation dans la console
+  @Param : ELf32_Ehdr *file_header : Pointeur vers le header du fichier lu.
+  @Param : Elf32_Shdr *section_headers : Pointeur vers les en-têtes de section
+  @Param : FILE* elf : Pointeur vers le fichier à lire
+
+*/
 int affichage_relocation(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers,FILE* elf);
 
+/* 
+  Fonction : Permet de compter le nombre de Table de relocation dans un fichier
+  @Param : ELf32_Ehdr *file_header : Pointeur vers le header du fichier lu.
+  @Param : Elf32_Shdr *section_headers : Pointeur vers les en-têtes de section
+  @Return : Le nombre de tables de relocations 
+*/ 
+ 
+int nbRel(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers);
