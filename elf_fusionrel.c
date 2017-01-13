@@ -39,7 +39,7 @@ int relsize(FichierElf * elfile) {
 	return taille;
 }
 
-void init_new_rel (FichierElf * new_elf, FichierElf * oldelf1, FichierElf * oldelf2) {
+int init_new_rel (FichierElf * new_elf, FichierElf * oldelf1, FichierElf * oldelf2) {
 
 	int nb_sec1 = oldelf1->header_elf.e_shnum;
 	int nb_sec2 = oldelf1->header_elf.e_shnum ;
@@ -53,14 +53,15 @@ void init_new_rel (FichierElf * new_elf, FichierElf * oldelf1, FichierElf * olde
 		if ( oldelf2->sectionsTable[i].sh_type == SHT_REL ) { nb_rel ++ ; } 
 	}
 
-	reltab = malloc(sizeof(Reloctable) * nb_rel+75);
-	realrel = malloc(sizeof(Elf32_Rel) * nb_rel+75);
+	reltab = malloc(sizeof(Reloctable) * nb_rel);
+	realrel = malloc(sizeof(Elf32_Rel) * nb_rel);
 	reltab->tablerel = realrel;
-	if ( reltab == NULL ) { printf("Erreur Allocation"); exit(1) ;} 	
+	if ( reltab == NULL ) { return -1 ;} 
 	else { new_elf->tabRel = reltab; ; } 
 	for (int i = 0; i < nb_rel ; i++) {
 		new_elf->tabRel->indice_section = -1;
 	}
+
 }
 
 Reloctable* crea_rel_table (FichierElf * elfile) {
@@ -89,6 +90,7 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 			for (int j=0; j < nombre; j++) {
 				
 				fread(&(tabrel[diffsec].tablerel[j]),trel, 1,elf);
+				printf ("ZOUBIDOU %d %d \n",tabrel[diffsec].tablerel[j].r_info, tabrel[diffsec].tablerel[j].r_offset);
 			}
 			diffsec ++;
 		}
@@ -104,12 +106,15 @@ Reloctable* crea_rel_table (FichierElf * elfile) {
 
 Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, FichierElf* oldelf2, FichierElf * newelf, int nbnewsymbole, int newindex) {
 	// Si deux sections ont le même nom : On concatene tout ca.
+	Elf32_Ehdr oldheader1 = oldelf1->header_elf;
 	Elf32_Shdr* oldsection_headers1 = oldelf1->sectionsTable;
 	Reloctable * oldlesrel1 = oldelf1->tabRel;
 	Symbole *oldsym1 = oldelf1->tabSymbole;
+	Elf32_Ehdr oldheader2 = oldelf2->header_elf;
 	Elf32_Shdr* oldsection_headers2 = oldelf2->sectionsTable;
 	Reloctable* oldlesrel2 = oldelf2->tabRel;
 	Symbole *oldsym2 = oldelf2->tabSymbole;
+	Elf32_Ehdr newheader = newelf->header_elf;
 	Elf32_Shdr* newsection_headers = newelf->sectionsTable;
 	Reloctable * newlesrel = newelf->tabRel;
 	Symbole *newsym = newelf->tabSymbole;
@@ -183,6 +188,7 @@ Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, F
 
 		// On stocke le dernier offset
 		lastoff = newlesrel[indice_new_rel].tablerel[i].r_offset;
+		printf("LAST OFF US : %x \n",lastoff);
 		switch (type) {
 				// Que faire si on entre dans ces types ?
 				// Prendre la section en question et prendre les 4 premiers octets
@@ -220,6 +226,7 @@ Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, F
 
 		// On calcule le nouvel offset
 		newlesrel[indice_new_rel].tablerel[indicenew].r_offset = lastoff + oldsection_headers2[numsec2].sh_entsize;
+		printf(" OFFSET : %x \n",lastoff);
 
 
 		// On enregistre le type et l'ID précédent.
@@ -278,6 +285,7 @@ Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, F
 
 	}
 	taille = newlesrel[indice_new_rel].nombre_relocation;
+	printf("taille = %d \n",taille);
 	newsection_headers[newindex].sh_type=oldsection_headers1[numsec1].sh_type;
 	newsection_headers[newindex].sh_flags=oldsection_headers1[numsec1].sh_flags;
 	newsection_headers[newindex].sh_addr=oldsection_headers1[numsec1].sh_addr;
@@ -287,10 +295,11 @@ Section RelFusion(FichierElf* oldelf1, Elf32_Shdr OldSec1, Elf32_Shdr OldSec2, F
 	newsection_headers[newindex].sh_info=oldsection_headers1[numsec1].sh_info;
 	newsection_headers[newindex].sh_addralign=oldsection_headers1[numsec1].sh_addralign;
 	newsection_headers[newindex].sh_entsize=oldsection_headers1[numsec1].sh_entsize;
-	/*printf("Que faut il changer ? %d %d %d \n",newsection_headers[newindex].sh_name,newsection_headers[newindex].sh_type,newsection_headers[newindex].sh_flags);
-	printf("Que faut il changer ? %d %d %d %d %d \n",newsection_headers[newindex].sh_size,newsection_headers[newindex].sh_link,newsection_headers[newindex].sh_info,newsection_headers[newindex].sh_addralign,newsection_headers[newindex].sh_entsize);*/
+	printf("Que faut il changer ? %d %d %d \n",newsection_headers[newindex].sh_name,newsection_headers[newindex].sh_type,newsection_headers[newindex].sh_flags);
+	printf("Que faut il changer ? %d %d %d %d %d \n",newsection_headers[newindex].sh_size,newsection_headers[newindex].sh_link,newsection_headers[newindex].sh_info,newsection_headers[newindex].sh_addralign,newsection_headers[newindex].sh_entsize);
 	EcritureStruct(newlesrel[indice_new_rel].tablerel,taille,&secrel,newsection_headers[newindex]);
-
+	printf("ZOZOZOZOZOZOZOOZZOOZZOZOZO \n");
+	printf("%s \n",secrel.contenu);
 	return secrel;
 }
 
@@ -302,9 +311,11 @@ Section RelUpdate (FichierElf* oldelf, FichierElf* newelf, Elf32_Shdr OldSec, in
 // Appel de type reloctable[i] ?? On va tester ça.
 
 
+Elf32_Ehdr oldheader = oldelf->header_elf;
 Elf32_Shdr* oldsection_headers = oldelf->sectionsTable;
 Reloctable* oldlesrel = oldelf->tabRel;
 Symbole *oldsym = oldelf->tabSymbole;
+Elf32_Ehdr newheader = newelf->header_elf;
 Elf32_Shdr* newsection_headers = newelf->sectionsTable;
 Reloctable* newlesrel = newelf->tabRel;
 Symbole *newsym = newelf->tabSymbole;
@@ -400,7 +411,9 @@ while (strcmp(oldlesrel[parcoureltab].nom_section,getSectionName(newsection_head
 		}
 	}
 	taille = newlesrel[indice_new_rel].nombre_relocation;
+	printf("taille = %d",taille);
 	EcritureStruct(newlesrel[indice_new_rel].tablerel,taille,&secrel,newsection_headers[0]);
+	printf("%s \n",secrel.contenu);
 	return secrel;
 }
 
@@ -409,9 +422,9 @@ void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_S
 	int i,j;
 	int nbOctets = 0;
 
+	printf("SH ENTSIZE : %d \n",sh_entsize);
 	section->contenu = malloc(taillerel * sh_entsize);
 	char * buffer = malloc(1);
-	char *init=buffer;
 	for(i=0; i<taillerel;i++){
 		buffer = (char *) &tabrel[i];
 		for (j=0; j < sh_entsize; j++) {
@@ -420,8 +433,8 @@ void EcritureStruct (Elf32_Rel *tabrel, int taillerel, Section *section, Elf32_S
 			nbOctets++;
 		}
 	}
+	printf("NBOCTEEEET : %d \n", nbOctets);
 	section->nbOctets = nbOctets;
 	section->header = headsec;
-	free(init);
 
 }

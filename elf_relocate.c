@@ -206,7 +206,7 @@ int affichage_relocation(Elf32_Ehdr *fileHeader, Elf32_Shdr *sections_headers, F
 				// get type
 						type = relType[ELF32_R_TYPE(rel[j].r_info)]; 
 						info = rel[j].r_info;
-						printf("%10d  %10x  %15s  %8x    ",rel[j].r_offset, rel[j].r_info, type, ELF32_R_SYM(info));
+						printf("%10x  %10x  %15s  %8x    ",rel[j].r_offset, rel[j].r_info, type, ELF32_R_SYM(info));
 						//recupNomSymbole(rel[j].r_offset, elf, strtab);
 						printf("\n");
 
