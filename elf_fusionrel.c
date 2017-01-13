@@ -53,10 +53,10 @@ void init_new_rel (FichierElf * new_elf, FichierElf * oldelf1, FichierElf * olde
 		if ( oldelf2->sectionsTable[i].sh_type == SHT_REL ) { nb_rel ++ ; } 
 	}
 
-	reltab = malloc(sizeof(Reloctable) * nb_rel+1);
-	realrel = malloc(sizeof(Elf32_Rel) * nb_rel+1);
+	reltab = malloc(sizeof(Reloctable) * nb_rel);
+	realrel = malloc(sizeof(Elf32_Rel) * nb_rel);
 	reltab->tablerel = realrel;
-	if ( reltab == NULL ) { printf("Erreur Allocation"); exit(1) ;} 	
+	if ( reltab == NULL ) { printf("Erreur Allocation"); exit(1) ;} 
 	else { new_elf->tabRel = reltab; ; } 
 	for (int i = 0; i < nb_rel ; i++) {
 		new_elf->tabRel->indice_section = -1;
