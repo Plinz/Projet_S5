@@ -422,6 +422,7 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	int * indexesREL1 = malloc(nbSectionMax * sizeof(int));
 	int * indexesREL2 = malloc(nbSectionMax * sizeof(int));
 	int nbSectionTypeRel = 0;
+	int nbSectionTypeRela = 0;
 
 	//Tableau qui contient les Sections{contenu,header} qu'on ecrira dans le fichier resultat
 	sections_elfRes = malloc(nbSectionMax * sizeof(Section));
