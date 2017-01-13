@@ -245,6 +245,7 @@ Section sectionfusion(Elf32_Shdr sectionHeader1, Elf32_Shdr sectionHeader2, Fich
 	shstrtab->offsetCourant += strlen(shstrtab->names[shstrtab->nbNames]) + 1;
 	shstrtab->nbNames++;
 
+	printf("\t\tNbOctets %d\n",sectionfusionee.nbOctets);
 
 
 	return sectionfusionee;
@@ -623,7 +624,4 @@ void fusion(FichierElf *fichierElf1, FichierElf *fichierElf2, FichierElf *fichie
 	free(indexesREL);
 	free(indexesREL1);
 	free(indexesREL2);
-	free(SectionHeaderRel);
-	free(SectionHeaderRelSeul1);
-	free(SectionHeaderRelSeul2);
 }
